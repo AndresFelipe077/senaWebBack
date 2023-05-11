@@ -14,4 +14,5 @@ class Rol extends Role
     {
         return $this->belongsTo(Company::class, 'idCompany');
     }
+    
 }

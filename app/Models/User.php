@@ -58,9 +58,24 @@ class User extends Authenticatable
         return $this->belongsTo(Person::class, 'idpersona');
     }
 
+    
+
     public function grupoLider()
     {
         return $this->hasOne(Grupo::class, 'idLider', 'id');
+    }
+
+    //relacion con los grupos Many To Many
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class)
+            ->using(AsignacionParticipante::class)
+            ->withPivot(['fechaInicial', 'fechaFinal', 'descripcion']);
+    }
+
+    public function activacion()
+    {
+        return $this->hasMany(ActivationCompanyUser::class, 'user_id', 'id');
     }
     
 }

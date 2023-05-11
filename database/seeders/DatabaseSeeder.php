@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Competencias;
 use App\Models\EstadoGrupo;
+use App\Models\Jornada;
 use App\Models\NivelFormacion;
 use App\Models\Programa;
 use App\Models\TipoFormacion;
@@ -23,6 +24,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+
+        Jornada::factory(3)->create();
 
         $path = 'database/seeders/sql/countries.sql';
         DB::unprepared(file_get_contents($path));
@@ -71,6 +75,7 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
+        
         Grupo::factory(10)->create();
 
     }

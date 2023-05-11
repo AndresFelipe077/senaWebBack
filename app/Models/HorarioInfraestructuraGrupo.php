@@ -5,22 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AsignacionParticipante extends Model
+class HorarioInfraestructuraGrupo extends Model
 {
     use HasFactory;
 
-    protected $table = 'asignacionParticipante';
+    protected $table = 'horarioInfraestructuraGrupo';
 
     protected $guarded = [];
 
-    public function usuario()
+    public function infraestructura()
     {
-        return $this->belongsTo(User::class, 'idParticipante');
+        return $this->belongsTo(Infraestructura::class, 'idInfraestructura');
     }
 
     public function grupo()
     {
         return $this->belongsTo(Grupo::class, 'idGrupo');
     }
+
 
 }

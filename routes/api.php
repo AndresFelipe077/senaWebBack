@@ -39,6 +39,9 @@ use App\Http\Controllers\gestion_grupo\NivelFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
+use App\Http\Controllers\HorarioInfraestructuraGrupoController;
+use App\Models\AsignacionParticipante;
+use App\Models\HorarioInfraestructuraGrupo;
 
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
@@ -146,10 +149,15 @@ Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJorna
 Route::resource('grupos', GrupoController::class);
 //buscador para el controlador grupos
 Route::get('obtenergrupos', [GrupoController::class, 'buscarGrupos']);
+
+Route::get('usuarios_instructores', [UserController::class, 'instructores']);
+
 //tipo de grupos
 Route::resource('tipogrupos', TipoGrupoController::class);
 
 Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
+
+Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
 
 Route::resource('niveles_formacion', NivelFormacionController::class);
 
@@ -158,6 +166,14 @@ Route::resource('tipo_formaciones', TipoFormacionController::class);
 Route::resource('estado_grupos', EstadoGrupoController::class);
 
 Route::resource('tipo_ofertas', TipoOfertaController::class);
+
+Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoController::class);
+
+Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
+
+Route::resource('asignacion_participante', AsignacionParticipante::class);
+
+
 
 Route::resource('personas', PersonController::class);
 

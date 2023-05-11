@@ -10,9 +10,15 @@ class AsignacionJornadaGrupoController extends Controller
 {
   public function index()
   {
-    $data = AsignacionJornadaGrupo::with(['jornada','grupo']) -> get();
-    return response() -> json($data);
-    
+    $data = AsignacionJornadaGrupo::with(['jornada', 'grupo'])->get();
+    return response()->json($data);
   }
-  
+
+
+  public function showByGrupo(int $id)
+  {
+    $data = AsignacionJornadaGrupo::with(['jornada', 'grupo'])->where('idGrupo', $id)->get();
+    return response()->json($data);
+  }
+
 }

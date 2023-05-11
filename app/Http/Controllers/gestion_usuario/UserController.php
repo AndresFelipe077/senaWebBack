@@ -48,6 +48,25 @@ class UserController extends Controller
         return response()->json($usuario, 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $data = $request->all();
+
+        $persona = Person::find($id);
+        $persona->fill($data);
+        $persona->save();
+
+        $usuario = User::where('idpersona', $persona->id)->first();
+        $usuario->fill($data);
+        if ($request->has('contrasena')) {
+            $usuario->contrasena = bcrypt($request->input('contrasena'));
+        }
+        $usuario->save();
+
+        return response()->json($usuario, 200);
+    }
+
+
     public function asignation(Request $request)
     {
 
@@ -58,7 +77,7 @@ class UserController extends Controller
         $user->assignRole($request->input('roles', []));
         return $user;
     }
-    
+
     // /**
     //  * Remove the specified resource from storage.
     //  *

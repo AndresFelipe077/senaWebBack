@@ -9,9 +9,8 @@ class AsignacionParticipanteController extends Controller
 {
   public function index()
   {
-    return response()->json(AsignacionParticipante::all(), 200);
+    $data = AsignacionParticipante::with(['usuario','grupo']) -> get();
+    return response() -> json($data);
   }
-
   
-
 }

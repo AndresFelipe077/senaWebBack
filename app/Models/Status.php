@@ -13,4 +13,11 @@ class Status extends Model
 
     const ID_ACTIVE = 1;
     const ID_INACTIVO = 2;
+
+
+    public function activacionesCompany()
+    {
+        return $this->hasMany(ActivationCompanyUser::class);
+    }
+
 }

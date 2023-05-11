@@ -25,4 +25,15 @@ class Company extends Model
         }
         return url(self::RUTA_LOGO_DEFAULT);
     }
+
+    public function roles()
+    {
+        return $this->hasMany(Rol::class, 'idCompany');
+    }
+
+    public function activacionUser()
+    {
+        return $this->hasMany(ActivationCompanyUser::class);
+    }
+
 }

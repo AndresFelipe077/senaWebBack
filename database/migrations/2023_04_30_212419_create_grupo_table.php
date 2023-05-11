@@ -17,8 +17,8 @@ class CreateGrupoTable extends Migration
 
             $table->increments('id');
             $table->string('nombre');
-            $table->date('fechaInicial');
-            $table->date('fechaFinal');
+            $table->date('fechaInicialGrupo');
+            $table->date('fechaFinalGrupo');
             $table->text('observacion');
 
             $table->foreignId('idTipoGrupo')->references('id')->on('tipoGrupo');
@@ -28,9 +28,6 @@ class CreateGrupoTable extends Migration
 
             $table->unsignedInteger('idPrograma');
             $table->foreign('idPrograma')->references('id')->on('programa');
-
-            $table->unsignedInteger('idInfraestructura');
-            $table->foreign('idInfraestructura')->references('id')->on('infraestructura');
 
             $table->foreignId('idNivel')->references('id')->on('nivelFormacion');
 
