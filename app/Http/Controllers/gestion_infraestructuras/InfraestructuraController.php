@@ -15,9 +15,22 @@ class InfraestructuraController extends Controller
     {
         $data = InfraEstructura::with([
             'sede',
-            'area'
+            'area',
+            'grupos'
         ]) -> get();
-        return response() -> json($data);
+        
+
+        $newData = $data -> map(function($infr){
+            $infr['grupos'] = $infr['grupos'] -> map(function($grupo){
+                $pivot = $grupo['pivot'];
+                unset($grupo['pivot']);
+                $grupo['horario_infraestructura'] = $pivot;
+                return $grupo;
+            });
+            return $infr;
+        });
+
+        return response() -> json($newData);
     }
 
     /**
@@ -78,7 +91,7 @@ class InfraestructuraController extends Controller
         $image = imagecreatefromstring($img_data);
 
         // Obtener la ruta completa del archivo de imagen
-        $storage_in = public_path($path);
+        $storage_in = storage_path($path);
 
          // Asegurarse de que la carpeta exista
          if (!file_exists(dirname($storage_in))) {
@@ -95,8 +108,20 @@ class InfraestructuraController extends Controller
      */
     public function show(int $id)
     {
-        $infraestructura = InfraEstructura::with(['sede','area']) -> find($id);
-        return response() -> json($infraestructura);
+        $infraestructura = InfraEstructura::with([
+            'sede',
+            'area',
+            'grupos'
+        ]) -> find($id);
+
+        $infr['grupos'] = $infraestructura['grupos'] -> map(function($grupo){
+            $pivot = $grupo['pivot'];
+            unset($grupo['pivot']);
+            $grupo['horario_infraestructura'] = $pivot;
+            return $grupo;
+        });
+        
+        return response() -> json($infr);
     }
      /**
      * Muestra las infraestructuras dependiendo de la sede
