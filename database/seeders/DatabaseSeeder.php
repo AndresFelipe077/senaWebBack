@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/areas.sql';
         DB::unprepared(file_get_contents($path));
-        $path = 'database/seeders/sql/infraestructuras.sql';
+       $path = 'database/seeders/sql/infraestructuras.sql';
         DB::unprepared(file_get_contents($path));
 
         $this->call(DiaSeeder::class);

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\gestion_infraestructuras;
 
+use App\Http\Controllers\Controller;
 use App\Models\Sede;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,11 @@ class SedeController extends Controller
     */
     public function index()
     {
-        $data = Sede::with(['ciudad','centroFormacion','infraestructuras']) -> get();
+        $data = Sede::with([
+            'ciudad',
+            'centroFormacion',
+            'infraestructuras'
+        ]) -> get();
         return response() -> json($data);
     }
 
@@ -21,17 +26,35 @@ class SedeController extends Controller
      */
     public function store(Request $request)
     {
+        $test = json_decode($request->getContent(),false);
+        if(is_array($test)){
+            $data = $request -> all();
+            foreach ($data as $item) {
+                $sede = new Sede();
+                $sede = $this -> guardarSede($item);
+                $sede -> save();
+            }
+            return response() -> json($data);
+        }
+        if(is_object($test)){
+            $data = $request -> all();
+            $sede = new Sede();
+            $sede = $this -> guardarSede($data);
+            $sede -> save();
+            return response() -> json($data);
+        }
 
-        $post = new Sede();
-        $post -> nombreSede = $request -> nombreSede;
-        $post -> direccion = $request -> direccion;
-        $post -> telefono = $request -> telefono;
-        $post -> descripcion = $request -> descripcion;
-        $post -> idCiudad = $request -> idCiudad;
-        $post -> idCentroFormacion = $request -> idCentroFormacion;
-
-        $post -> save();
-
+    }
+    private function guardarSede(Array $data){
+        $sede = new Sede([
+            'nombreSede' => $data['nombreSede'],
+            'direccion' => $data['direccion'],
+            'telefono' => $data['telefono'],
+            'descripcion' => $data['descripcion'],
+            'idCiudad' => $data['idCiudad'],
+            'idCentroFormacion' => $data['idCentroFormacion']
+        ]);
+        return $sede;
     }
 
     /**

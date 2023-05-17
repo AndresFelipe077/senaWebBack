@@ -10,6 +10,7 @@ class Sede extends Model
     use HasFactory;
 
     protected $table = 'sede';
+    protected $guarded = [];
 
     public function ciudad(){
         return $this -> belongsTo(

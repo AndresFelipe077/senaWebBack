@@ -9,9 +9,8 @@ class Area extends Model
 {
     use HasFactory;
 
-    use HasFactory;
-
     protected $table = 'area';
+    protected $guarded = [];
 
     public function infraestructuras(){
         return $this -> hasMany(Infraestructura::class,'idArea');

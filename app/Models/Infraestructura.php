@@ -10,6 +10,7 @@ class Infraestructura extends Model
     use HasFactory;
 
     protected $table = 'infraestructura';
+    protected $guarded = [];
 
     public function sede(){
         return $this -> belongsTo(Sede::class, 'idSede');

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\gestion_infraestructuras;
 
+use App\Http\Controllers\Controller;
 use App\Models\Area;
 use Illuminate\Http\Request;
 
@@ -21,11 +22,33 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        $post = new Area();
-        $post -> nombreArea = $request -> nombreArea;
-        $post -> codigo = $request -> codigo;
-        $post -> save();
+        $test = json_decode($request->getContent(),false);
+        if(is_array($test)){
+            $data = $request -> all();
+            foreach ($data as $item) {
+                $area = new Area();
+                $area = $this -> guardarArea($item);
+                $area -> save();
+            }
+            return response() -> json($data);
+        }
+        if(is_object($test)){
+            $data = $request -> all();
+            $area = new Area();
+            $area = $this -> guardarArea($data);
+            $area -> save();
+            return response() -> json($data);
+        }
     }
+
+    private function guardarArea(Array $data){
+        $area = new Area([
+            'nombreArea' => $data['nombreArea'],
+            'codigo' => $data['codigo'],
+        ]);
+        return $area;
+    }
+
 
     /**
      * Display the specified resource.

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ActividadProyectoController;
-use App\Http\Controllers\AreaController;
 use App\Http\Controllers\gestion_empresa\CompanyController;
 use App\Http\Controllers\gestion_rol\RolController;
 use App\Http\Controllers\auth\LoginController;
@@ -27,15 +26,11 @@ use App\Http\Controllers\gestion_programas\actividadAprendizajeController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProyectoFormativoController;
 use App\Http\Controllers\TipoProgramasController;
-use App\Http\Controllers\SedeController;
-use App\Http\Controllers\InfraestructuraController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
-use App\Http\Controllers\VentasController;
 
 use App\Http\Controllers\gestion_grupo\AsignacionJornadaGrupoController;
 use App\Http\Controllers\gestion_grupo\EstadoGrupoController;
@@ -47,6 +42,10 @@ use App\Http\Controllers\gestion_grupo\TipoOfertaController;
 use App\Http\Controllers\HorarioInfraestructuraGrupoController;
 use App\Models\AsignacionParticipante;
 use App\Models\HorarioInfraestructuraGrupo;
+
+use App\Http\Controllers\gestion_infraestructuras\AreaController;
+use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
+use App\Http\Controllers\gestion_infraestructuras\SedeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,7 +125,7 @@ Route::resource('ciudades', CityController::class);
 Route::get('ciudades/departamento/{id}', [CityController::class, 'showByDepartamento']);
 
 //rutas sede -> revisar y optimizar
-Route::resource('sedes', SedeController::class);
+Route::resource('sedes',SedeController::class);
 Route::get('sedes/ciudad/{id}', [SedeController::class, 'showByCiudad']);
 
 //ruta de areas
