@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_infraestructuras;
 use App\Http\Controllers\Controller;
 use App\Models\Infraestructura;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InfraestructuraController extends Controller
 {
@@ -66,11 +67,13 @@ class InfraestructuraController extends Controller
             $fileQrName=$data['nombreInfraestructura'].'_'.$fecha_actual.'_Qr.png';
 
             //guarda la ruta para incluirla en el campo codigoQr de infraestructuras
-            $path='/images/infraestructuras/codigoqr/'.$fileQrName;
+            $path='/app/public/images/infraestructuras/codigoqr/'.$fileQrName;
             
             $this -> guardarImg($qrRequest,$path);
 
-            $data['codigoQr']=asset($path);
+            $data['codigoQr']=Storage::url($path);
+            //$data['codigoQr']=url(Storage::url($path));
+            $data['codigoQr']=str_replace('storage//','storage/',$data['codigoQr']);
 
             $infr = new Infraestructura([
                 'nombreInfraestructura' => $data['nombreInfraestructura'],
@@ -114,14 +117,14 @@ class InfraestructuraController extends Controller
             'grupos'
         ]) -> find($id);
 
-        $infr['grupos'] = $infraestructura['grupos'] -> map(function($grupo){
+        $infraestructura['grupos'] = $infraestructura['grupos'] -> map(function($grupo){
             $pivot = $grupo['pivot'];
             unset($grupo['pivot']);
             $grupo['horario_infraestructura'] = $pivot;
             return $grupo;
         });
         
-        return response() -> json($infr);
+        return response() -> json($infraestructura);
     }
      /**
      * Muestra las infraestructuras dependiendo de la sede

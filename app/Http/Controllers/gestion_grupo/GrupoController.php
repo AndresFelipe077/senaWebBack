@@ -8,7 +8,7 @@ use App\Models\AsignacionParticipante;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Cast\Object_;
+use Mockery\Undefined;
 
 class GrupoController extends Controller
 {
@@ -79,33 +79,33 @@ class GrupoController extends Controller
         ]);
         $grupo->save();
 
-        $grupos_jornada = $data['grupos_jornada'];
+        $jornadas = $data['jornadas'];
 
-        foreach ($grupos_jornada as $grupoJItem) {
+        foreach ($jornadas as $grupoJItem) {
             $this -> guardarGruposJorna($grupoJItem,$grupo->id);
         }
 
-        $infraestructura = $data['infraestructura'];
+        $infraestructuras = $data['infraestructuras'];
 
-       foreach ($infraestructura as $infraItem) {
+       foreach ($infraestructuras as $infraItem) {
             $this->guardarHorarioInfra($infraItem, $grupo->id);
         }
 
         return response()->json($grupo, 201);
     }
     private function guardarGruposJorna(Array $data,int $idGrupo){
-        $grupo_jornada = new AsignacionJornadaGrupo([
-            'idJornada'=> $data['idJornada'],
+        $jornada = new AsignacionJornadaGrupo([
+            'idJornada'=> $data['jornada_grupo']['idJornada'],
             'idGrupo'=> $idGrupo
         ]);
-        $grupo_jornada -> save();
+        $jornada -> save();
     }
     private function guardarHorarioInfra(Array $data,int $idGrupo){
         $horarioInfraestructura = new HorarioInfraestructuraGrupo([
             'idGrupo' => $idGrupo,
-            'idInfraestructura' => $data['idInfraestructura'],
-            'fechaInicial'      => $data['fechaInicial'],
-            'fechaFinal'        => $data['fechaFinal']
+            'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
+            'fechaInicial'      => $data['horario_infraestructura']['fechaInicial'],
+            'fechaFinal'        => $data['horario_infraestructura']['fechaFinal']
         ]);
         $horarioInfraestructura->save();
     }
@@ -195,7 +195,7 @@ class GrupoController extends Controller
             'idTipoOferta' => $data['idTipoOferta'],
         ]);
 
-        $grupos_jornada = $data['grupos_jornada'];
+        $grupos_jornada = $data['jornadas'];
         if($grupos_jornada){
             foreach ($grupos_jornada as $grupoJItem) {
                 $this -> actualizarGruposJorna($grupoJItem, $grupo -> id);
@@ -204,9 +204,9 @@ class GrupoController extends Controller
             AsignacionJornadaGrupo::where('idGrupo',$id) -> delete();
         }
         
-        $infraestructura = $data['infraestructura'];
-        if($infraestructura){
-            foreach ($infraestructura as $horarioInfraItem) {
+        $infraestructuras = $data['infraestructuras'];
+        if($infraestructuras){
+            foreach ($infraestructuras as $horarioInfraItem) {
                 $this -> actualizarHorarioInfra($horarioInfraItem,$grupo -> id);
             }
         }else{
@@ -228,9 +228,10 @@ class GrupoController extends Controller
     }
 
     private function actualizarGruposJorna(Array $data,int $idGrupo){
-        $grupo_jornada = AsignacionJornadaGrupo::find($data['id']);
+        $dataId = isset($data['id'])? $data['id'] : 0;
+        $grupo_jornada = AsignacionJornadaGrupo::find($dataId);
         if($grupo_jornada){
-            $grupo_jornada -> idJornada = $data['idJornada'];
+            $grupo_jornada -> idJornada = $data['jornada_grupo']['idJornada'];
             $grupo_jornada -> idGrupo = $idGrupo;
 
             $grupo_jornada -> save();
@@ -242,14 +243,15 @@ class GrupoController extends Controller
 
     }
     private function actualizarHorarioInfra(Array $data,int $idGrupo){
-        $horario_jornada = HorarioInfraestructuraGrupo::find($data['id']);
-        if($horario_jornada){
-            $horario_jornada -> idInfraestructura = $data['idInfraestructura'];
-            $horario_jornada -> idGrupo = $idGrupo;
-            $horario_jornada -> fechaInicial = $data['fechaInicial'];
-            $horario_jornada -> fechaFinal = $data['fechaFinal'];
+        $dataId = isset($data['id'])? $data['id'] : 0;
+        $horario_infra = HorarioInfraestructuraGrupo::find($dataId);
+        if($horario_infra){
+            $horario_infra -> idInfraestructura = $data['horario_infraestructura']['idInfraestructura'];
+            $horario_infra -> idGrupo = $idGrupo;
+            $horario_infra -> fechaInicial = $data['horario_infraestructura']['fechaInicial'];
+            $horario_infra -> fechaFinal = $data['horario_infraestructura']['fechaFinal'];
 
-            $horario_jornada-> save();
+            $horario_infra-> save();
         }else{
             unset($data['id']);
             $this -> guardarHorarioInfra($data,$idGrupo);
