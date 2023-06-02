@@ -86,7 +86,6 @@ class GrupoController extends Controller
             });
         }
 
-
         return response()->json($grupos->get());
     }
 
@@ -129,6 +128,7 @@ class GrupoController extends Controller
 
         return response()->json($grupo, 201);
     }
+    
     private function guardarGruposJorna(Array $data,int $idGrupo){
         $grupo_jornada = new AsignacionJornadaGrupo([
             'idJornada'=> $data['idJornada'],
@@ -136,6 +136,7 @@ class GrupoController extends Controller
         ]);
         $grupo_jornada -> save();
     }
+
     private function guardarHorarioInfra(Array $data,int $idGrupo){
         $horarioInfraestructura = new HorarioInfraestructuraGrupo([
             'idGrupo' => $idGrupo,
@@ -214,15 +215,23 @@ class GrupoController extends Controller
             'idTipoOferta' => $data['idTipoOferta'],
         ]);
 
-        $grupos_jornada = $data['grupos_jornada'];
-        if($grupos_jornada){
-            foreach ($grupos_jornada as $grupoJItem) {
-                $this -> actualizarGruposJorna($grupoJItem, $grupo -> id);
-            }
-        }else{
-            AsignacionJornadaGrupo::where('idGrupo',$id) -> delete();
-        }
+        // $grupos_jornada = $data['grupos_jornada'];
+        // if($grupos_jornada){
+        //     foreach ($grupos_jornada as $grupoJItem) {
+        //         $this -> actualizarGruposJorna($grupoJItem, $grupo -> id);
+        //     }
+        // }else{
+        //     AsignacionJornadaGrupo::where('idGrupo',$id) -> delete();
+        // }
         
+        foreach ($request->gruposJornada as $val) {
+            foreach ($val as $val2) {
+                $info = ['idGrupo' => $grupo->id, 'idInfraestructura' => $val2];
+                $grupoJornada = new AsignacionJornadaGrupo($info);
+                $grupoJornada->save();
+            }
+        }
+
         $infraestructura = $data['infraestructura'];
         if($infraestructura){
             foreach ($infraestructura as $horarioInfraItem) {
@@ -259,6 +268,7 @@ class GrupoController extends Controller
         
 
     }
+
     private function actualizarHorarioInfra(Array $data,int $idGrupo){
         $horario_jornada = HorarioInfraestructuraGrupo::find($data['id']);
         if($horario_jornada){
