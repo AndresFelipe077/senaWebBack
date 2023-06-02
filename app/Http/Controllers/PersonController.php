@@ -14,8 +14,20 @@ class PersonController extends Controller
      */
     public function index()
     {
-        $data =Person::with('usuario') -> get();
-        return response() -> json($data);
+        $data = Person::with('usuario')->get();
+        return response()->json($data);
+    }
+
+
+    public function personByIdentificacion($identificacion)
+    {
+        $personIdentificacion = Person::where('identificacion', $identificacion)->first();
+
+        if ($personIdentificacion) {
+            return response()->json(['message' => 'Se encontró la persona', 'person' => $personIdentificacion]);
+        } else {
+            return response()->json(['message' => 'No se encontró ninguna persona con esa identificación'], 404);
+        }
     }
 
     /**

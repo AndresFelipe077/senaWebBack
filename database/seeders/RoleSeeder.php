@@ -28,7 +28,7 @@ class RoleSeeder extends Seeder
         $rapidoTambo->name = "Admin";
         $rapidoTambo->idCompany = 2;
         $rapidoTambo->save();
-        
+
 
         $vt->syncPermissions([
             PermissionConst::GESTION_ROL_PERMISOS,
@@ -46,14 +46,13 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_FASES,
             PermissionConst::GESTION_ACTIVIDAD_PROYECTO,
             PermissionConst::GESTION_PROYECTO_FORMATIVO,
-            
-            
+
+
 
 // permisao vanesas
             PermissionConst::GESTION_COMPETENCIA,
             PermissionConst::GESTION_ACTIVIDAD_APRENDIZAJE,
             PermissionConst::GESTION_RESULTADO_APRENDIZAJE,
-
 
 
 
@@ -66,9 +65,10 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_INFRAESTRUCTURA,
 
             PermissionConst::GESTION_JORNADA,
-            PermissionConst::CALENDARIO
-           
-            
+            PermissionConst::CALENDARIO,
+            PermissionConst::GESTION_MATRICULA
+
+
         ]);
 
         $rapidoTambo->syncPermissions([
@@ -76,7 +76,7 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_USUARIO,
             PermissionConst::GESTION_GRUPO,
             PermissionConst::GESTION_TIPO_GRUPO,
-            
+            PermissionConst::GESTION_MATRICULA,
 
 
         ]);

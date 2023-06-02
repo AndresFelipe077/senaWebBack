@@ -46,6 +46,7 @@ use App\Models\HorarioInfraestructuraGrupo;
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
+use App\Http\Controllers\MatriculaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -181,3 +182,7 @@ Route::resource('personas', PersonController::class);
 Route::resource('regionales', RegionalController::class);
 
 Route::resource('centroFormacion', CentroFormacionController::class);
+
+Route::resource('matriculas', MatriculaController::class);
+
+Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
