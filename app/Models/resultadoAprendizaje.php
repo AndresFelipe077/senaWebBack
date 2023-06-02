@@ -12,14 +12,25 @@ class resultadoAprendizaje extends Model
     protected $table = "resultadoAprendizaje";
     protected $fillable = [
         "rap",
-        "codigoRap"
+        "codigoRap",
+        "numeroHoras",
+        "idTipoRaps",
+        "idCompetencia"
     ];
-
     public $timestamps = false;
-    public function competencias()
-{
-    return $this->belongsToMany(Competencias::class);
-}
 
+
+    // relacion uno a muchos entre raps y tipo raps
+
+    public function tipoRaps()
+    {
+        return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
+    }
+
+    //relacion muchos a muchos
+    public function competencias()
+    {
+        return $this->belongsTo(Competencias::class, 'idCompetencia');
+    }
 
 }

@@ -6,33 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\resultadoAprendizaje;
 use Illuminate\Http\Request;
 
-class resultadoAprendizajeController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+class resultadoAprendizajeController extends Controller{
     public function index(Request $request)
     {
-        $rap = $request->input('rap');
+        $competencia = $request->input('competencias');
+        $tipoResultado = $request->input('tipoRaps');
+        $resultados = resultadoAprendizaje::with('competencias','tipoRaps');
 
-        $resultadoAp = resultadoAprendizaje ::query();
-        if ($rap) {
-            $resultadoAp->where('rap', $rap);
+        if($competencia){
+            $resultados->whereHas('competencias',function($q) use ($competencia){
+                return $q->select('id')->where('id', $competencia)->orWhere('nombreCompetencia',$competencia);
+            });
+        };
+
+        if($tipoResultado){
+            $resultados->whereHas('tipoRaps',function($q) use ($tipoResultado){
+                return $q->select('id')->where('id', $tipoResultado)->orWhere('nombre',$tipoResultado);
+            });
         }
 
-
-        return response()->json($resultadoAp->get());
+        return response()->json($resultados->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
         $data = $request->all();
@@ -42,12 +38,7 @@ class resultadoAprendizajeController extends Controller
         return response()->json($resultadoA, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function show(int $id)
     {
         $resultadoA = resultadoAprendizaje::find($id);
@@ -55,13 +46,7 @@ class resultadoAprendizajeController extends Controller
         return response()->json($resultadoA);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, int $id)
     {
         $data = $request->all();
@@ -72,12 +57,7 @@ class resultadoAprendizajeController extends Controller
         return response()->json($resultadoA);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy(int $id)
     {
         $resultadoA = resultadoAprendizaje::findOrFail($id);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActividadProyectoController;
+use App\Http\Controllers\asignacionCompetenciaRapController;
 use App\Http\Controllers\gestion_empresa\CompanyController;
 use App\Http\Controllers\gestion_rol\RolController;
 use App\Http\Controllers\auth\LoginController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\ProyectoFormativoController;
 use App\Http\Controllers\TipoProgramasController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
+use App\Http\Controllers\TipoRapsController;
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
@@ -104,15 +106,15 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 Route::resource('competencias', CompetenciasController::class);
 //rutas para resultado aprendizaje 2 vanesa
 Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
+//rutas para tipo resultados aprendizaje
+Route::resource('tipo_resultados',  TipoRapsController::class);
 //rutas para actividad aprendizaje 3 vanesa
 Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
-
-
-
 //ruta tipo_programas
 Route::resource('tipo_programas',  TipoProgramasController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
+
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 //ruta para fases

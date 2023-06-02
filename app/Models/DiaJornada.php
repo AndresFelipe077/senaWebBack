@@ -14,7 +14,7 @@ class DiaJornada extends Model
         'idJornada',
         'idDia'
     ];
-    public $timestamps = false;
+    // public $timestamps = false;
 
     public function jornada()
     {

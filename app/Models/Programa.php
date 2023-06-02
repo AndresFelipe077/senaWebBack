@@ -11,6 +11,11 @@ class Programa extends Model
 
     public static $snakeAttributes = false;
     protected $table = "programa";
+
+const RUTA_DOC = "programa";
+const RUTA_DOC_DEFAULT = "default";
+protected $appends = ['docUrl'];
+
     protected $fillable = [
     "nombrePrograma",
     "codigoPrograma",
@@ -21,9 +26,21 @@ class Programa extends Model
     "etapaLectiva",
     "etapaProductiva",
     "creditosLectiva",
-    "creditosProductiva"
+    "creditosProductiva",
+    "rutaArchivo"
     ];
     public $timestamps = false;
+
+ public function getDocUrlAttribute(){
+    if(
+        isset($this->attributes['rutaArchivo']) &&
+        isset($this->attributes['rutaArchivo'][0])
+    ){
+        return url($this->attributes['rutaArchivo']);
+    }
+    return url(self::RUTA_DOC_DEFAULT);
+ }
+
 
     //relacion uno a muchos tipo programa
     public function tipoPrograma()
