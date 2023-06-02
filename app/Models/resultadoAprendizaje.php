@@ -14,7 +14,8 @@ class resultadoAprendizaje extends Model
         "rap",
         "codigoRap",
         "numeroHoras",
-        "idTipoRaps"
+        "idTipoRaps",
+        "idCompetencia"
     ];
     public $timestamps = false;
 
@@ -23,13 +24,13 @@ class resultadoAprendizaje extends Model
 
     public function tipoRaps()
     {
-        return $this->belongsToMany(TipoRaps::class, 'idTipoRaps');
+        return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
     }
 
     //relacion muchos a muchos
     public function competencias()
     {
-        return $this->belongsTo(Competencias::class);
+        return $this->belongsTo(Competencias::class, 'idCompetencia');
     }
 
 }

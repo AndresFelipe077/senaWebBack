@@ -20,6 +20,8 @@ class CreateResultadoAprendizajesTable extends Migration
             $table->integer('numeroHoras');
             $table->unsignedInteger('idTipoRaps');
             $table->foreign('idTipoRaps')->references('id')->on('tipoRaps');
+            $table->unsignedInteger('idCompetencia');
+            $table->foreign('idCompetencia')->references('id')->on('competencias');
 
             $table->timestamps();
         });

@@ -12,8 +12,8 @@ class TipoRaps extends Model
     public static $snakeAttributes = false;
     protected $table = "tipoRaps";
     protected $fillable = [
-        "nombreTipoPrograma",
-        "descripcion"
+        "nombre",
+        "codigo"
     ];
     public $timestamps = false;
 }
