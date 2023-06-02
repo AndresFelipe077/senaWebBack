@@ -19,12 +19,6 @@ class Grupo extends Model
         return $this->belongsTo(TipoGrupo::class, 'idTipoGrupo', 'id');
     }
 
-    //Relacion uno a muchos Inversa(Usuario->Grupo)
-    public function instructor()
-    {
-        return $this->belongsTo(User::class, 'idLider', 'id');
-    }
-
     //Relacion uno a muchos Inversa(programa->Grupo)
     public function programa()
     {
