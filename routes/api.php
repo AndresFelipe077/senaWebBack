@@ -187,4 +187,4 @@ Route::resource('centroFormacion', CentroFormacionController::class);
 
 Route::resource('matriculas', MatriculaController::class);
 
-Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
+Route::get('person_by_identificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
