@@ -7,8 +7,8 @@ use App\Models\AsignacionJornadaGrupo;
 use App\Models\AsignacionParticipante;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
+use ArrayObject;
 use Illuminate\Http\Request;
-use Mockery\Undefined;
 
 class GrupoController extends Controller
 {
@@ -77,7 +77,7 @@ class GrupoController extends Controller
       'idEstado' => $data['idEstado'],
       'idTipoOferta' => $data['idTipoOferta'],
     ]);
-    
+
     $grupo->save();
 
     $jornadas = $data['jornadas'];
