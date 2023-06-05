@@ -19,7 +19,7 @@ class InfraestructuraController extends Controller
             'area',
             'grupos'
         ]) -> get();
-        
+
 
         $newData = $data -> map(function($infr){
             $infr['grupos'] = $infr['grupos'] -> map(function($grupo){
@@ -66,13 +66,8 @@ class InfraestructuraController extends Controller
             $fileQrName=$data['nombreInfraestructura'].'_'.$fecha_actual.'_Qr.png';
 
             //guarda la ruta para incluirla en el campo codigoQr de infraestructuras
-<<<<<<< HEAD
             $path='/images/infraestructuras/codigoqr/'.$fileQrName;
 
-=======
-            $path='/app/public/images/infraestructuras/codigoqr/'.$fileQrName;
-            
->>>>>>> dc28569f5d8d1d79f783593307780126dac671d2
             $this -> guardarImg($qrRequest,$path);
 
             $data['codigoQr']=Storage::url($path);
@@ -127,7 +122,7 @@ class InfraestructuraController extends Controller
             $grupo['horario_infraestructura'] = $pivot;
             return $grupo;
         });
-        
+
         return response() -> json($infraestructura);
     }
      /**
