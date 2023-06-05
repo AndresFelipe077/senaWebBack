@@ -8,6 +8,7 @@ use App\Models\AsignacionParticipante;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use Illuminate\Http\Request;
+use Mockery\Undefined;
 
 class GrupoController extends Controller
 {
@@ -16,77 +17,41 @@ class GrupoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-
-        $tipoGrupo       = $request->input('tipogrupo');
-        $instructor      = $request->input('idpersona');
-        $programa        = $request->input('nombrePrograma');
-        $infraestructura = $request->input('horarioInfraestructuraGrupo');
-        $nivelFormacion  = $request->input('nivel');
-        $tipoFormacion   = $request->input('nombreTipoFormacion');
-        $estadoGrupo     = $request->input('nombreEstado');
-        $tipoOferta      = $request->input('nombreOferta');
-        $gruposJornada   = $request->input('grupos_jornada');
 
         $grupos = Grupo::with([
             'tipoGrupo',
             'programa',
             'instructor.persona',
-            'infraestructura',                                                // y ademas los campos restantes de la tabla intermedia
             'nivelFormacion',
             'tipoFormacion',
             'estadoGrupo',
             'tipoOferta',
-            'gruposJornada',
-            'participantes' => function ($query) {
-                $query->withPivot('fechaInicial', 'fechaFinal', 'descripcion');
-            }
-        ]);
+            'jornadas',
+            'participantes',
+            'infraestructuras'
+        ]) -> get();
 
-        if ($tipoGrupo) {
-            $grupos->whereHas('grupos', function ($q) use ($tipoGrupo) {
-                return $q->select('id')->where('id', $tipoGrupo)->orWhere('nombreTipoGrupo', $tipoGrupo);
+        //quitar pivots
+        $newGrupos = $grupos -> map(function($grupo){
+            $grupo['infraestructuras'] = $grupo['infraestructuras'] -> map(function($infr){
+                $pivot = $infr['pivot'];
+                unset($infr['pivot']);
+                $infr['horario_infraestructura']=$pivot;
+                return $infr;
             });
-        }
 
-        if ($instructor) {
-            $grupos->whereHas('idpersona', function ($q) use ($instructor) {
-                return $q->select('id')->where('id', $instructor)->orWhere('contrasena', $instructor);
+            $grupo['jornadas'] = $grupo['jornadas'] -> map(function($jornada){
+                $pivot = $jornada['pivot'];
+                unset($jornada['pivot']);
+                $jornada['jornada_grupo'] = $pivot;
+                return $jornada;
             });
-        }
-
-        if ($programa) {
-            $grupos->whereHas('nombrePrograma', function ($q) use ($programa) {
-                return $q->select('id')->where('id', $programa)->orWhere('nombrePrograma', $programa);
-            });
-        }
-
-        if ($nivelFormacion) {
-            $grupos->whereHas('nivelFormacion', function ($q) use ($nivelFormacion) {
-                return $q->select('id')->where('id', $nivelFormacion)->orWhere('nivelFormacion', $nivelFormacion);
-            });
-        }
-
-        if ($tipoFormacion) {
-            $grupos->whereHas('nombreTipoFormacion', function ($q) use ($tipoFormacion) {
-                return $q->select('id')->where('id', $tipoFormacion)->orWhere('nombreTipoFormacion', $tipoFormacion);
-            });
-        }
-
-        if ($estadoGrupo) {
-            $grupos->whereHas('estadoGrupo', function ($q) use ($estadoGrupo) {
-                return $q->select('id')->where('id', $estadoGrupo)->orWhere('nombreEstado', $estadoGrupo);
-            });
-        }
-
-        if ($tipoOferta) {
-            $grupos->whereHas('nombreOferta', function ($q) use ($tipoOferta) {
-                return $q->select('id')->where('id', $tipoOferta)->orWhere('nombreOferta', $tipoOferta);
-            });
-        }
-
-        return response()->json($grupos->get());
+            return $grupo;
+        });
+        return response()->json($newGrupos);
+        //return response()->json($grupos);
     }
 
     /**
@@ -114,35 +79,35 @@ class GrupoController extends Controller
         ]);
         $grupo->save();
 
-        $grupos_jornada = $data['grupos_jornada'];
+        $jornadas = $data['jornadas'];
 
-        foreach ($grupos_jornada as $grupoJItem) {
+        foreach ($jornadas as $grupoJItem) {
             $this -> guardarGruposJorna($grupoJItem,$grupo->id);
         }
 
-        $infraestructura = $data['infraestructura'];
+        $infraestructuras = $data['infraestructuras'];
 
-       foreach ($infraestructura as $infraItem) {
+       foreach ($infraestructuras as $infraItem) {
             $this->guardarHorarioInfra($infraItem, $grupo->id);
         }
 
         return response()->json($grupo, 201);
     }
-    
+
     private function guardarGruposJorna(Array $data,int $idGrupo){
-        $grupo_jornada = new AsignacionJornadaGrupo([
-            'idJornada'=> $data['idJornada'],
+        $jornada = new AsignacionJornadaGrupo([
+            'idJornada'=> $data['jornada_grupo']['idJornada'],
             'idGrupo'=> $idGrupo
         ]);
-        $grupo_jornada -> save();
+        $jornada -> save();
     }
 
     private function guardarHorarioInfra(Array $data,int $idGrupo){
         $horarioInfraestructura = new HorarioInfraestructuraGrupo([
             'idGrupo' => $idGrupo,
-            'idInfraestructura' => $data['idInfraestructura'],
-            'fechaInicial'      => $data['fechaInicial'],
-            'fechaFinal'        => $data['fechaFinal']
+            'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
+            'fechaInicial'      => $data['horario_infraestructura']['fechaInicial'],
+            'fechaFinal'        => $data['horario_infraestructura']['fechaFinal']
         ]);
         $horarioInfraestructura->save();
     }
@@ -169,23 +134,40 @@ class GrupoController extends Controller
      * @param  \App\Models$grupo  $grupo
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         $dato = Grupo::with([
-            'infraestructura' => function ($query) {
-                $query->withPivot('fechaInicial', 'fechaFinal');
-            },
-            'gruposJornada',
-            'participantes' => function ($query) {
-                $query->withPivot('fechaInicial', 'fechaFinal', 'descripcion');
-            }
+            'tipoGrupo',
+            'programa',
+            'instructor.persona',
+            'nivelFormacion',
+            'tipoFormacion',
+            'estadoGrupo',
+            'tipoOferta',
+            'jornadas',
+            'participantes',
+            'infraestructuras'
         ])->find($id);
 
         if (!$dato) {
             return response()->json(['error' => 'El dato no fue encontrado'], 404);
         }
 
-        return $dato->toJson();
+        $dato['infraestructuras'] = $dato['infraestructuras'] -> map(function($infr){
+            $pivot = $infr['pivot'];
+            unset($infr['pivot']);
+            $infr['horario_infraestructura']=$pivot;
+            return $infr;
+        });
+
+        $dato['jornadas'] = $dato['jornadas'] -> map(function($jornada){
+            $pivot = $jornada['pivot'];
+            unset($jornada['pivot']);
+            $jornada['jornada_grupo'] = $pivot;
+            return $jornada;
+        });
+
+        return response() -> json($dato);
     }
 
 
@@ -215,26 +197,20 @@ class GrupoController extends Controller
             'idTipoOferta' => $data['idTipoOferta'],
         ]);
 
-        // $grupos_jornada = $data['grupos_jornada'];
-        // if($grupos_jornada){
-        //     foreach ($grupos_jornada as $grupoJItem) {
-        //         $this -> actualizarGruposJorna($grupoJItem, $grupo -> id);
-        //     }
-        // }else{
-        //     AsignacionJornadaGrupo::where('idGrupo',$id) -> delete();
-        // }
-        
-        foreach ($request->gruposJornada as $val) {
-            foreach ($val as $val2) {
-                $info = ['idGrupo' => $grupo->id, 'idInfraestructura' => $val2];
-                $grupoJornada = new AsignacionJornadaGrupo($info);
-                $grupoJornada->save();
+        $grupos_jornada = $data['jornadas'];
+        if($grupos_jornada){
+            foreach ($grupos_jornada as $grupoJItem) {
+                $this -> actualizarGruposJorna($grupoJItem, $grupo -> id);
             }
         }
 
         $infraestructura = $data['infraestructura'];
         if($infraestructura){
             foreach ($infraestructura as $horarioInfraItem) {
+
+        $infraestructuras = $data['infraestructuras'];
+        if($infraestructuras){
+            foreach ($infraestructuras as $horarioInfraItem) {
                 $this -> actualizarHorarioInfra($horarioInfraItem,$grupo -> id);
             }
         }else{
@@ -256,29 +232,33 @@ class GrupoController extends Controller
     }
 
     private function actualizarGruposJorna(Array $data,int $idGrupo){
-        $grupo_jornada = AsignacionJornadaGrupo::find($data['id']);
+        $dataId = isset($data['id'])? $data['id'] : 0;
+        $grupo_jornada = AsignacionJornadaGrupo::find($dataId);
         if($grupo_jornada){
-            $grupo_jornada -> idJornada = $data['idJornada'];
+            $grupo_jornada -> idJornada = $data['jornada_grupo']['idJornada'];
             $grupo_jornada -> idGrupo = $idGrupo;
 
             $grupo_jornada -> save();
         }else{
+            unset($data['id']);
             $this -> guardarGruposJorna($data,$idGrupo);
         }
-        
+
 
     }
 
     private function actualizarHorarioInfra(Array $data,int $idGrupo){
-        $horario_jornada = HorarioInfraestructuraGrupo::find($data['id']);
-        if($horario_jornada){
-            $horario_jornada -> idInfraestructura = $data['idInfraestructura'];
-            $horario_jornada -> idGrupo = $idGrupo;
-            $horario_jornada -> fechaInicial = $data['fechaInicial'];
-            $horario_jornada -> fechaFinal = $data['fechaFinal'];
+        $dataId = isset($data['id'])? $data['id'] : 0;
+        $horario_infra = HorarioInfraestructuraGrupo::find($dataId);
+        if($horario_infra){
+            $horario_infra -> idInfraestructura = $data['horario_infraestructura']['idInfraestructura'];
+            $horario_infra -> idGrupo = $idGrupo;
+            $horario_infra -> fechaInicial = $data['horario_infraestructura']['fechaInicial'];
+            $horario_infra -> fechaFinal = $data['horario_infraestructura']['fechaFinal'];
 
-            $horario_jornada-> save();
+            $horario_infra-> save();
         }else{
+            unset($data['id']);
             $this -> guardarHorarioInfra($data,$idGrupo);
         }
     }
@@ -298,5 +278,5 @@ class GrupoController extends Controller
             'eliminada'
         ]);
     }
-    
+
 }
