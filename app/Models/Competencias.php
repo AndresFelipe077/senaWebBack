@@ -28,9 +28,9 @@ class Competencias extends Model
     }
     
     //relacion muchos a  muchos
-    public function competenciaRap()
-    {
-        return $this->belongsToMany(AsignacionCompetenciaRap::class, 'asignacionCompetenciasRaps', 'idCompetencia', 'idRap');
-    }
+    public function resultados()
+{
+    return $this->belongsToMany(ResultadoAprendizaje::class, 'asignacionCompetenciasRaps', 'idCompetencia', 'idRap');
+}
 }
 

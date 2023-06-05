@@ -114,7 +114,10 @@ Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
 Route::resource('tipo_programas',  TipoProgramasController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
-
+//ruta para asignar competenciaRaps
+Route::post('resultados/{idResultadoAprendizaje}/competencias/{idCompetencia}', [ResultadoAprendizajeController::class, 'agregarCompetencia'])->name('resultados.agregarCompetencia');
+//ruta asignar y guardar
+Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 //ruta para fases
