@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
-
-        Jornada::factory(3)->create();
+        $path = 'database/seeders/sql/jornada.sql';
+        DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/countries.sql';
         DB::unprepared(file_get_contents($path));
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
 
         TipoProgramas::factory(10)->create();
         Programa::factory(10)->create();
-      
+
         $this->call(CompanySeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
-        
+
         Grupo::factory(10)->create();
 
     }

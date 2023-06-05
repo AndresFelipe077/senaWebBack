@@ -213,7 +213,6 @@ class GrupoController extends Controller
 
     $grupo->infraestructuras()->detach();
 
-
     $infraestructura = $data['infraestructuras'];
 
     foreach ($infraestructura as $horarioInfraItem) {
@@ -233,7 +232,7 @@ class GrupoController extends Controller
       $grupo_jornada->idJornada = $data['jornada_grupo']['idJornada'];
       $grupo_jornada->idGrupo = $idGrupo;
 
-      $grupo_jornada->update();
+      $grupo_jornada->save();
     } else {
       unset($data['id']);
       $this->guardarGruposJorna($data, $idGrupo);
