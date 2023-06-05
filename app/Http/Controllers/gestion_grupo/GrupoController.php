@@ -190,7 +190,7 @@ class GrupoController extends Controller
             'idNivel' => $data['idNivel'],
             'idTipoFormacion' => $data['idTipoFormacion'],
             'idEstado' => $data['idEstado'],
-            'idTipoOferta' => $data['idTipoOferta'],
+            'idTipoOferta' => $data['idTipoOferta']
         ]);
 
         $grupos_jornada = $data['jornadas'];
@@ -199,10 +199,10 @@ class GrupoController extends Controller
             $gruposJornadaIds = array_column($grupos_jornada, 'id');
 
             //Elimina aquellos registros de la tabla culla id no este en el array de arriba
-            AsignacionJornadaGrupo::whereNotNull('id')
+            /*AsignacionJornadaGrupo::whereNotNull('id')
                 ->whereNotIn('id', $gruposJornadaIds)
                 ->where('idGrupo', $id)
-                ->delete();
+                ->delete();*/
 
             foreach ($grupos_jornada as $grupoJItem) {
                 $this->actualizarGruposJorna($grupoJItem, $grupo->id);
