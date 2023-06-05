@@ -15,7 +15,7 @@ class CreateCompetenciasTable extends Migration
     public function up()
     {
         Schema::create('competencias', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->text ('nombreCompetencia');
             $table->text ('codigoCompetencia');
 

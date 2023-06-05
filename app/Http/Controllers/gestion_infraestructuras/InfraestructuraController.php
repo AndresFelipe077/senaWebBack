@@ -33,7 +33,6 @@ class InfraestructuraController extends Controller
 
         return response() -> json($newData);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -59,7 +58,7 @@ class InfraestructuraController extends Controller
     private function guardarInfr(Array $data){
             //guarda la fecha para usarla en el nombre de los ficheros
             $fecha_actual = date('YmdHis') . '_' . substr(microtime(), 2, 3);
-            
+
             //la imagen en base64 proveniente desde la solicitud json
             $qrRequest = $data['newQr'];
 
@@ -67,8 +66,13 @@ class InfraestructuraController extends Controller
             $fileQrName=$data['nombreInfraestructura'].'_'.$fecha_actual.'_Qr.png';
 
             //guarda la ruta para incluirla en el campo codigoQr de infraestructuras
+<<<<<<< HEAD
+            $path='/images/infraestructuras/codigoqr/'.$fileQrName;
+
+=======
             $path='/app/public/images/infraestructuras/codigoqr/'.$fileQrName;
             
+>>>>>>> dc28569f5d8d1d79f783593307780126dac671d2
             $this -> guardarImg($qrRequest,$path);
 
             $data['codigoQr']=Storage::url($path);
@@ -83,10 +87,10 @@ class InfraestructuraController extends Controller
                 'idSede' => $data['idSede'],
                 'idArea' => $data['idArea']
             ]);
-            return $infr;     
+            return $infr;
     }
     private function guardarImg(string $img,string $path){
-       
+
         // Decodificar la imagen base64 a su representación binaria
         $img_data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $img));
 

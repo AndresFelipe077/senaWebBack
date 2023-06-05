@@ -30,6 +30,12 @@ class CompetenciasController extends Controller
         return response()->json($AP->get());
     }
 
+    // public function index()
+    // {
+    //     $date = Competencias::with('competenciaRap')->get();
+    //     return response()->json($date);
+    // }
+
     /**
      * Store a newly created resource in storage.
      *

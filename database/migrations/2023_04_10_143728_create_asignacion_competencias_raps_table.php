@@ -14,15 +14,17 @@ class CreateAsignacionCompetenciasRapsTable extends Migration
     public function up()
     {
         Schema::create('asignacionCompetenciasRaps', function (Blueprint $table) {
-            $table->unsignedBigInteger('idcompetencia');
+
+            $table->increments('id');
+
+            
+            $table->unsignedInteger('idCompetencia');
             $table->foreign('idCompetencia')->references('id')->on('competencias');
 
-            $table->foreign('rap')->references('id')->on('resultadoAprendizaje');
-            $table->unsignedInteger('rap');
-
+            $table->unsignedInteger('idRap');
+            $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
 
             $table->timestamps();
-
         });
     }
 

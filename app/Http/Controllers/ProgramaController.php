@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Programa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProgramaController extends Controller {
 
@@ -31,14 +30,30 @@ class ProgramaController extends Controller {
         return response()->json($programas->get());
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $data = $request->all();
-        $programa = new Programa($data);
-        $programa->save();
 
+        $programa = new Programa($data);
+        $programa->rutaArchivo = $this->storeDocumento($request);
+        $programa->save();
         return response()->json($programa,201);
     }
+
+private function storeDocumento(Request $request, $default = true){
+    $rutaDoc = null;
+
+    if($default){
+        $rutaDoc = Programa::RUTA_DOC_DEFAULT;
+    }
+    if($request->hasFile('archivo')){
+        $rutaDoc = 
+        '/storage/' . 
+        $request
+        ->file('archivo')
+        ->store(Programa::RUTA_DOC, ['disk' => 'public']);
+    }
+    return $rutaDoc;
+}
 
 
     public function show(int $id)
@@ -46,6 +61,16 @@ class ProgramaController extends Controller {
         $programa = Programa::find($id);
 
         return response()->json($programa,200);
+    }
+
+    public function mostrarPrograma($id){
+        $programa = Programa::with('archivo')->find($id);
+
+        if ($programa) {
+            return response()->json($programa);
+        } else {
+            abort(404, 'Programa no encontrado');
+        }
     }
 
 

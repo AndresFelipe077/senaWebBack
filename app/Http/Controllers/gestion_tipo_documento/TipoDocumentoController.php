@@ -13,14 +13,15 @@ class TipoDocumentoController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * 
      */
     public function index(Request $request)
     {
-       
+
         $estado = $request->input('estado');
         $proceso = $request->input('proceso');
         $tipoDocumentos = TipoDocumento::with('estado', 'proceso');
-        
+
         if ($estado) {
             $tipoDocumentos->whereHas('estado', function ($q) use ($estado) {
                 return $q->select('id')->where('id', $estado)->orWhere('estado', $estado);
