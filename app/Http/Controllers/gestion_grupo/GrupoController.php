@@ -80,10 +80,12 @@ class GrupoController extends Controller
 
     $grupo->save();
 
-    $jornadas = $data['jornadas'];
-
-    foreach ($jornadas as $grupoJItem) {
-      $this->guardarGruposJorna($grupoJItem, $grupo->id);
+    foreach ($request->jornadas as $jornadaItem) {
+        foreach ($jornadaItem as $jItem) {
+            $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
+            $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+            $asignacionJornadaGrupo->save();
+        }
     }
 
     $infraestructuras = $data['infraestructuras'];
@@ -201,15 +203,16 @@ class GrupoController extends Controller
     ]);
 
     // Eliminar todas las relaciones existentes en la tabla central
-    $grupo->jornadas()->detach();
+    // $grupo->jornadas()->detach();
 
-    $grupos_jornada = $data['jornadas'];
+    // $grupos_jornada = $data['jornadas'];
 
-    if ($grupos_jornada) {
-      foreach ($grupos_jornada as $grupoJItem) {
-        $this->actualizarGruposJorna($grupoJItem, $grupo->id);
-      }
-    }
+    // if ($grupos_jornada) {
+    //   foreach ($grupos_jornada as $grupoJItem) {
+    //     $this->actualizarGruposJorna($grupoJItem, $grupo->id);
+    //   }
+    // }
+
 
     $grupo->infraestructuras()->detach();
 
@@ -219,6 +222,16 @@ class GrupoController extends Controller
       $this->actualizarHorarioInfra($horarioInfraItem, $grupo->id);
     }
 
+    AsignacionJornadaGrupo::where('idGrupo', $grupo->id)->delete();
+
+    foreach ($request->jornadas as $jornaItem) {
+        foreach ($jornaItem as $jItem) {
+            $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
+            $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+            $asignacionJornadaGrupo->save();
+        }
+    }
+
     return response()->json($grupo, 200);
 
   }
@@ -226,6 +239,13 @@ class GrupoController extends Controller
 
   private function actualizarGruposJorna(array $data, int $idGrupo)
   {
+
+    if ($data === null) {
+        // Realizar acciones cuando $data es null
+        $this->guardarGruposJorna([], $idGrupo); // Llamar a la función guardarGruposJorna con un arreglo vacío
+        return;
+    }
+
     $dataId = isset($data['id']) ? $data['id'] : 0;
     $grupo_jornada = AsignacionJornadaGrupo::find($dataId);
     if ($grupo_jornada) {
@@ -243,6 +263,7 @@ class GrupoController extends Controller
   {
     $dataId = isset($data['id']) ? $data['id'] : 0;
     $horario_infra = HorarioInfraestructuraGrupo::find($dataId);
+
     if ($horario_infra) {
       $horario_infra->idInfraestructura = $data['horario_infraestructura']['idInfraestructura'];
       $horario_infra->idGrupo = $idGrupo;
