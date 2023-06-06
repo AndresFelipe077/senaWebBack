@@ -30,19 +30,9 @@ class resultadoAprendizajeController extends Controller{
         return response()->json($resultados->get());
     }
 
-    
-    // public function store(Request $request)
-    // { 
-
-    //     $data = $request->all();
-    //     $resultadoA = new resultadoAprendizaje($data);
-    //     $resultadoA->save();
-
-    //     return response()->json($resultadoA, 201);
-    // }
+    //funcion para asignar los resultados a las competencias
     public function store(Request $request)
     {
-
         $data = $request->all();
 
         if (isset($data['rap'])) {
@@ -51,7 +41,7 @@ class resultadoAprendizajeController extends Controller{
             $resultadoA->save();
             // Verificar si se proporcionó un ID de competencia en la solicitud
             if (isset($data['idCompetencia'])) {
-                $competencia = Competencia::findOrFail($data['idCompetencia']);
+                $competencia = Competencias::findOrFail($data['idCompetencia']);
 
                 // Agregar la competencia al resultado de aprendizaje
                 $resultadoA->competencias()->attach($competencia);
