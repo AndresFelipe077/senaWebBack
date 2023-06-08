@@ -78,12 +78,6 @@ class UserController extends Controller
         return $user;
     }
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  *
-    //  * @param  int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
     public function destroy(int $id)
     {
         ActivationCompanyUser::where('user_id', $id)->delete();

@@ -33,10 +33,22 @@ use App\Http\Controllers\TipoRapsController;
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
-use App\Http\Controllers\VentasController;
-use App\Models\EstadoGrupo;
-use App\Models\NivelFormacion;
-use App\Models\User;
+
+use App\Http\Controllers\gestion_grupo\AsignacionJornadaGrupoController;
+use App\Http\Controllers\gestion_grupo\EstadoGrupoController;
+use App\Http\Controllers\gestion_grupo\GrupoController;
+use App\Http\Controllers\gestion_grupo\NivelFormacionController;
+use App\Http\Controllers\gestion_grupo\TipoFormacionController;
+use App\Http\Controllers\gestion_grupo\TipoGrupoController;
+use App\Http\Controllers\gestion_grupo\TipoOfertaController;
+use App\Http\Controllers\HorarioInfraestructuraGrupoController;
+use App\Models\AsignacionParticipante;
+use App\Models\HorarioInfraestructuraGrupo;
+
+use App\Http\Controllers\gestion_infraestructuras\AreaController;
+use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
+use App\Http\Controllers\gestion_infraestructuras\SedeController;
+use App\Http\Controllers\MatriculaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,7 +114,10 @@ Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
 Route::resource('tipo_programas',  TipoProgramasController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
-
+//ruta para asignar competenciaRaps
+Route::post('resultados/{idResultadoAprendizaje}/competencias/{idCompetencia}', [ResultadoAprendizajeController::class, 'agregarCompetencia'])->name('resultados.agregarCompetencia');
+//ruta asignar y guardar
+Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 //ruta para fases
@@ -171,5 +186,8 @@ Route::resource('personas', PersonController::class);
 //regional
 Route::resource('regionales', RegionalController::class);
 
-//asignacion competencias raps
-Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapController::class, 'showByCompetencia']);
+Route::resource('centroFormacion', CentroFormacionController::class);
+
+Route::resource('matriculas', MatriculaController::class);
+
+Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
