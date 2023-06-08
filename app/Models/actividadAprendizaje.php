@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class actividadAprendizaje extends Model
 {
     use HasFactory;
-   
+
     public static $snakeAttributes = false;
     protected $table = "actividadAprendizaje";
 
@@ -16,19 +16,19 @@ class actividadAprendizaje extends Model
         "NombreAA",
         "codigoAA",
         "idEstado",
-        "rap"   
+        "idRap"
     ];
 
     public $timestamps =false;
     public function rap()
     {
-        return $this->belongsTo(resultadoAprendizaje::class, 'rap');
+        return $this->belongsTo(resultadoAprendizaje::class, 'idRap');
     }
     public function estado()
     {
         return $this->belongsTo(Status::class, 'idEstado');
     }
-    
+
 
 
 }
