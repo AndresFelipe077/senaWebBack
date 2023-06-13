@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_infraestructuras;
 use App\Http\Controllers\Controller;
 use App\Models\Infraestructura;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class InfraestructuraController extends Controller
 {
@@ -15,9 +16,22 @@ class InfraestructuraController extends Controller
     {
         $data = InfraEstructura::with([
             'sede',
-            'area'
+            'area',
+            'grupos'
         ]) -> get();
-        return response() -> json($data);
+
+
+        $newData = $data -> map(function($infr){
+            $infr['grupos'] = $infr['grupos'] -> map(function($grupo){
+                $pivot = $grupo['pivot'];
+                unset($grupo['pivot']);
+                $grupo['horario_infraestructura'] = $pivot;
+                return $grupo;
+            });
+            return $infr;
+        });
+
+        return response() -> json($newData);
     }
     /**
      * Store a newly created resource in storage.
@@ -56,7 +70,9 @@ class InfraestructuraController extends Controller
 
             $this -> guardarImg($qrRequest,$path);
 
-            $data['codigoQr']=asset($path);
+            $data['codigoQr']=Storage::url($path);
+            //$data['codigoQr']=url(Storage::url($path));
+            $data['codigoQr']=str_replace('storage//','storage/',$data['codigoQr']);
 
             $infr = new Infraestructura([
                 'nombreInfraestructura' => $data['nombreInfraestructura'],
@@ -77,7 +93,7 @@ class InfraestructuraController extends Controller
         $image = imagecreatefromstring($img_data);
 
         // Obtener la ruta completa del archivo de imagen
-        $storage_in = public_path($path);
+        $storage_in = storage_path($path);
 
          // Asegurarse de que la carpeta exista
          if (!file_exists(dirname($storage_in))) {
@@ -94,7 +110,19 @@ class InfraestructuraController extends Controller
      */
     public function show(int $id)
     {
-        $infraestructura = InfraEstructura::with(['sede','area']) -> find($id);
+        $infraestructura = InfraEstructura::with([
+            'sede',
+            'area',
+            'grupos'
+        ]) -> find($id);
+
+        $infraestructura['grupos'] = $infraestructura['grupos'] -> map(function($grupo){
+            $pivot = $grupo['pivot'];
+            unset($grupo['pivot']);
+            $grupo['horario_infraestructura'] = $pivot;
+            return $grupo;
+        });
+
         return response() -> json($infraestructura);
     }
      /**

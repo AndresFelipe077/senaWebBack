@@ -157,6 +157,7 @@ Route::resource('grupos', GrupoController::class);
 Route::get('obtenergrupos', [GrupoController::class, 'buscarGrupos']);
 
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
 
 //tipo de grupos
 Route::resource('tipogrupos', TipoGrupoController::class);
@@ -190,4 +191,4 @@ Route::resource('centroFormacion', CentroFormacionController::class);
 
 Route::resource('matriculas', MatriculaController::class);
 
-Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
+Route::get('person_by_identificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
