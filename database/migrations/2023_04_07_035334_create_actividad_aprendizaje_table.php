@@ -23,8 +23,8 @@ class CreateActividadAprendizajeTable extends Migration
             $table->unsignedInteger('idEstado');
             $table->foreign('idEstado')->references('id')->on('estado');
 
-            $table->foreign('rap')->references('id')->on('resultadoAprendizaje');
-            $table->unsignedInteger('rap');
+            $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
+            $table->unsignedInteger('idRap');
 
             $table->timestamps();
 

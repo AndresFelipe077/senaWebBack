@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAreasTable extends Migration
+class CreateTipoParticipacionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('area', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('iconUrl') -> nullable();
-            $table->string('nombreArea');
-            $table->string('codigo');
+        Schema::create('tipo_participacions', function (Blueprint $table) {
+            $table->id();
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ class CreateAreasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('area');
+        Schema::dropIfExists('tipo_participacions');
     }
 }

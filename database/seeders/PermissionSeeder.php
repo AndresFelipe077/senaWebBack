@@ -38,6 +38,7 @@ class PermissionSeeder extends Seeder
 
         $this->savePermission(PermissionConst::GESTION_TIPO_PROGRAMAS, "Gestión de tipos de competencias");
         $this->savePermission(PermissionConst::GESTION_PROGRAMAS, "Gestión de tipos de programas");
+        $this->savePermission(PermissionConst::GESTION_FICHAS, "Gestión Fichas");
         $this->savePermission(PermissionConst::GESTION_FASES, "Gestión de fases");
         $this->savePermission(PermissionConst::GESTION_ACTIVIDAD_PROYECTO, "Gestión de actividad de proyecto");
         $this->savePermission(PermissionConst::GESTION_PROYECTO_FORMATIVO, "Gestión de proyecto formativo");
@@ -49,6 +50,7 @@ class PermissionSeeder extends Seeder
         $this->savePermission(PermissionConst::REGIONAL, "Regional");
         $this->savePermission(PermissionConst::CENTRO_FORMACION, "gestion de centros de formacion");
         $this->savePermission(PermissionConst::GESTION_MATRICULA,"Gestión de matricula");
+
     }
 
     private function savePermission($name, $description)

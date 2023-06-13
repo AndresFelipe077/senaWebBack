@@ -19,12 +19,6 @@ class Grupo extends Model
         return $this->belongsTo(TipoGrupo::class, 'idTipoGrupo', 'id');
     }
 
-    //Relacion uno a muchos Inversa(Usuario->Grupo)
-    public function instructor()
-    {
-        return $this->belongsTo(User::class, 'idLider', 'id');
-    }
-
     //Relacion uno a muchos Inversa(programa->Grupo)
     public function programa()
     {
@@ -32,9 +26,13 @@ class Grupo extends Model
     }
 
     //relacion con horarioInfraestructuraGrupo pertenecientes a grupo con infraestructura
-    public function infraestructura()
+    public function infraestructuras()
     {
-        return $this->belongsToMany(Infraestructura::class, HorarioInfraestructuraGrupo::class, 'idGrupo', 'idInfraestructura');
+        return $this->belongsToMany(
+            Infraestructura::class, 
+            HorarioInfraestructuraGrupo::class, 
+            'idGrupo', 'idInfraestructura'
+        ) -> withPivot('id','fechaInicial', 'fechaFinal');
     }
 
     //Relacion uno a muchos Inversa(nivelFormacion->Grupo)
@@ -62,9 +60,13 @@ class Grupo extends Model
     }
 
     //relacion con los grupos jornada pertenecientes a un grupo
-    public function gruposJornada()
+    public function jornadas()
     {
-        return $this->belongsToMany(Jornada::class, AsignacionJornadaGrupo::class, 'idGrupo', 'idJornada');
+        return $this->belongsToMany(
+            Jornada::class, 
+            AsignacionJornadaGrupo::class, 
+            'idGrupo', 'idJornada'
+        ) -> withPivot('id');
     }
 
     //relacion con AsignacionParticipante pertenecientes a un grupo
@@ -72,5 +74,5 @@ class Grupo extends Model
     {
         return $this->belongsToMany(User::class, AsignacionParticipante::class, 'idGrupo', 'idParticipante');
     }
-    
+
 }

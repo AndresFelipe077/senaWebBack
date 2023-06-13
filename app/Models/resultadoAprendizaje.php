@@ -27,7 +27,12 @@ class resultadoAprendizaje extends Model
         return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
     }
 
-    // relacion muchos a muchos
+    public function actividadesAprendizaje()
+    {
+        return $this->hasMany(actividadAprendizaje::class,'rap');
+    }
+
+    //relacion muchos a muchos
     public function competencias()
     {
         return $this->belongsToMany(Competencias::class, 'asignacionCompetenciasRaps', 'idRap', 'idCompetencia');
