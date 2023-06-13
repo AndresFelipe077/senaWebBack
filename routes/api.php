@@ -106,6 +106,8 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 Route::resource('competencias', CompetenciasController::class);
 //rutas para resultado aprendizaje 2 vanesa
 Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
+//asignacion competencias raps
+Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapController::class, 'showByCompetencia']);
 //rutas para tipo resultados aprendizaje
 Route::resource('tipo_resultados',  TipoRapsController::class);
 //rutas para actividad aprendizaje 3 vanesa
@@ -114,9 +116,7 @@ Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
 Route::resource('tipo_programas',  TipoProgramasController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
-//ruta para asignar competenciaRaps
-Route::post('resultados/{idResultadoAprendizaje}/competencias/{idCompetencia}', [ResultadoAprendizajeController::class, 'agregarCompetencia'])->name('resultados.agregarCompetencia');
-//ruta asignar y guardar
+//ruta asignar y guardar competencias raps
 Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
