@@ -21,9 +21,11 @@ class Infraestructura extends Model
 
     public function grupos()
     {
-        return $this->belongsToMany(Grupo::class)
-            ->using(HorarioInfraestructuraGrupo::class)
-            ->withPivot(['fechaInicial', 'fechaFinal']);
+        return $this->belongsToMany(
+            Grupo::class,
+            HorarioInfraestructuraGrupo::class,
+            'idGrupo','idInfraestructura'
+        )->withPivot('id','fechaInicial','fechaFinal');
     }
 
 }

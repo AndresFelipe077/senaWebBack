@@ -66,5 +66,19 @@ class UserController extends Controller
 
     return response()->json($usuariosActives);
   }
-  
+
+  public function aprendicesActives()
+  {
+    $usuariosActivados = ActivationCompanyUser::role('APRENDIZ')->active()->get();
+
+    $usuariosActives = collect();
+    foreach ($usuariosActivados as $usuario) {
+      $usuarioActive = $usuario->toArray();
+      $usuarioActive['usuario'] = Person::find($usuario->user_id);
+      $usuariosActives->push($usuarioActive);
+    }
+
+    return response()->json($usuariosActives);
+  }
+
 }
