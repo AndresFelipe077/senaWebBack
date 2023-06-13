@@ -67,10 +67,26 @@ class Grupo extends Model
         return $this->belongsToMany(Jornada::class, AsignacionJornadaGrupo::class, 'idGrupo', 'idJornada');
     }
 
+
+
+
+    // utilizando vanesaaaa
+
     //relacion con AsignacionParticipante pertenecientes a un grupo
     public function participantes()
     {
         return $this->belongsToMany(User::class, AsignacionParticipante::class, 'idGrupo', 'idParticipante');
     }
-    
+
+
+
+
+
+    public function asignacionParticipantes()
+    {
+        return $this->belongsToMany(AsignacionParticipante::class, 'asignacionParticipante', 'idGrupo', 'id')->withTimestamps();
+    }
+
+
+
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActividadProyectoController;
 use App\Http\Controllers\asignacionCompetenciaRapController;
+use App\Http\Controllers\AsignacionParticipanteController;
 use App\Http\Controllers\gestion_empresa\CompanyController;
 use App\Http\Controllers\gestion_rol\RolController;
 use App\Http\Controllers\auth\LoginController;
@@ -191,3 +192,13 @@ Route::resource('centroFormacion', CentroFormacionController::class);
 Route::resource('matriculas', MatriculaController::class);
 
 Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
+
+
+
+ Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
+// Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
