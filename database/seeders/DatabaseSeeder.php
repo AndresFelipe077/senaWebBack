@@ -14,6 +14,8 @@ use App\Models\Programa;
 use App\Models\TipoFormacion;
 use App\Models\TipoOferta;
 use App\Models\TipoProgramas;
+use App\Models\estadoRap;
+ 
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,7 +29,6 @@ class DatabaseSeeder extends Seeder
 
         $path = 'database/seeders/sql/jornada.sql';
         DB::unprepared(file_get_contents($path));
-
         $path = 'database/seeders/sql/countries.sql';
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/cities.sql';
@@ -64,6 +65,7 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
 
         $this->call(DiaSeeder::class);
+        $this->call(EstadoRapSeeder::class);
 
         $path = 'database/seeders/sql/tipo_grupo.sql';
         DB::unprepared(file_get_contents($path));

@@ -15,11 +15,18 @@ class ProyectoFormativoController extends Controller
     public function index(Request $request)
     {
         $Programa = $request->input('Programas');
-        $proyectoFormativo = proyectoFormativo::with('Programas');
+        $centroFormacion = $request->input('CentroFormativos');
+        $proyectoFormativo = proyectoFormativo::with('Programas','centroFormativos');
 
         if($Programa){
             $proyectoFormativo->whereHas('Programa',function($q) use ($Programa){
                 return $q->select('id')->where('id',$Programa)->orWhere('nombrePrograma',$Programa);
+            });
+        };
+        
+        if($centroFormacion){
+            $proyectoFormativo->whereHas('centroFormacion',function($q) use ($centroFormacion){
+                return $q->select('id')->where('id',$centroFormacion)->orWhere('nombreCentro',$centroFormacion);
             });
         };
         return response()->json($proyectoFormativo->get());

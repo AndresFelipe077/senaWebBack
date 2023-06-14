@@ -32,4 +32,9 @@ class proyectoFormativo extends Model
     {
         return $this->belongsToMany(Fase::class, 'asignacionFaseProyecto');
     }
+
+    public function centroFormativos()
+    {
+        return $this->belongsTo(CentroFormacion::class, 'idCentroFormacion');
+    }
 }

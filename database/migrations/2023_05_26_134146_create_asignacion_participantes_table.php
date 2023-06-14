@@ -14,7 +14,7 @@ class CreateAsignacionParticipantesTable extends Migration
     public function up()
     {
         Schema::create('asignacionParticipante', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->unsignedInteger('idParticipante')->nullable();
             $table->foreign('idParticipante')->references('id')->on('usuario')->onDelete('cascade');
 
