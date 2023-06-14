@@ -179,7 +179,15 @@ Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoCont
 
 Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
 
+
+
+
+
+
+// ttttttttttttttttttttttt
+
 Route::resource('asignacion_participante', AsignacionParticipante::class);
+// gggggggggggggggg
 
 
 
