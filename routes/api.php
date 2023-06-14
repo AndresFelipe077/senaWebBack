@@ -160,7 +160,15 @@ Route::resource('grupos', GrupoController::class);
 Route::get('obtenergrupos', [GrupoController::class, 'buscarGrupos']);
 
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
+
+
+
+
+
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
+// duplica ensayo rama
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
+
 
 //tipo de grupos
 Route::resource('tipogrupos', TipoGrupoController::class);
