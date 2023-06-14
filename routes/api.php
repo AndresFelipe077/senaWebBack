@@ -166,8 +166,7 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
-// duplica ensayo rama
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
+
 
 
 //tipo de grupos
@@ -212,7 +211,13 @@ Route::resource('matriculas', MatriculaController::class);
 
 Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
 
+
+
+
 Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
+
+
 
 Route::resource('tipoPar', TipoParticipacionController::class);
 
