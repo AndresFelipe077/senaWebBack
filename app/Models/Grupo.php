@@ -29,8 +29,8 @@ class Grupo extends Model
     public function infraestructuras()
     {
         return $this->belongsToMany(
-            Infraestructura::class, 
-            HorarioInfraestructuraGrupo::class, 
+            Infraestructura::class,
+            HorarioInfraestructuraGrupo::class,
             'idGrupo', 'idInfraestructura'
         ) -> withPivot('id','fechaInicial', 'fechaFinal');
     }
@@ -63,16 +63,32 @@ class Grupo extends Model
     public function jornadas()
     {
         return $this->belongsToMany(
-            Jornada::class, 
-            AsignacionJornadaGrupo::class, 
+            Jornada::class,
+            AsignacionJornadaGrupo::class,
             'idGrupo', 'idJornada'
         ) -> withPivot('id');
     }
+
+
+
+
+    // utilizando vanesaaaa
 
     //relacion con AsignacionParticipante pertenecientes a un grupo
     public function participantes()
     {
         return $this->belongsToMany(User::class, AsignacionParticipante::class, 'idGrupo', 'idParticipante');
     }
+
+
+
+
+
+    public function asignacionParticipantes()
+    {
+        return $this->belongsToMany(AsignacionParticipante::class, 'asignacionParticipante', 'idGrupo', 'id')->withTimestamps();
+    }
+
+
 
 }

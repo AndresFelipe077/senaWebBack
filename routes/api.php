@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActividadProyectoController;
 use App\Http\Controllers\asignacionCompetenciaRapController;
+use App\Http\Controllers\AsignacionParticipanteController;
 use App\Http\Controllers\gestion_empresa\CompanyController;
 use App\Http\Controllers\gestion_rol\RolController;
 use App\Http\Controllers\auth\LoginController;
@@ -178,7 +179,15 @@ Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoCont
 
 Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
 
+
+
+
+
+
+// ttttttttttttttttttttttt
+
 Route::resource('asignacion_participante', AsignacionParticipante::class);
+// gggggggggggggggg
 
 
 
@@ -191,4 +200,14 @@ Route::resource('centroFormacion', CentroFormacionController::class);
 
 Route::resource('matriculas', MatriculaController::class);
 
-Route::get('person_by_identificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
+Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
+
+
+
+ Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
+// Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);

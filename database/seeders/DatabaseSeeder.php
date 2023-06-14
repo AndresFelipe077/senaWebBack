@@ -44,6 +44,13 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_pago.sql';
         DB::unprepared(file_get_contents($path));
 
+        // tipo participantes
+        $path = 'database/seeders/sql/tipo_participante.sql';
+        DB::unprepared(file_get_contents($path));
+        // estadoParticipantes
+        $path = 'database/seeders/sql/estado_participante.sql';
+        DB::unprepared(file_get_contents($path));
+
 
         TipoProgramas::factory(10)->create();
         Programa::factory(10)->create();
@@ -61,11 +68,12 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/areas.sql';
         DB::unprepared(file_get_contents($path));
-       $path = 'database/seeders/sql/infraestructuras.sql';
+        $path = 'database/seeders/sql/infraestructuras.sql';
         DB::unprepared(file_get_contents($path));
 
         $this->call(DiaSeeder::class);
         $this->call(EstadoRapSeeder::class);
+
 
         $path = 'database/seeders/sql/tipo_grupo.sql';
         DB::unprepared(file_get_contents($path));
@@ -80,5 +88,6 @@ class DatabaseSeeder extends Seeder
 
         Grupo::factory(10)->create();
 
+        Grupo::factory(10)->create();
     }
 }
