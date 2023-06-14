@@ -50,6 +50,8 @@ use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
+use App\Http\Controllers\TipoParticipacionController;
+use App\Models\TipoParticipacion;
 
 /*
 |--------------------------------------------------------------------------
@@ -202,12 +204,18 @@ Route::resource('matriculas', MatriculaController::class);
 
 Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 'personByIdentificacion']);
 
+Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
+Route::resource('tipoPar', TipoParticipacionController::class);
 
- Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
 // Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
+
+
+//
+
+
