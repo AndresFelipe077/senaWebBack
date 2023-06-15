@@ -15,65 +15,6 @@ class AsignacionParticipanteController extends Controller
     return response() -> json($data);
   }
 
-//   public function obtenerGruposPorPrograma(Request $request)
-//   {
-//       $programaId = $request->input('programa_id');
-
-//       $grupos = Grupo::whereHas('asignacionParticipantes', function ($query) use ($programaId) {
-//           $query->whereHas('grupo', function ($query) use ($programaId) {
-//               $query->where('idPrograma', $programaId);
-//           });
-//       })->get();
-
-//       return response()->json([
-//           'grupos' => $grupos,
-//       ]);
-//   }
-
-
-
-// public function obtenerGruposPorPrograma(Request $request)
-// {
-//     $programaId = $request->input('programa_id');
-
-//     $grupos = Grupo::whereHas('asignacionParticipantes', function ($query) use ($programaId) {
-//         $query->whereHas('grupo', function ($query) use ($programaId) {
-//             $query->where('idPrograma', $programaId);
-//         });
-//     })
-//     ->with('asignacionParticipantes')
-//     ->get();
-
-//     return response()->json([
-//         'grupo' => $grupos,
-//     ]);
-// }
-
-
-
-
-// public function obtenerAsignacionesParticipantes()
-// {
-//     $asignaciones = AsignacionParticipante::with('grupo')->get();
-
-//     $data = [];
-//     foreach ($asignaciones as $asignacion) {
-//         $grupo = $asignacion->grupo;
-//         $idPrograma = $grupo->idPrograma;
-
-//         // Agregar los datos necesarios al arreglo
-//         $data[] = [
-//             'nombre' => $grupo->nombre,
-//             'idPrograma' => $idPrograma,
-//         ];
-//     }
-
-//     return response()->json([
-//         'data' => $data,
-//     ]);
-// }
-
-
 
 
 public function obtenerAsignacionesParticipantes()
@@ -116,5 +57,32 @@ public function obtenerGruposPorPrograma($idPrograma)
 
     return response()->json($grupos);
 }
+
+// public function obtenerAprendicesPorGrupo($idGrupo)
+// {
+//     $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
+//         ->whereIn('idEstadoParticipantes', ['ACTIVO', 'PENDIENTE'])
+//         ->with(['usuario'])
+//         ->get();
+
+//     return response()->json($asignaciones);
+// }
+
+
+public function obtenerAprendicesPorGrupo($idGrupo)
+{
+    $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
+        ->whereIn('idEstadoParticipantes', function ($query) {
+            $query->select('id')
+                ->from('estadoParticipantes')
+                ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
+        })
+        ->with(['usuario'])
+        ->get();
+
+    return response()->json($asignaciones);
+}
+
+
 
 }

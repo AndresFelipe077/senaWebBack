@@ -222,11 +222,13 @@ Route::resource('asignacionParticipantes', AsignacionParticipanteController::cla
 Route::resource('tipoPar', TipoParticipacionController::class);
 
 
-// Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
 
 Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
+
+Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
 
 //
