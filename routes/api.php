@@ -50,6 +50,7 @@ use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
+use App\Http\Controllers\QueryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -204,10 +205,13 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
- Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
 // Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
+
+
+Route::get('search/{table}/query/{query}',[QueryController::class,'index']);
