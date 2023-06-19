@@ -214,4 +214,4 @@ Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [Asignacion
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
 
-Route::get('search/{table}/query/{query}',[QueryController::class,'index']);
+Route::get('search/{table}/{query}',[QueryController::class,'show']);
