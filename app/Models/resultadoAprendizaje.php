@@ -36,13 +36,5 @@ class resultadoAprendizaje extends Model
     public function competencias()
     {
         return $this->belongsToMany(Competencias::class, 'asignacionCompetenciasRaps', 'idRap', 'idCompetencia');
-
     }
-
-    //ralacion para obtener el nombre de la competancia
-    public function Competencia()
-    {
-        return $this->belongsTo(Competencias::class,'idCompetencia');
-    }
-
 }

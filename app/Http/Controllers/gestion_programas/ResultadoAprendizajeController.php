@@ -82,15 +82,4 @@ class resultadoAprendizajeController extends Controller{
         ]);
     }
 
-    public function agregarCompetencia($idResultadoAprendizaje, $idCompetencia)
-    {
-        $resultadoAprendizaje = resultadoAprendizaje::findOrFail($idResultadoAprendizaje);
-        $competencia = Competencias::findOrFail($idCompetencia);
-
-        // Agregar la competencia al resultado de aprendizaje
-        $resultadoAprendizaje->competencias()->attach($competencia);
-
-        return redirect()->back()->with('success', 'Competencia agregada correctamente al resultado de aprendizaje.');
-    }
-
 }

@@ -156,6 +156,7 @@ class InfraestructuraController extends Controller
 
         return response() -> json($infraestructuras);
     }
+
     /**
      * Update the specified resource in storage.
      */
