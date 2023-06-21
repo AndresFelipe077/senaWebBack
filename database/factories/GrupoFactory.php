@@ -30,8 +30,8 @@ class GrupoFactory extends Factory
         return [
 
             'nombre'            => $this->faker->unique()->randomFloat(0, 0, 1000000),
-            'fechaInicialGrupo' => $this->faker->randomElement(['2012/12/12', '2018/12/12']),
-            'fechaFinalGrupo'   => $this->faker->randomElement(['2020/12/10', '2021/12/10']),
+            'fechaInicialGrupo' => $this->faker->randomElement(['2018/12/12', '20/12/12']),
+            'fechaFinalGrupo'   => $this->faker->randomElement(['2023/12/10', '2030/12/10']),
             'observacion'       => strtoupper($this->faker->text()),
             'idTipoGrupo'       => $tipoGrupo -> id,
             'idPrograma'        => $programa -> id,
