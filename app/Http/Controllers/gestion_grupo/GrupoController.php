@@ -28,7 +28,7 @@ class GrupoController extends Controller
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
-      'jornadas',
+      'jornadas.diaJornada',
       'participantes',
       'infraestructuras'
     ])->get();
@@ -144,12 +144,12 @@ class GrupoController extends Controller
     $dato = Grupo::with([
       'tipoGrupo',
       'programa',
-      'instructor.persona',
+      //'instructor.persona',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
-      'jornadas',
+      'jornadas.diaJornada',
       'participantes',
       'infraestructuras'
     ])->find($id);
