@@ -31,6 +31,7 @@ use App\Http\Controllers\TipoProgramasController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\TipoRapsController;
+use App\Http\Controllers\configuracionRapController;
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
@@ -125,6 +126,11 @@ Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 Route::resource('fases', FaseController::class);
 //ruta para actividades de proyecto
 Route::resource('actividad_proyecto', ActividadProyectoController::class);
+//ruta para configuracion de rap
+Route::resource('configuracion_rap', configuracionRapController::class);
+//ruta para transferir participantes de fichas
+Route::post('transferir-ficha', [configuracionRapController::class, 'transferirFicha']);
+
 
 //rutas para ciudad y departamento
 Route::resource('departamentos', CountryController::class);
