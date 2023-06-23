@@ -132,7 +132,39 @@ class GrupoController extends Controller
             $query->where('idInfraestructura', $id);
         })->with($this->relations)->get();
 
-        return response()->json($grupos);
+        $newGrupos = $grupos->map(function ($grupo) {
+            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+                $pivot = $infr['pivot'];
+                unset($infr['pivot']);
+                $infr['horario_infraestructura'] = $pivot;
+                return $infr;
+            });
+
+            return $grupo;
+        });
+
+        return response()->json($newGrupos);
+    }
+
+    public function showByIdSede(int $id)
+    {
+
+        $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
+            $query->where('idSede', $id);
+        })->with($this->relations)->get();
+
+        $newGrupos = $grupos->map(function ($grupo) {
+            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+                $pivot = $infr['pivot'];
+                unset($infr['pivot']);
+                $infr['horario_infraestructura'] = $pivot;
+                return $infr;
+            });
+
+            return $grupo;
+        });
+
+        return response()->json($newGrupos);
     }
     /**
      * search a newly created resource in storage.
