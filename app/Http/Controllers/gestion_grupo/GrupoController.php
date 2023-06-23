@@ -129,18 +129,7 @@ class GrupoController extends Controller
                 return response()->json(['error' => 'La infraestructura no existe.'], 404);
             }
 
-            $existeAsignacion = HorarioInfraestructuraGrupo::where('idInfraestructura', $infraestructura->id)
-                ->where(function ($query) use ($grupo) {
-                    $query->where('idGrupo', '<>', $grupo->id)
-                        ->where(function ($query) use ($grupo) {
-                            $query->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
-                                ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
-                        })
-                        ->whereHas('grupo.jornadas', function ($query) use ($grupo) {
-                            $query->whereIn('jornada.id', $grupo->jornadas->pluck('id'));
-                        });
-                })
-                ->exists();
+            $existeAsignacion = $this->verificarAsignacionInfraestructura($infraestructura, $grupo);
 
             if ($existeAsignacion) {
                 return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha o jornada.'], 422);
@@ -154,6 +143,28 @@ class GrupoController extends Controller
 
         return response()->json($grupo, 201);
     }
+
+
+
+    private function verificarAsignacionInfraestructura(Infraestructura $infraestructura, Grupo $grupo)
+    {
+        $existeAsignacion = HorarioInfraestructuraGrupo::where('idInfraestructura', $infraestructura->id)
+            ->where(function ($query) use ($grupo) {
+                $query->where('idGrupo', '<>', $grupo->id)
+                    ->where(function ($query) use ($grupo) {
+                        $query->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
+                            ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
+                    })
+                    ->whereHas('grupo.jornadas', function ($query) use ($grupo) {
+                        $query->whereIn('jornada.id', $grupo->jornadas->pluck('id'));
+                    });
+            })
+            ->exists();
+
+        return $existeAsignacion;
+    }
+
+
 
     private function guardarGruposJorna(array $data, int $idGrupo)
     {
