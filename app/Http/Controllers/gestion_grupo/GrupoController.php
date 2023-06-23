@@ -99,6 +99,29 @@ class GrupoController extends Controller
 
         $infraestructuras = $data['infraestructuras'];
 
+        // foreach ($infraestructuras as $infraItem) {
+        //     try {
+        //         $infraestructura = Infraestructura::findOrFail($infraItem['id']);
+        //     } catch (ModelNotFoundException $e) {
+        //         return response()->json(['error' => 'La infraestructura no existe.'], 404);
+        //     }
+
+        //     // Verificar si la infraestructura ya está asignada a otro grupo en la misma fecha
+        //     $existeAsignacion = HorarioInfraestructuraGrupo::where('idInfraestructura', $infraestructura->id)
+        //         ->where(function ($query) use ($grupo) {
+        //             $query->where('idGrupo', '<>', $grupo->id)
+        //                 ->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
+        //                 ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
+        //         })
+        //         ->exists();
+
+        //     if ($existeAsignacion) {
+        //         return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha.'], 422);
+        //     } else {
+        //         $this->guardarHorarioInfra($infraItem, $grupo->id);
+        //     }
+        // }
+
         foreach ($infraestructuras as $infraItem) {
             try {
                 $infraestructura = Infraestructura::findOrFail($infraItem['id']);
@@ -106,21 +129,29 @@ class GrupoController extends Controller
                 return response()->json(['error' => 'La infraestructura no existe.'], 404);
             }
 
-            // Verificar si la infraestructura ya está asignada a otro grupo en la misma fecha
             $existeAsignacion = HorarioInfraestructuraGrupo::where('idInfraestructura', $infraestructura->id)
                 ->where(function ($query) use ($grupo) {
                     $query->where('idGrupo', '<>', $grupo->id)
-                        ->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
-                        ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
+                        ->where(function ($query) use ($grupo) {
+                            $query->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
+                                ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
+                        })
+                        ->whereHas('grupo.jornadas', function ($query) use ($grupo) {
+                            $query->whereIn('jornada.id', $grupo->jornadas->pluck('id'));
+                        });
                 })
                 ->exists();
 
             if ($existeAsignacion) {
-                return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha.'], 422);
-            } else {
-                $this->guardarHorarioInfra($infraItem, $grupo->id);
+                return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha o jornada.'], 422);
             }
+
+            $this->guardarHorarioInfra($infraItem, $grupo->id);
         }
+
+
+
+
         return response()->json($grupo, 201);
     }
 
