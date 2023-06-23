@@ -82,8 +82,6 @@ class GrupoController extends Controller
     ]);
 
     $infraestructuras = $data['infraestructuras'];
-    $jornadas = $data['jornadas'];
-
 
     foreach ($infraestructuras as $infraItem) {
       try {
@@ -93,7 +91,6 @@ class GrupoController extends Controller
       }
 
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
-    //   $existeAsignacion = $this->verificarAsignacionInfraestructura($infraestructura, $grupo);
 
       if ($existeAsignacion) {
         return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha o jornada.'], 422);
@@ -140,6 +137,24 @@ class GrupoController extends Controller
     }
 
     return false;
+  }
+
+  private function verificarAsignacionInfraestructuraActualizar(Infraestructura $infraestructura, Grupo $grupo)
+  {
+    $existeAsignacion = HorarioInfraestructuraGrupo::where('idInfraestructura', $infraestructura->id)
+      ->where(function ($query) use ($grupo) {
+        $query->where('idGrupo', '<>', $grupo->id)
+          ->where(function ($query) use ($grupo) {
+            $query->where('fechaInicial', '<=', $grupo->fechaFinalGrupo)
+              ->where('fechaFinal', '>=', $grupo->fechaInicialGrupo);
+          })
+          ->whereHas('grupo.jornadas', function ($query) use ($grupo) {
+            $query->whereIn('jornada.id', $grupo->jornadas->pluck('id'));
+          });
+      })
+      ->exists();
+
+    return $existeAsignacion;
   }
 
 
@@ -222,7 +237,7 @@ class GrupoController extends Controller
    * @return \Illuminate\Http\Response
    */
 
-  public function update(Request $request, $id)
+  /*public function update(Request $request, $id)
   {
     $data = $request->all();
     $grupo = Grupo::findOrFail($id);
@@ -239,17 +254,6 @@ class GrupoController extends Controller
       'idEstado' => $data['idEstado'],
       'idTipoOferta' => $data['idTipoOferta'],
     ]);
-
-    // Eliminar todas las relaciones existentes en la tabla central
-    // $grupo->jornadas()->detach();
-
-    // $grupos_jornada = $data['jornadas'];
-
-    // if ($grupos_jornada) {
-    //   foreach ($grupos_jornada as $grupoJItem) {
-    //     $this->actualizarGruposJorna($grupoJItem, $grupo->id);
-    //   }
-    // }
 
 
     $grupo->infraestructuras()->detach();
@@ -271,7 +275,134 @@ class GrupoController extends Controller
     }
 
     return response()->json($grupo, 200);
+  }*/
+
+  /*public function update(Request $request, $id)
+  {
+    $data = $request->all();
+
+    $grupo = Grupo::findOrFail($id);
+
+    $grupo->nombre = $data['nombre'];
+    $grupo->fechaInicialGrupo = $data['fechaInicialGrupo'];
+    $grupo->fechaFinalGrupo = $data['fechaFinalGrupo'];
+    $grupo->observacion = $data['observacion'];
+    $grupo->idTipoGrupo = $data['idTipoGrupo'];
+    $grupo->idPrograma = $data['idPrograma'];
+    $grupo->idNivel = $data['idNivel'];
+    $grupo->idTipoFormacion = $data['idTipoFormacion'];
+    $grupo->idEstado = $data['idEstado'];
+    $grupo->idTipoOferta = $data['idTipoOferta'];
+
+    $infraestructuras = $data['infraestructuras'];
+
+    foreach ($infraestructuras as $infraItem) {
+      try {
+        $infraestructura = Infraestructura::findOrFail($infraItem['id']);
+      } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'La infraestructura no existe.'], 404);
+      }
+
+      $existeAsignacion = $this->verificarAsignacionInfraestructuraActualizar($infraestructura, $grupo);
+
+      if ($existeAsignacion) {
+        return response()->json(['error' => 'Existe una asignación de infraestructuras o jornadas que coincide con las fechas y jornadas especificadas.'], 400);
+      }
+
+    }
+
+    $grupo->save();
+
+    $grupo->infraestructuras()->detach();
+
+    $infraestructuras = $data['infraestructuras'];
+
+    foreach ($infraestructuras as $infraItem) {
+      try {
+        $infraestructura = Infraestructura::findOrFail($infraItem['id']);
+      } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'La infraestructura no existe.'], 404);
+      }
+
+      $this->actualizarHorarioInfra($infraItem, $grupo->id);
+    }
+
+    AsignacionJornadaGrupo::where('idGrupo', $grupo->id)->delete();
+
+    foreach ($request->jornadas as $jornadaItem) {
+      foreach ($jornadaItem as $jItem) {
+        $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
+        $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+        $asignacionJornadaGrupo->save();
+      }
+    }
+
+    return response()->json($grupo, 200);
+  }*/
+
+
+  public function update(Request $request, $id)
+  {
+    $data = $request->all();
+    $grupo = Grupo::findOrFail($id);
+
+    $infraestructuras = $data['infraestructuras'];
+
+    foreach ($infraestructuras as $infraItem) {
+      try {
+        $infraestructura = Infraestructura::findOrFail($infraItem['id']);
+      } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'La infraestructura no existe.'], 404);
+      }
+
+      $existeAsignacion = $this->verificarAsignacionInfraestructuraActualizar($infraestructura, $grupo);
+
+      if ($existeAsignacion) {
+        return response()->json(['error' => 'Existe una asignación de infraestructuras o jornadas que coincide con las fechas y jornadas especificadas.'], 400);
+      }
+    }
+
+    // Actualizar los campos del grupo
+    $grupo->nombre = $data['nombre'];
+    $grupo->fechaInicialGrupo = $data['fechaInicialGrupo'];
+    $grupo->fechaFinalGrupo = $data['fechaFinalGrupo'];
+    $grupo->observacion = $data['observacion'];
+    $grupo->idTipoGrupo = $data['idTipoGrupo'];
+    $grupo->idPrograma = $data['idPrograma'];
+    $grupo->idNivel = $data['idNivel'];
+    $grupo->idTipoFormacion = $data['idTipoFormacion'];
+    $grupo->idEstado = $data['idEstado'];
+    $grupo->idTipoOferta = $data['idTipoOferta'];
+
+    $grupo->save();
+
+    $grupo->infraestructuras()->detach();
+
+    $infraestructuras = $data['infraestructuras'];
+
+    foreach ($infraestructuras as $infraItem) {
+      try {
+        $infraestructura = Infraestructura::findOrFail($infraItem['id']);
+      } catch (ModelNotFoundException $e) {
+        return response()->json(['error' => 'La infraestructura no existe.'], 404);
+      }
+
+      $this->actualizarHorarioInfra($infraItem, $grupo->id);
+    }
+
+    AsignacionJornadaGrupo::where('idGrupo', $grupo->id)->delete();
+
+    foreach ($request->jornadas as $jornadaItem) {
+      foreach ($jornadaItem as $jItem) {
+        $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
+        $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+        $asignacionJornadaGrupo->save();
+      }
+    }
+
+    return response()->json($grupo, 200);
   }
+
 
 
   private function actualizarGruposJorna(array $data, int $idGrupo)
