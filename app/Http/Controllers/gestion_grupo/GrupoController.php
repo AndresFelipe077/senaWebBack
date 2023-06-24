@@ -93,7 +93,7 @@ class GrupoController extends Controller
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
 
       if ($existeAsignacion) {
-        return response()->json(['error' => 'La infraestructura seleccionada ya está asignada a otro grupo en la misma fecha o jornada.'], 422);
+        return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
       } else {
         $grupo->save();
         $this->guardarHorarioInfra($infraItem, $grupo->id);
@@ -200,7 +200,7 @@ class GrupoController extends Controller
     $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
 
     if ($existeAsignacion) {
-      return response()->json(['error' => 'Existe una asignación de infraestructuras y jornadas que coincide con las fechas y jornadas especificadas.'], 400);
+      return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 400);
     }
 
     $grupo->update([
