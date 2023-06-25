@@ -1,4 +1,4 @@
-INSERT INTO `centroformacion` (`nombreCentro`, `idRegional`) VALUES
+INSERT INTO `centroFormacion` (`nombreCentro`, `idRegional`) VALUES
 ('CENTRO DE COMERCIO Y SERVICIOS',1),
 ('CENTRO TECNOLOGICO DEL CAUCA',2),
 ('CENTRO DE ESTUDIOS CULINARIOS',2);
