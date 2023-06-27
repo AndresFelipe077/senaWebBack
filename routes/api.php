@@ -50,12 +50,11 @@ use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
-<<<<<<< HEAD
 use App\Http\Controllers\TipoParticipacionController;
 use App\Models\TipoParticipacion;
-=======
 use App\Http\Controllers\QueryController;
->>>>>>> ce82f90d3835803e55b37cb0ab4597e24f5fe44f
+use App\Http\Controllers\AprendicesTmpController;
+use App\Http\Controllers\pruebaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -217,10 +216,7 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
-<<<<<<< HEAD
-=======
 Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
->>>>>>> ce82f90d3835803e55b37cb0ab4597e24f5fe44f
 
 Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
@@ -236,14 +232,22 @@ Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [Asignacion
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
-<<<<<<< HEAD
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
 
 //
 
 
-=======
 
 Route::get('search/{table}/{query}',[QueryController::class,'show']);
->>>>>>> ce82f90d3835803e55b37cb0ab4597e24f5fe44f
+
+
+
+
+
+Route::post('aprendis',[AprendicesTmpController::class,'importar']);
+Route::post('prueba',[pruebaController::class,'import']);
+
+
+
+Route::post('importarexcel', [AprendicesTmpController::class, 'importExcel']);
