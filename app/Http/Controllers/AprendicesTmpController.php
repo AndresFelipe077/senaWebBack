@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\aprendicesTmp;
+
+
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+// use App\Models\aprendicesTmp;
+
 use App\Imports\AprendicesImport;
 use App\Models\aprendicesTmp;
 use Maatwebsite\Excel\Facades\Excel;
 
 
 
-use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 class AprendicesTmpController extends Controller
 {
