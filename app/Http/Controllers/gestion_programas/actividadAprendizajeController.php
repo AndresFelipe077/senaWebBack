@@ -15,7 +15,7 @@ class actividadAprendizajeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    { 
         $estado = $request->input('estado');
         $ActividadAprendizaje = $request->input('rap');
         $actividadAprendizaje = actividadAprendizaje::with('estado', 'rap');

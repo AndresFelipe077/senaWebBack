@@ -51,7 +51,11 @@ use App\Http\Controllers\gestion_infraestructuras\AreaController;
 use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
+use App\Http\Controllers\TipoParticipacionController;
+use App\Models\TipoParticipacion;
 use App\Http\Controllers\QueryController;
+use App\Http\Controllers\AprendicesTmpController;
+use App\Http\Controllers\pruebaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -167,7 +171,14 @@ Route::get('grupos/infraestructura/{id}', [GrupoController::class,'showByIdInfra
 Route::get('grupos/sede/{id}', [GrupoController::class,'showByIdSede']);
 
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
+
+
+
+
+
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
+
+
 
 //tipo de grupos
 Route::resource('tipogrupos', TipoGrupoController::class);
@@ -215,11 +226,36 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
-// Route::post('gruposProg', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
+
+
+
+Route::resource('tipoPar', TipoParticipacionController::class);
+
+
+
 
 Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
+Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
+
+
+//
+
+
 
 Route::get('search/{table}/{query}',[QueryController::class,'show']);
+
+
+
+
+
+Route::post('aprendis',[AprendicesTmpController::class,'importar']);
+Route::post('prueba',[pruebaController::class,'import']);
+
+
+
+Route::post('importarexcel', [AprendicesTmpController::class, 'importExcel']);
