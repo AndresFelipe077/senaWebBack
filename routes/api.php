@@ -102,7 +102,7 @@ Route::resource('tipo_pagos', TipoPagoController::class);
 // tipo transaccion
 Route::resource('tipo_transacciones', TipoTransaccionController::class);
 // traer listado de los usuario por empresa
-Route::get('lista_usuarios', [Gestion_usuarioUserController::class, 'getUsers']);
+Route::get('lista_usuarios', [Gestion_usuarioUserController::class, 'index']);
 
 Route::resource('usuarios', Gestion_usuarioUserController::class);
 
