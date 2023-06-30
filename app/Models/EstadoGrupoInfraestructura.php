@@ -13,4 +13,9 @@ class EstadoGrupoInfraestructura extends Model
 
     protected $table = 'estadoGrupoInfraestructura';
 
+
+    public function grupos(){
+        return $this->hasMany(HorarioInfraestructuraGrupo::class, 'idEstado');
+    }
+
 }

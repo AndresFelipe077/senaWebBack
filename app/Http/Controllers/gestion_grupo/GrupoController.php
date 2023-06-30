@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_grupo;
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\AsignacionParticipante;
+use App\Models\EstadoGrupoInfraestructura;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use App\Models\Infraestructura;
@@ -115,14 +116,24 @@ class GrupoController extends Controller
 
     private function guardarHorarioInfra(array $data, int $idGrupo)
     {
+        $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
+        $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
+
+        $estadoId = ($fechaInicial > now()) ? 2 : 1;// 2 = PENDIENTE, 1 = EN CURSO
+
         $horarioInfraestructura = new HorarioInfraestructuraGrupo([
             'idGrupo' => $idGrupo,
             'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
-            'fechaInicial'      => $data['horario_infraestructura']['fechaInicial'],
-            'fechaFinal'        => $data['horario_infraestructura']['fechaFinal']
+            'fechaInicial' => $fechaInicial,
+            'fechaFinal' => $fechaFinal,
+            'idEstado' => $estadoId
         ]);
+
         $horarioInfraestructura->save();
+
+
     }
+
 
     /**
      * search a newly created resource in storage.
@@ -245,65 +256,6 @@ class GrupoController extends Controller
 
         return response()->json($grupo, 200);
     }
-
-    /*public function update(Request $request, $id)
-    {
-        $data = $request->all();
-        $grupo = Grupo::findOrFail($id);
-
-        $grupo->update([
-            'nombre' => $data['nombre'],
-            'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-            'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-            'observacion' => $data['observacion'],
-            'idTipoGrupo' => $data['idTipoGrupo'],
-            'idPrograma' => $data['idPrograma'],
-            'idNivel' => $data['idNivel'],
-            'idTipoFormacion' => $data['idTipoFormacion'],
-            'idEstado' => $data['idEstado'],
-            'idTipoOferta' => $data['idTipoOferta'],
-        ]);
-
-        if (isset($data['infraestructuras'])) {
-            $infraestructuras = $data['infraestructuras'];
-
-            foreach ($infraestructuras as $infraItem) {
-                $infraestructuraId = $infraItem['id'];
-                $fechaInicio = $infraItem['fechaInicio'];
-                $fechaFinal = $infraItem['fechaFinal'];
-
-                // Verificar si la infraestructura ya ha pasado de su fecha final
-                $infraestructuraExistente = $grupo->infraestructuras()
-                    ->where('horarioInfraestructuraGrupo.idInfraestructura', $infraestructuraId)
-                    ->first();
-
-                if ($infraestructuraExistente && $infraestructuraExistente->pivot->fechaFinal < $fechaFinal) {
-                    // La infraestructura ya ha pasado de su fecha final, no se actualiza
-                    continue;
-                }
-
-                $grupo->infraestructuras()->syncWithoutDetaching([
-                    $infraestructuraId => [
-                        'fechaInicial' => $fechaInicio,
-                        'fechaFinal' => $fechaFinal
-                    ]
-                ]);
-            }
-        }
-
-        AsignacionJornadaGrupo::where('idGrupo', $grupo->id)->delete();
-
-        foreach ($request->jornadas as $jornaItem) {
-            foreach ($jornaItem as $jItem) {
-                $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
-                $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
-                $asignacionJornadaGrupo->save();
-            }
-        }
-
-        return response()->json($grupo, 200);
-    }*/
-
 
     private function actualizarHorarioInfra(array $data, int $idGrupo)
     {
