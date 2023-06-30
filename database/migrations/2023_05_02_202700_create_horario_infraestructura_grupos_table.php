@@ -15,14 +15,23 @@ class CreateHorarioInfraestructuraGruposTable extends Migration
     {
         Schema::create('horarioInfraestructuraGrupo', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('idInfraestructura')->nullable();
+            $table->unsignedInteger('idInfraestructura');
             $table->foreign('idInfraestructura')->references('id')->on('infraestructura')->onDelete('cascade');
 
-            $table->unsignedInteger('idGrupo')->nullable();
+            $table->unsignedInteger('idGrupo');
             $table->foreign('idGrupo')->references('id')->on('grupo')->onDelete('cascade');
-            
-            $table->date('fechaInicial')->nullable(); //Null por pruebas
-            $table->date('fechaFinal')->nullable();
+
+            $table->date('fechaInicial');
+            $table->date('fechaFinal');
+
+            $table->text('observacion');
+
+            $table->foreignId('idEstado')->references('id')->on('estadoGrupoInfraestructura')->onDelete('cascade');
+
+            $table->unsignedInteger('idUsuario');
+            $table->foreign('idUsuario')->references('id')->on('activation_company_users')->onDelete('cascade');
+
+
             $table->timestamps();
         });
     }
