@@ -16,8 +16,9 @@ use Illuminate\Http\Request;
 
 class GrupoController extends Controller
 {
+
   /**
-   * Display a listing of the resource.
+   * Listar todos los grupos con sus relaciones
    *
    * @return \Illuminate\Http\Response
    */
@@ -27,7 +28,6 @@ class GrupoController extends Controller
     $grupos = Grupo::with([
       'tipoGrupo',
       'programa',
-      // 'instructor.persona',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
@@ -55,11 +55,10 @@ class GrupoController extends Controller
       return $grupo;
     });
     return response()->json($newGrupos);
-    //return response()->json($grupos);
   }
 
   /**
-   * Store a newly created resource in storage.
+   * Crear grupo con sus relaciones
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
@@ -114,82 +113,8 @@ class GrupoController extends Controller
   }
 
 
-  /*private function guardarHorarioInfra(array $data, int $idGrupo)
-    {
-        $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
-        $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
-
-        $estadoId = ($fechaInicial > now()) ? 2 : 1; // 2 = PENDIENTE, 1 = EN CURSO
-
-        $horarioInfraestructura = new HorarioInfraestructuraGrupo([
-            'idGrupo' => $idGrupo,
-            'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
-            'fechaInicial' => $fechaInicial,
-            'fechaFinal' => $fechaFinal,
-            'idEstado' => $estadoId
-        ]);
-
-        $horarioInfraestructura->save();
-    }*/
-
-  private function guardarHorarioInfra(array $data, int $idGrupo)
-  {
-    $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
-    $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
-
-    $estadoId = ($fechaInicial > now()) ? 2 : 1; // 2 = PENDIENTE, 1 = EN CURSO
-
-    // Actualizar la infraestructura existente si existe
-    $existingInfraestructura = HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)->first();
-
-    if ($existingInfraestructura) {
-      $existingInfraestructura->update(['idEstado' => 5]); // 5 = ACTUALIZADO
-    }
-
-    // Crear la nueva infraestructura
-    $horarioInfraestructura = new HorarioInfraestructuraGrupo([
-      'idGrupo' => $idGrupo,
-      'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
-      'fechaInicial' => $fechaInicial,
-      'fechaFinal' => $fechaFinal,
-      'idEstado' => $estadoId
-    ]);
-
-    $horarioInfraestructura->save();
-  }
-
-
-
-
-  private function actualizarEstadoInfraestructuras($idGrupo)
-  {
-    HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
-      ->where('idEstado', 2) // ID 2 representa el estado "PENDIENTE"
-      ->where('fechaInicial', '<=', now())
-      ->update(['idEstado' => 1]); // Actualiza el campo idEstado a 1 (EN CURSO)
-  }
-
-
-
-
   /**
-   * search a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-
-  public function buscarGrupos(Request $request)
-  {
-    $grupo = $request->get('grupo');
-
-    $querys = Grupo::with('tipogrupo')->where('nombre', 'LIKE', '%' . $grupo . '%')->get();
-
-    return response()->json($querys);
-  }
-
-  /**
-   * Display the specified resource.
+   * Mostrar un grupo por su Id
    *
    * @param  \App\Models$grupo  $grupo
    * @return \Illuminate\Http\Response
@@ -232,63 +157,12 @@ class GrupoController extends Controller
 
 
   /**
-   * Update the specified resource in storage.
+   * Actualizar estado de las infraestructuras y crear una nueva infraestructura con su grupo cuando se afecte esta
    *
    * @param  \Illuminate\Http\Request  $request
    * @param  \App\Models$grupo  $grupo
    * @return \Illuminate\Http\Response
    */
-
-  /*public function update(Request $request, $id)
-  {
-    $data = $request->all();
-    $grupo = Grupo::findOrFail($id);
-
-    // Validar infraestructuras y jornadas
-    $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
-
-    if ($existeAsignacion) {
-      return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 400);
-    }
-
-    $grupo->update([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
-      'idPrograma' => $data['idPrograma'],
-      'idNivel' => $data['idNivel'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta'],
-    ]);
-
-
-    $currentInfraestructuras = $grupo->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
-    $grupo->infraestructuras()->detach($currentInfraestructuras);
-
-    $infraestructura = $data['infraestructuras'];
-
-    foreach ($infraestructura as $infraItem) { //Guardar infraestructura actualizada
-    //   $grupo->save();
-      $this->guardarHorarioInfra($infraItem, $grupo->id);
-    }
-
-    AsignacionJornadaGrupo::where('idGrupo', $grupo->id)->delete();
-
-    foreach ($request->jornadas as $jornaItem) {
-      foreach ($jornaItem as $jItem) {
-        $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
-        $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
-        $asignacionJornadaGrupo->save();
-      }
-    }
-
-    $this->actualizarEstadoInfraestructuras($grupo->id);
-
-    return response()->json($grupo, 200);
-  }*/
 
   public function update(Request $request, $id)
   {
@@ -316,12 +190,11 @@ class GrupoController extends Controller
     ]);
 
     $currentInfraestructuras = $grupo->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
-    $grupo->infraestructuras()->detach($currentInfraestructuras);
+    $grupo->infraestructuras()->detach($currentInfraestructuras); // No poder eliminar grupos que ya pasaron su fecha final
 
     $infraestructura = $data['infraestructuras'];
 
     foreach ($infraestructura as $infraItem) { // Guardar infraestructura actualizada
-      $this->actualizarEstadoInfraestructuras($grupo->id);
       $this->guardarHorarioInfra($infraItem, $grupo->id);
     }
 
@@ -335,33 +208,14 @@ class GrupoController extends Controller
       }
     }
 
-
     $grupo->save(); // Guardar el grupo actualizado
 
     return response()->json($grupo, 200);
   }
 
 
-  private function actualizarHorarioInfra(array $data, int $idGrupo)
-  {
-    $dataId = isset($data['id']) ? $data['id'] : 0;
-    $horario_infra = HorarioInfraestructuraGrupo::find($dataId);
-
-    if ($horario_infra) {
-      $horario_infra->idInfraestructura = $data['horario_infraestructura']['idInfraestructura'];
-      $horario_infra->idGrupo = $idGrupo;
-      $horario_infra->fechaInicial = $data['horario_infraestructura']['fechaInicial'];
-      $horario_infra->fechaFinal = $data['horario_infraestructura']['fechaFinal'];
-
-      $horario_infra->save();
-    } else {
-      unset($data['id']);
-      $this->guardarHorarioInfra($data, $idGrupo);
-    }
-  }
-
   /**
-   * Remove the specified resource from storage.
+   * Eliminar el grupo con sus relaciones
    *
    * @param  \App\Models$grupo  $grupo
    * @return \Illuminate\Http\Response
@@ -377,11 +231,72 @@ class GrupoController extends Controller
   }
 
 
-  //Validaciones de las infraestructuras y jornadas en los grupos para que no se interpongan
+  /** Funciones para validar y guardar las infraestructuras del grupo  */
 
-  private function verificarAsignacionInfraestructura($infraestructuras, $jornadas)
+
+  /**
+   * Guarda el horario de infraestructura para un grupo.
+   *
+   * @param array $data Los datos del horario de infraestructura.
+   * @param int $idGrupo El ID del grupo al que se asignará el horario de infraestructura.
+   * @return void
+   */
+  private function guardarHorarioInfra(array $data, int $idGrupo)
   {
 
+    $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
+    $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
+
+    // Verificar si existe una infraestructura anterior no actualizada
+    $existingInfraestructura = HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
+      ->where('idEstado', '<>', 5) // Excluir infraestructuras ya actualizadas
+      ->first();
+
+    if ($existingInfraestructura) {
+      $existingInfraestructura->update(['idEstado' => 5]); // 5 = ACTUALIZADO
+    }
+
+    $estadoId = ($fechaInicial > now()) ? 2 : 1; // 2 = PENDIENTE, 1 = EN CURSO
+
+    // Crear la nueva infraestructura
+    $horarioInfraestructura = new HorarioInfraestructuraGrupo([
+      'idGrupo' => $idGrupo,
+      'idInfraestructura' => $data['horario_infraestructura']['idInfraestructura'],
+      'fechaInicial' => $fechaInicial,
+      'fechaFinal' => $fechaFinal,
+      'idEstado' => $estadoId
+    ]);
+
+    $horarioInfraestructura->save();
+
+  }
+
+
+  /**
+   * Actualiza el estado de las infraestructuras de un grupo de "PENDIENTE" a "EN CURSO".
+   *
+   * @param int $idGrupo El ID del grupo.
+   * @return void
+   */
+  private function infraestructuraEnCurso($idGrupo)
+  {
+    HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
+      ->where('idEstado', 2) // ID 2 representa el estado "PENDIENTE"
+      ->where('fechaInicial', '<=', now())
+      ->where('fechaFinal', '>', now()) // Fecha final mayor que la fecha actual
+      ->update(['idEstado' => 1]); // Actualiza el campo idEstado a 1 (EN CURSO)
+  }
+
+  
+  /**
+   * Verifica si hay asignación de infraestructuras en las jornadas y horarios especificados.
+   *
+   * @param array $infraestructuras Un array de infraestructuras a verificar.
+   * @param array $jornadas Un array de jornadas a considerar.
+   * @return bool Devuelve true si existe una asignación de infraestructuras en las jornadas y horarios especificados, de lo contrario devuelve false.
+   */
+  private function verificarAsignacionInfraestructura($infraestructuras, $jornadas)
+  {
     foreach ($infraestructuras as $infraestructura) {
       $infraestructuraId = $infraestructura['horario_infraestructura']['idInfraestructura'];
       $fechaInicial = $infraestructura['horario_infraestructura']['fechaInicial'];
@@ -406,6 +321,7 @@ class GrupoController extends Controller
 
     return false;
   }
+
 
   /**
    * Verifica si existe alguna asignación de infraestructura en conflicto para la actualización del grupo.
@@ -448,6 +364,4 @@ class GrupoController extends Controller
     return false;
   }
 
-
-  //(res.competencias.length > 0 ? res.competencias[0].nombreCompetencia : '')
 }
