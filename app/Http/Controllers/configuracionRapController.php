@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AsignacionParticipante;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
 
@@ -19,7 +20,7 @@ class configuracionRapController extends Controller
 
         if($resultado){
             $configuraconRap->whereHas('resultados',function($q) use ($resultado){
-                return $q->select('id')->where('id',$resulado)->orWhere('rap',$resultado);
+                return $q->select('id')->where('id',$resultado)->orWhere('rap',$resultado);
             });
         };
 
@@ -70,7 +71,7 @@ class configuracionRapController extends Controller
         $configuracionRap->fill($data);
         $configuracionRap->save();
 
-        return response()->json($programa,203);
+        return response()->json($configuracionRap,203);
     }
 
     public function destroy($id)
@@ -81,46 +82,43 @@ class configuracionRapController extends Controller
         return response()->json([]);
     }
 
+
+
     public function transferirFicha(Request $request)
 {
-    $fichaActual = $request->input('ficha_actual');
-    $fichaDestino = $request->input('ficha_destino');
-    $participante = $request->input('participante_id');
-    
-    // Obtener información del participante en la ficha actual
-    $configuracionActual = ConfiguracionRap::where('idParticipante', $participante)
-        ->where('idJornada', $fichaActual)
-        ->first();
-    
-    // Obtener información del participante en la ficha destino
-    $configuracionDestino = ConfiguracionRap::where('idParticipante', $participante)
-        ->where('idJornada', $fichaDestino)
-        ->first();
-    
-    // Verificar las condiciones para el traslado de ficha
-    if ($configuracionActual && $configuracionDestino) {
-        $estadoActual = $configuracionActual->estado->nombre; // Obtener el nombre del estado actual
-        $estadoDestino = $configuracionDestino->estado->nombre; // Obtener el nombre del estado en la ficha destino
-        
-        if ($estadoActual == 'aprobado' && $estadoDestino == 'pendiente') {
-            // Caso 1: El participante ya aprobó el rap en la ficha actual y la ficha destino aún no lo tiene aprobado
-            // Realizar el traslado de ficha aquí
-            // ...
-            return response()->json(['message' => 'Traslado de ficha exitoso.']);
-        } elseif ($estadoActual == 'pendiente' && $estadoDestino == 'aprobado') {
-            // Caso 2: El participante aún no aprueba el rap y la ficha destino ya lo tiene aprobado
-            return response()->json(['message' => 'No puedes realizar el traslado de ficha en este caso.']);
-        } elseif ($estadoActual == 'cursando' && $estadoDestino == 'pendiente') {
-            // Caso 3: El participante está cursando el rap en la ficha actual y la ficha destino aún no lo tiene aprobado
-            return response()->json(['message' => 'El participante debe aprobar el rap antes de hacer el traslado de ficha.']);
-        } else {
-            // Otros casos no especificados
-            return response()->json(['message' => 'No se cumple ninguna condición para el traslado de ficha.']);
-        }
+    $participante_id = $request->input('participante_id');
+
+    // Obtener los RAP aprobados y pendientes/cursando del participante
+    $rap_aprobados = configuracionRap::where('idParticipante', $participante_id)
+        ->where('idEstado', 'aprovado')
+        ->pluck('idRap');
+
+    $rap_pendientes_cursando = configuracionRap::where('idParticipante', $participante_id)
+        ->whereIn('idEstado', ['pendiente', 'cursando'])
+        ->pluck('idRap');
+
+    // Verificar las validaciones
+    if ($rap_aprobados->contains($request->input('resultado_destino'))) {
+        return response()->json(['message' => 'Puede hacer el traslado de ficha']);
+    } elseif ($rap_pendientes_cursando->contains($request->input('resultado_destino'))) {
+        return response()->json(['message' => 'No puede hacer el traslado de ficha, aún no ha aprobado el RAP en el resultado destino']);
+    } elseif ($rap_pendientes_cursando->count() > 0) {
+        return response()->json(['message' => 'No puede hacer el traslado de ficha, debe terminar de cursar los RAP pendientes/cursando']);
     } else {
-        // No se encontraron las configuraciones de la ficha actual o destino
-        return response()->json(['message' => 'No se encontró la configuración de la ficha actual o destino.']);
+        return response()->json(['message' => 'No se puede realizar el traslado de ficha']);
     }
 }
 
+public function obtenerResultados($participante_id) {
+    $participante = AsignacionParticipante::find($participante_id);
+
+    $resultados = ConfiguracionRap::where('idParticipante', $participante->id)
+        ->with('resultados')
+        ->get();
+
+    foreach ($resultados as $configuracion) {
+        $resultadoParticipante = $configuracion->resultados;
+        return response()->json(['holi']);
+    }
+}
 }
