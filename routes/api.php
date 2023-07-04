@@ -135,6 +135,8 @@ Route::resource('actividad_proyecto', ActividadProyectoController::class);
 Route::resource('configuracion_rap', configuracionRapController::class);
 //ruta para transferir participantes de fichas
 Route::post('transferir-ficha', [configuracionRapController::class, 'transferirFicha']);
+//ruta para optener los resultados de un participante
+Route::get('participantes/{participante_id}/resultados', [configuracionRapController::class , 'obtenerResultados']);
 
 
 //rutas para ciudad y departamento
