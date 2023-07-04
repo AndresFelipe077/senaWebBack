@@ -162,7 +162,7 @@ class GrupoController extends Controller
             'idEstado' => $data['idEstado'],
             'idTipoOferta' => $data['idTipoOferta']
         ]);
-
+        
         $infraestructuras = $data['infraestructuras'];
 
         foreach ($infraestructuras as $infraItem) {

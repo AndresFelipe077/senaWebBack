@@ -9,19 +9,11 @@ use Illuminate\Http\Request;
 class CentroFormacionController extends Controller
 {
     
-    public function index(Request $request)
+    public function index()
     {
-        $regional = $request->input('regional');
-        $AP = CentroFormacion::with('regional');
+        $data = CentroFormacion::with('regional')->get();
 
-
-        if($regional){
-            $AP->whereHas('regional',function($q) use ($regional){
-                return $q->select('id')->where('id',$regional)->orWhere('nombreRegional',$regional);
-            });
-        };
-
-        return response()->json($AP->get());
+        return response()->json($data);
     }
 
     
