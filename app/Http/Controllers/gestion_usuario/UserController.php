@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session as FacadesSession;
 
 class UserController extends Controller
 {
-    public function getUsers()
+    public function index()
     {
         $id = FacadesSession::get("company_id");
         $user = ActivationCompanyUser::with('company', 'user', 'user.persona', 'roles', 'estado')
