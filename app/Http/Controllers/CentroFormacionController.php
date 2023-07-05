@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\controller;
+use App\Http\Controllers\Controller;
 use App\Models\CentroFormacion;
 use Illuminate\Http\Request;
 
