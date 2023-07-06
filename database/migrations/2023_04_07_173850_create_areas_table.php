@@ -17,7 +17,7 @@ class CreateAreasTable extends Migration
             $table->increments('id');
             $table->string('iconUrl') -> nullable();
             $table->string('nombreArea');
-            $table->string('codigo');
+            $table->integer('codigo');
             $table->timestamps();
         });
     }
