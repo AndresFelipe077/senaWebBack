@@ -22,33 +22,9 @@ class AreaController extends Controller
      */
     public function store(Request $request)
     {
-        $test = json_decode($request->getContent(),false);
-        if(is_array($test)){
-            $data = $request -> all();
-            foreach ($data as $item) {
-                $area = new Area();
-                $area = $this -> guardarArea($item);
-                $area -> save();
-            }
-            return response() -> json($data);
-        }
-        if(is_object($test)){
-            $data = $request -> all();
-            $area = new Area();
-            $area = $this -> guardarArea($data);
-            $area -> save();
-            return response() -> json($data);
-        }
-    }
-
-    private function guardarArea(Array $data){
-        $area = new Area([
-            'nombreArea' => $data['nombreArea'],
-            'codigo' => $data['codigo'],
-        ]);
+        $area = Area::create($request -> all());
         return $area;
     }
-
 
     /**
      * Display the specified resource.
@@ -76,7 +52,7 @@ class AreaController extends Controller
         // Actualizar los valores del registro
         $registro->nombreArea = $request->nombreArea;
         $registro->codigo = $request->codigo;
-    
+        $registro->iconUrl = $request->iconUrl;
         // Guardar los cambios en la base de datos
         $registro->save();
     
