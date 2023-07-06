@@ -84,12 +84,7 @@ class GrupoController extends Controller
     $infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
-      try {
-        $infraestructura = Infraestructura::findOrFail($infraItem['id']);
-      } catch (ModelNotFoundException $e) {
-        return response()->json(['error' => 'La infraestructura no existe.'], 404);
-      }
-
+      
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
 
       if ($existeAsignacion) {
