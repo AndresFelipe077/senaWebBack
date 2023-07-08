@@ -55,7 +55,9 @@ use App\Http\Controllers\TipoParticipacionController;
 use App\Models\TipoParticipacion;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
+use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\pruebaController;
+use App\Models\asignacionFaseProyFormativo;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,6 +121,13 @@ Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapControlle
 Route::resource('tipo_resultados',  TipoRapsController::class);
 //rutas para actividad aprendizaje 3 vanesa
 Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
+
+Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
+
+
+
+
+
 //ruta tipo_programas
 Route::resource('tipo_programas',  TipoProgramasController::class);
 //ruta para programas
@@ -260,4 +269,4 @@ Route::post('prueba',[pruebaController::class,'import']);
 
 
 
-Route::post('importarexcel', [AprendicesTmpController::class, 'importExcel']);
+Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);

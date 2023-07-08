@@ -18,8 +18,8 @@ class CreateAsignacionFaseProgramaTable extends Migration
             $table->unsignedInteger('idFase');
             $table->foreign('idFase')->references('id')->on('fase');
 
-            $table->unsignedInteger('idPrograma');
-            $table->foreign('idPrograma')->references('id')->on('programa');
+            $table->unsignedInteger('idProyectoFormativo');
+            $table->foreign('idProyectoFormativo')->references('id')->on('proyectoFormativo');
 
             $table->timestamps();
         });

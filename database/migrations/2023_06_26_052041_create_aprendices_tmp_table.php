@@ -15,14 +15,14 @@ class CreateAprendicesTmpTable extends Migration
     {
         Schema::create('aprendicesTmp', function (Blueprint $table) {
             $table->id();
-            $table->string('TIPO_DOCUMENTO');
-            $table->string('IDENTIFICACION');
-            $table->string('NOMBRES');
-            $table->string('APELLIDOS');
-            $table->string('ESTADO');
-            $table->string('FICHA');
-            $table->string('PROGRAMA');
-            $table->string('PROYECTOFORMATIVO');
+            $table->string('TIPO_DOCUMENTO')->nullable();
+            $table->string('IDENTIFICACION')->nullable();
+            $table->string('NOMBRES')->nullable();
+            $table->string('APELLIDOS')->nullable();
+            $table->string('ESTADO')->nullable();
+            $table->string('FICHA')->nullable();
+            $table->string('PROGRAMA')->nullable();
+            $table->string('PROYECTOFORMATIVO')->nullable();
             $table->timestamps();
         });
     }
