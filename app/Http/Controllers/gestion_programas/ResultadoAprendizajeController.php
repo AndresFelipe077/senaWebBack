@@ -13,17 +13,18 @@ class resultadoAprendizajeController extends Controller{
     {
         $competencia = $request->input('competencias');
         $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('competencias','tipoRaps');
-
-        if($competencia){
-            $resultados->whereHas('competencias',function($q) use ($competencia){
-                return $q->select('id')->where('id', $competencia)->orWhere('nombreCompetencia',$competencia);
+        $resultados = resultadoAprendizaje::with('competencias', 'tipoRaps');
+        
+// rrrrrrrevkizar
+        if ($competencia) {
+            $resultados->whereHas('competencias', function ($q) use ($competencia) {
+                return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
             });
-        };
+        }
 
-        if($tipoResultado){
-            $resultados->whereHas('tipoRaps',function($q) use ($tipoResultado){
-                return $q->select('id')->where('id', $tipoResultado)->orWhere('nombre',$tipoResultado);
+        if ($tipoResultado) {
+            $resultados->whereHas('tipoRaps', function ($q) use ($tipoResultado) {
+                return $q->where('id', $tipoResultado)->orWhere('nombre', $tipoResultado);
             });
         }
 

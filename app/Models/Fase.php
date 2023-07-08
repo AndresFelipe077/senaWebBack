@@ -21,4 +21,5 @@ class Fase extends Model
     {
         return $this->belongsToMany(proyectoFormativo::class, 'asignacionFaseProyecto');
     }
+    
 }

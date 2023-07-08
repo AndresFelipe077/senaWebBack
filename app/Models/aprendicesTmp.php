@@ -12,16 +12,16 @@ class aprendicesTmp extends Model
 
     protected $table = 'aprendicesTmp';
     protected $guarded = [];
-    protected $fillable = [
-        'TIPO_DOCUMENTO',
-        'IDENTIFICACION',
-        'NOMBRES',
-        'APELLIDOS',
-        'ESTADO',
-        'FICHA',
-        'PROGRAMA',
-        'PROYECTOFORMATIVO',
-    ];
+    // protected $fillable = [
+    //     'TIPO_DOCUMENTO',
+    //     'IDENTIFICACION',
+    //     'NOMBRES',
+    //     'APELLIDOS',
+    //     'ESTADO',
+    //     'FICHA',
+    //     'PROGRAMA',
+    //     'PROYECTOFORMATIVO',
+    // ];
 }
 
 

@@ -27,10 +27,25 @@ class proyectoFormativo extends Model
         return $this->belongsTo(Programa::class, 'idPrograma');
     }
 
+    // //relacion con los grupos jornada pertenecientes a un grupo
+    // public function jornadas()
+    // {
+    //     return $this->belongsToMany(
+    //         Jornada::class,
+    //         AsignacionJornadaGrupo::class,
+    //         'idGrupo', 'idJornada'
+    //     ) -> withPivot('id');
+    // }
+
     //relacion muchos a muchos con fase
     public function fases()
     {
-        return $this->belongsToMany(Fase::class, 'asignacionFaseProyecto');
+        return $this->belongsToMany(
+            Fase::class,
+            asignacionFaseProyFormativo::class,
+            'idFase', 'idProyectoFormativo'
+        )->withPivot('id');
+            
     }
 
     public function centroFormativos()

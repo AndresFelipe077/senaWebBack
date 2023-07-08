@@ -6,7 +6,18 @@ use App\Models\proyectoFormativo;
 use Illuminate\Http\Request;
 
 class ProyectoFormativoController extends Controller
-{
+{   
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'Programas',
+            'fases',
+            'centroFormativos'
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +27,7 @@ class ProyectoFormativoController extends Controller
     {
         $Programa = $request->input('Programas');
         $centroFormacion = $request->input('CentroFormativos');
-        $proyectoFormativo = proyectoFormativo::with('Programas','centroFormativos');
+        $proyectoFormativo = proyectoFormativo::with($this ->relations)->get();
 
         if($Programa){
             $proyectoFormativo->whereHas('Programa',function($q) use ($Programa){
@@ -29,7 +40,19 @@ class ProyectoFormativoController extends Controller
                 return $q->select('id')->where('id',$centroFormacion)->orWhere('nombreCentro',$centroFormacion);
             });
         };
-        return response()->json($proyectoFormativo->get());
+
+        //quitar pivots
+        $newProyecto = $proyectoFormativo->map(function ($proyecto) {
+            $proyecto['fases'] = $proyecto['fases']->map(function ($proyectoF) {
+                $pivot = $proyectoF['pivot'];
+                unset($proyectoF['pivot']);
+                $proyectoF['fase_proyecto'] = $pivot;
+                return $proyectoF;
+            });
+            return $proyecto;
+        });
+
+        return response()->json($newProyecto);
     }
 
     

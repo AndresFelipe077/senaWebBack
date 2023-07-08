@@ -80,11 +80,55 @@ class PersonController extends Controller
      * @param  \App\Models\Person  $person
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Person $person)
-    {
-        //
-    }
 
+
+
+     
+     public function update(Request $request, $id)
+     {
+         // Valida los datos recibidos en la solicitud
+         $validatedData = $request->validate([
+             // Validación de campos...
+         ]);
+     
+         // Encuentra la persona por su ID
+         $persona = Person::find($id);
+     
+         // Actualiza el registro de la persona con los nuevos datos
+         $persona->identificacion = $validatedData['identificacion'];
+         $persona->nombre1 = $validatedData['nombre1'];
+         $persona->nombre2 = $validatedData['nombre2'];
+         $persona->apellido1 = $validatedData['apellido1'];
+         $persona->apellido2 = $validatedData['apellido2'];
+         $persona->fechaNac = $validatedData['fechaNac'];
+         $persona->direccion = $validatedData['direccion'];
+         $persona->email = $validatedData['email'];
+         $persona->telefonoFijo = $validatedData['telefonoFijo'];
+         $persona->celular = $validatedData['celular'];
+         $persona->perfil = $validatedData['perfil'];
+         $persona->sexo = $validatedData['sexo'];
+         $persona->rh = $validatedData['rh'];
+         $persona->rutaFoto = $validatedData['rutaFoto'];
+         $persona->idTipoIdentificacion = $validatedData['idTipoIdentificacion'];
+         $persona->idCiudad = $validatedData['idCiudad'];
+         $persona->idCiudadNac = $validatedData['idCiudadNac'];
+         $persona->idCiudadUbicacion = $validatedData['idCiudadUbicacion'];
+     
+         $persona->save();
+     
+         // Recupera la información de las ciudades usando las relaciones definidas en los modelos
+         $ciudad = $persona->ciudad()->first();
+         $ciudadNac = $persona->ciudadNac()->first();
+         $ciudadUbicacion = $persona->ciudadUbicacion()->first();
+     
+         // Prepara los datos para la respuesta
+         $responseData = $persona->toArray();
+         $responseData['ciudad'] = $ciudad;
+         $responseData['ciudadNac'] = $ciudadNac;
+         $responseData['ciudadUbicacion'] = $ciudadUbicacion;
+     
+         return response()->json(['message' => 'Persona actualizada exitosamente', 'data' => $responseData], 200);
+     }
     /**
      * Remove the specified resource from storage.
      *
