@@ -42,6 +42,13 @@ class ActividadProyectoController extends Controller
         return response()->json($AP,200);
     }
 
+    public function showByIdFase(int $id){
+        $actividadP = ActividadProyecto::with('fase')
+        ->where('idFase',$id) -> get();
+
+        return response() -> json($actividadP);
+    }
+
     
     public function update(Request $request, int $id)
     {

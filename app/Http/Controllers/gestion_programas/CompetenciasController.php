@@ -65,6 +65,13 @@ class CompetenciasController extends Controller
         return response()->json($competencias);
     }
 
+    public function showByIdActividadP(int $id){
+        $competencias = Competencias::with('actividadProyecto')
+        ->where('idActividadProyecto',$id)->get();
+
+        return response() -> json($competencias);
+    }
+
     /**
      * Update the specified resource in storage.
      *
