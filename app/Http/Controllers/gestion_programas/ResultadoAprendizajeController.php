@@ -62,6 +62,15 @@ class resultadoAprendizajeController extends Controller{
         return response()->json($resultadoA);
     }
 
+    public function showByIdCompetencia(int $id)
+    {
+        $raps = resultadoAprendizaje::whereHas('competencias', function ($query) use ($id) {
+            $query->where('idCompetencia', $id);
+        })->get();
+
+        return response() -> json($raps);
+    }
+
     
     public function update(Request $request, int $id)
     {

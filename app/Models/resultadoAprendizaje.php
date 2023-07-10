@@ -37,7 +37,11 @@ class resultadoAprendizaje extends Model
     //relacion muchos a muchos
     public function competencias()
     {
-        return $this->belongsToMany(Competencias::class, 'asignacionCompetenciasRaps', 'idRap', 'idCompetencia');
+        return $this->belongsToMany(
+            Competencias::class,
+            AsignacionCompetenciaRap::class, 
+            'idRap', 'idCompetencia'
+        ) -> withPivot('id');
     }
 
 

@@ -73,6 +73,11 @@ class ProyectoFormativoController extends Controller
         return response()->json($proyectoFormativo,200);
     }
 
+    public function showByIdPrograma(int $id){
+        $proyectos = proyectoFormativo::with($this -> relations) 
+        -> where('idPrograma',$id) -> get();
+        return response() -> json($proyectos);
+    }
     
     public function update(Request $request, int $id)
     {

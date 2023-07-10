@@ -8,38 +8,47 @@ use Illuminate\Support\Facades\Redis;
 
 class FaseController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $nombreFase = $request->input('nombreFase');
 
         $fases = Fase::query();
-        if($nombreFase){
+        if ($nombreFase) {
             $fases->where('nombreFase', $nombreFase);
         }
         return response()->json($fases->get());
     }
 
-    
+
 
     public function store(Request $request)
     {
-        $data=$request->all();
+        $data = $request->all();
         $fase = new Fase($data);
         $fase->save();
 
-        return response()->json($fase,201);
+        return response()->json($fase, 201);
     }
 
-   
+
     public function show(int $id)
     {
         $fase = Fase::find($id);
-        
-        return response()->json($fase,200);
+
+        return response()->json($fase, 200);
     }
 
-   
+    public function showByIdProyecto(int $id)
+    {
+        $fases = Fase::whereHas('proyectos', function ($query) use ($id) {
+            $query->where('idProyectoFormativo', $id);
+        })->get();
+
+        return response() -> json($fases);
+    }
+
+
     public function update(Request $request, int  $id)
     {
         $data = $request->all();
@@ -50,7 +59,7 @@ class FaseController extends Controller
         return response()->json($fase);
     }
 
-    
+
     public function destroy(int $id)
     {
         $fase = Fase::findOrFail($id);
