@@ -54,6 +54,7 @@ use App\Http\Controllers\TipoParticipacionController;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
+use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
 
 
@@ -215,7 +216,7 @@ Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoCont
 Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
 
 
-
+Route::resource('estados', EstadoController::class);
 
 
 
