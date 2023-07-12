@@ -39,16 +39,6 @@ class FaseController extends Controller
         return response()->json($fase, 200);
     }
 
-    public function showByIdProyecto(int $id)
-    {
-        $fases = Fase::whereHas('proyectos', function ($query) use ($id) {
-            $query->where('idProyectoFormativo', $id);
-        })->get();
-
-        return response() -> json($fases);
-    }
-
-
     public function update(Request $request, int  $id)
     {
         $data = $request->all();

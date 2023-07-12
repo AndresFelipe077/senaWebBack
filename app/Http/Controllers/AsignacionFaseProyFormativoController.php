@@ -7,7 +7,16 @@ use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 
 class AsignacionFaseProyFormativoController extends Controller
-{
+{   
+
+    private $relations;
+
+    public function _construct(){
+        $this->relations = [
+            'fase',
+            'proyectoFormativo'
+        ];
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +24,7 @@ class AsignacionFaseProyFormativoController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -41,6 +50,14 @@ class AsignacionFaseProyFormativoController extends Controller
     public function show(asignacionFaseProyFormativo $asignacionFaseProyFormativo)
     {
         //
+    }
+
+    public function showByIdProyecto(int $id)
+    {
+        $fases = AsignacionFaseProyFormativo::with(['fase','proyectoFormativo'])
+        ->where('idProyectoFormativo',$id) -> get();
+
+        return response() -> json($fases);
     }
 
     /**

@@ -17,8 +17,8 @@ class CreateActividadProyectosTable extends Migration
             $table->increments('id');
             $table->string('nombreActividadProyecto');
 
-            $table->unsignedInteger('idFase');
-            $table->foreign('idFase')->references('id')->on('fase');
+            $table->unsignedInteger('idFaseProyecto');
+            $table->foreign('idFaseProyecto')->references('id')->on('asignacionFaseProyecto');
 
             $table->string('codigoAP');
             $table->timestamps();

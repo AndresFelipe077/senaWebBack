@@ -21,7 +21,7 @@ class asignacionFaseProyFormativo extends Model
         return $this->belongsTo(Fase::class, 'idFase');
     }
 
-    public function proyectFormativo()
+    public function proyectoFormativo()
     {
         return $this->belongsTo(proyectoFormativo::class, 'idProyectoFormativo');
     }

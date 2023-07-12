@@ -22,9 +22,10 @@ class CreateActividadAprendizajeTable extends Migration
 
             $table->unsignedInteger('idEstado');
             $table->foreign('idEstado')->references('id')->on('estado');
-
-            $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
-            $table->unsignedInteger('idRap');
+            
+            $table->unsignedInteger('idCompetenciaRap');
+            $table->foreign('idCompetenciaRap')->references('id')->on('asignacionCompetenciasRaps');
+            
 
             $table->timestamps();
 
