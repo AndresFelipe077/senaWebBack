@@ -21,4 +21,10 @@ class asignacionCompetenciaRapController extends Controller
             ->get();
         return response()->json($data);
     }
+
+    public function destroy(int $id)
+    {
+        $asignacionCompetenciaRap = AsignacionCompetenciaRap::findOrFail($id);
+        $asignacionCompetenciaRap ->delete();
+    }
 }

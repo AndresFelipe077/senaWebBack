@@ -78,8 +78,9 @@ class AsignacionFaseProyFormativoController extends Controller
      * @param  \App\Models\asignacionFaseProyFormativo  $asignacionFaseProyFormativo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(asignacionFaseProyFormativo $asignacionFaseProyFormativo)
+    public function destroy(int $id)
     {
-        //
+        $asignacionFaseP = asignacionFaseProyFormativo::findOrFail($id);
+        $asignacionFaseP -> delete();
     }
 }
