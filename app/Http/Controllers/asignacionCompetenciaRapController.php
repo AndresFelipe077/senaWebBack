@@ -17,7 +17,7 @@ class asignacionCompetenciaRapController extends Controller
     public function showByCompetencia(int $id)
     {
         $data = AsignacionCompetenciaRap::with(['competencia', 'resultadoAprendizaje'])
-            ->where('idCompetencia', $id)
+            ->wh3ere('idCompetencia', $id)
             ->get();
         return response()->json($data);
     }

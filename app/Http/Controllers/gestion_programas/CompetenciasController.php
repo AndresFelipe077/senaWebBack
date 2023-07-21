@@ -4,44 +4,28 @@
 namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActividadProyecto;
 use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class CompetenciasController extends Controller
 {
-  /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
-        $actividadProyecto= $request->input('actividadProyecto');
-        $AP = Competencias::with('actividadProyecto');
+
+        $programa = $request->input('programas');
+        $competencias = Competencias::with('programas');
 
 
-        if($actividadProyecto){
-            $AP->whereHas('actividadProyecto',function($q) use ($actividadProyecto){
-                return $q->select('id')->where('id',$actividadProyecto)->orWhere('nombreActividadProyecto',$actividadProyecto);
+        if($programa){
+            $competencias->whereHas('programas',function($q) use ($programa){
+                return $q->select('id')->where('id',$programa)->orWhere('nombrePrograma',$programa);
             });
         };
 
-        return response()->json($AP->get());
+        return response()->json($competencias->get());
     }
 
-    // public function index()
-    // {
-    //     $date = Competencias::with('competenciaRap')->get();
-    //     return response()->json($date);
-    // }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
 

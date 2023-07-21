@@ -13,11 +13,10 @@ class resultadoAprendizajeController extends Controller{
     {
         $competencia = $request->input('competencias');
         $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('competencias', 'tipoRaps');
+        $resultados = resultadoAprendizaje::with('competencia', 'tipoRaps');
         
-// rrrrrrrevkizar
         if ($competencia) {
-            $resultados->whereHas('competencias', function ($q) use ($competencia) {
+            $resultados->whereHas('competencia', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
             });
         }
