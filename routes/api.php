@@ -277,3 +277,6 @@ Route::post('prueba',[pruebaController::class,'import']);
 
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
+
+/////////////// asignacion roles 
+Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_usuario;
 use App\Http\Controllers\Controller;
 use App\Models\ActivationCompanyUser;
 use App\Models\Person;
+use App\Models\Rol;
 use App\Models\User;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
@@ -67,16 +68,27 @@ class UserController extends Controller
     }
 
 
-    public function asignation(Request $request)
+    public function asignation(Request $request, $id)
     {
-
-        DB::table('model_has_roles')
-            ->where('model_id', $request->idActivation)
-            ->delete();
-        $user = ActivationCompanyUser::find($request->input('idActivation'));
-        $user->assignRole($request->input('roles', []));
-        return $user;
+        // Obtener los ids de los roles enviados desde Postman
+        $roleIds = (array) $request->input('roles', []);
+    
+        // Buscar los roles por sus ids
+        $roles = Rol::whereIn('id', $roleIds)->pluck('name')->toArray();
+    
+        // Asignar los roles al usuario
+        $user = ActivationCompanyUser::find($id);
+        $userRoles = $user->getRoleNames()->toArray();
+    
+        // Agregar los nuevos roles a los roles existentes del usuario
+        $roles = array_merge($userRoles, $roles);
+    
+        // Asignar los roles actualizados al usuario
+        $user->syncRoles($roles);
+    
+        return response()->json(['message' => 'Roles asignados correctamente'], 200);
     }
+
 
     public function destroy(int $id)
     {
