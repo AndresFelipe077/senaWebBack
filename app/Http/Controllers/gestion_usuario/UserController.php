@@ -116,13 +116,26 @@ class UserController extends Controller
 
     public function destroy(int $id)
     {
-        ActivationCompanyUser::where('user_id', $id)->delete();
+        // Obtén el ActivationCompanyUser
+        $activationCompanyUser = ActivationCompanyUser::where('user_id', $id)->first();
+        
+        // Si el ActivationCompanyUser existe, desasigna los roles
+        if($activationCompanyUser) {
+            $activationCompanyUser->syncRoles([]); // Desasigna todos los roles
+            $activationCompanyUser->delete();
+        }
+    
+        // Obtén el User
         $user = User::findOrFail($id);
         $idPersona = $user->idpersona;
+    
+        // Elimina el User
         User::where('id', $id)->delete();
+    
+        // Elimina el Person
         Person::where('id', $idPersona)->delete();
-
-        return response()->json([], 204);
+    
+        return response()->json(['message' => 'Roles elominados correctamente'], 204);
     }
 
     public function unassignRoles(Request $request, $id)
