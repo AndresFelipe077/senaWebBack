@@ -80,6 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::resource('roles', RolController::class);
+Route::post('roless', [RolController::class, 'store']);
 Route::get('list_companies', [CompanyController::class, 'index']);
 
 //permisos
