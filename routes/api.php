@@ -280,3 +280,6 @@ Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
 /////////////// asignacion roles 
 Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);
+
+
+Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);

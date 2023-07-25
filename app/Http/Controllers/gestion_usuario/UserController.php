@@ -70,10 +70,10 @@ class UserController extends Controller
 
     public function asignation(Request $request, $id)
     {
-        // Obtener los ids de los roles enviados desde Postman
+    
         $roleIds = (array) $request->input('roles', []);
     
-        // Buscar los roles por sus ids
+        // Buscar los roles por sus id
         $roles = Rol::whereIn('id', $roleIds)->pluck('name')->toArray();
     
         // Asignar los roles al usuario
@@ -89,6 +89,30 @@ class UserController extends Controller
         return response()->json(['message' => 'Roles asignados correctamente'], 200);
     }
 
+    public function filtrarRolesAsignados($id)
+    {
+        $activationCompanyUser = ActivationCompanyUser::with('roles')->find($id);
+    
+        
+        if (!$activationCompanyUser) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        // se utiliza funcion para traer los roles que estan en activationCompanyUser
+        $assignedRoles = $activationCompanyUser->roles;
+    
+        
+        $allRoles = Rol::all();
+    
+        // se crea filtro para obtener los filtros que no estan en activationCompanyUser
+        $unassignedRoles = $allRoles->diff($assignedRoles);
+    
+       
+        return response()->json([
+            'assigned_roles' => $assignedRoles,
+            'unassigned_roles' => $unassignedRoles
+        ]);
+    }
 
     public function destroy(int $id)
     {
