@@ -124,4 +124,22 @@ class UserController extends Controller
 
         return response()->json([], 204);
     }
+
+    public function unassignRoles(Request $request, $id)
+    {
+        $roleIds = (array) $request->input('roles', []);
+        
+        // Buscar los roles por sus id
+        $roles = Rol::whereIn('id', $roleIds)->get();
+        
+        // Obtener el usuario
+        $user = ActivationCompanyUser::find($id);
+        
+        // Quitar los roles especificados del usuario
+        foreach($roles as $role) {
+            $user->removeRole($role->name);
+        }
+        
+        return response()->json(['message' => 'Roles desasignados correctamente'], 200);
+    }
 }
