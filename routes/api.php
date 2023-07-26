@@ -32,6 +32,9 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\TipoRapsController;
 use App\Http\Controllers\configuracionRapController;
+use App\Http\Controllers\AsignacionCompetenciaProyectoController;
+use App\Http\Controllers\PlaneacionController;
+
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
@@ -56,7 +59,7 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
-use App\Models\asignacionFaseProyFormativo;
+use App\Models\asignacionCompetenciaProyecto;
 
 /*
 |--------------------------------------------------------------------------
@@ -130,6 +133,11 @@ Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::cla
 Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
 Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class,'showByIdProyecto']);
 
+Route::resource('asignacionCompetenciaProyecto', AsignacionCompetenciaProyectoController::class);
+Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetenciaProyectoController::class,'showByIdProyecto']);
+
+Route::resource('planeacion', PlaneacionController::class);
+Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
 
 //ruta tipo_programas
 Route::resource('tipo_programas',  TipoProgramasController::class);
@@ -277,3 +285,5 @@ Route::post('prueba',[pruebaController::class,'import']);
 
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
+
+Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
