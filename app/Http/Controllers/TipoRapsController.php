@@ -34,7 +34,9 @@ class TipoRapsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $tipoRap = TipoRaps::create($data);
+        return response() -> json($tipoRap);
     }
 
     /**

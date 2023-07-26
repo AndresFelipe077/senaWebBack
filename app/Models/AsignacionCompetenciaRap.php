@@ -18,8 +18,8 @@ class AsignacionCompetenciaRap extends Model
     public $timestamps = false;
 
 
-    public function competencias(){
-        return $this->belongsTo(competencias::class);
+    public function competencia(){
+        return $this->belongsTo(competencias::class,'idCompetencia');
     }
 
     public function resultadoAprendizaje(){

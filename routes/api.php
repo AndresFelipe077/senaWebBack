@@ -54,8 +54,9 @@ use App\Http\Controllers\TipoParticipacionController;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
+use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
-
+use App\Models\asignacionFaseProyFormativo;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +119,7 @@ Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
 Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class,'showByIdCompetencia']);
 
 //asignacion competencias raps
+Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
 Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapController::class, 'showByCompetencia']);
 //rutas para tipo resultados aprendizaje
 Route::resource('tipo_resultados',  TipoRapsController::class);
@@ -126,6 +128,7 @@ Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
 Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::class,'showByIdRap']);
 
 Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
+Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class,'showByIdProyecto']);
 
 
 //ruta tipo_programas
@@ -215,7 +218,7 @@ Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoCont
 Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
 
 
-
+Route::resource('estados', EstadoController::class);
 
 
 
