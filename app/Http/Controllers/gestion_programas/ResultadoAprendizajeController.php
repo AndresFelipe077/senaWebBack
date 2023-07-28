@@ -9,18 +9,24 @@ use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class resultadoAprendizajeController extends Controller{
+
+
+    private $relations;
+
+  public function __construct()
+  {
+    $this->relations = [
+      'competencias',
+
+    ];
+  }
     public function index(Request $request)
     {
-        $competencia = $request->input('competencias');
         $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('competencias', 'tipoRaps');
+        $resultados = resultadoAprendizaje::with('tipoRaps');
         
 // rrrrrrrevkizar
-        if ($competencia) {
-            $resultados->whereHas('competencias', function ($q) use ($competencia) {
-                return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
-            });
-        }
+
 
         if ($tipoResultado) {
             $resultados->whereHas('tipoRaps', function ($q) use ($tipoResultado) {
@@ -34,24 +40,37 @@ class resultadoAprendizajeController extends Controller{
     //funcion para asignar los resultados a las competencias
     public function store(Request $request)
     {
-        $data = $request->all();
 
-        if (isset($data['rap'])) {
-            // Crear un nuevo resultado de aprendizaje
-            $resultadoA = new resultadoAprendizaje($data);
-            $resultadoA->save();
-            // Verificar si se proporcionó un ID de competencia en la solicitud
-            if (isset($data['idCompetencia'])) {
-                $competencia = Competencias::findOrFail($data['idCompetencia']);
 
-                // Agregar la competencia al resultado de aprendizaje
-                $resultadoA->competencias()->attach($competencia);
-            }
 
-            return response()->json($resultadoA, 201);
-        }
 
-        return response()->json(['error' => 'El campo "nombre" es requerido'], 400);
+        $rap = resultadoAprendizaje::with($this -> relations)->get();
+
+        //quitar pivots
+        $newRap = $rap->map(function ($rapp) {
+          $rapp['competecias'] = $rapp['competencias']->map(function ($infr) {
+            $pivot = $infr['pivot'];
+            unset($infr['pivot']);
+            $infr['Competencias'] = $pivot;
+            return $infr;
+          });
+    
+          return $rapp;
+          
+        });
+        return response()->json($newRap);
+        // $data = $request->all();
+
+        // if (isset($data['rap'])) {
+        //     // Crear un nuevo resultado de aprendizaje
+        //     $resultadoA = new resultadoAprendizaje($data);
+        //     $resultadoA->save();
+        //     // Verificar si se proporcionó un ID de competencia en la solicitud
+
+        //     return response()->json($resultadoA, 201);
+        // }
+
+        // return response()->json(['error' => 'El campo "nombre" es requerido'], 400);
     }
 
     

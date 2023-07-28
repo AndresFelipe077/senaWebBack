@@ -14,8 +14,7 @@ class resultadoAprendizaje extends Model
         "rap",
         "codigoRap",
         "numeroHoras",
-        "idTipoRaps",
-        "idCompetencia"
+        "idTipoRaps"
     ];
     public $timestamps = false;
 
@@ -42,18 +41,26 @@ class resultadoAprendizaje extends Model
             AsignacionCompetenciaRap::class, 
             'idRap', 'idCompetencia'
         ) -> withPivot('id');
+        
     }
 
 
 
 
     // Relación con el modelo Competencias
-    public function competencia()
-    {
-        return $this->belongsTo(Competencias::class, 'idCompetencia');
-    }
-    public function tableCompetencia()
-    {
-        return $this->belongsTo(Competencias::class, 'competencias');
-    }
+
+    
+    // public function competencia()
+    // {
+    //     return $this->belongsTo(Competencias::class, 'idCompetencia');
+    // }
+    // public function tableCompetencia()
+    // {
+    //     return $this->belongsTo(Competencias::class, 'competencias');
+    // }
+
+
+
+
+    // correcion para los pivots
 }
