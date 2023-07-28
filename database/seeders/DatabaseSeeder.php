@@ -8,9 +8,11 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Competencias;
 use App\Models\EstadoGrupo;
+use App\Models\Fase;
 use App\Models\Jornada;
 use App\Models\NivelFormacion;
 use App\Models\Programa;
+use App\Models\proyectoFormativo;
 use App\Models\TipoFormacion;
 use App\Models\TipoOferta;
 use App\Models\TipoProgramas;
@@ -49,6 +51,8 @@ class DatabaseSeeder extends Seeder
 
         TipoProgramas::factory(10)->create();
         Programa::factory(10)->create();
+        Fase::factory(10)->create();
+
 
         $this->call(CompanySeeder::class);
         $this->call(PermissionSeeder::class);
@@ -79,7 +83,10 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
 
+        proyectoFormativo::factory(10)->create();
+
         Grupo::factory(10)->create();
 
     }
+
 }

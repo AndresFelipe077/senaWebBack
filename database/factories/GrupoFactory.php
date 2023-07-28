@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\EstadoGrupo;
 use App\Models\NivelFormacion;
 use App\Models\Programa;
+use App\Models\proyectoFormativo;
 use App\Models\TipoFormacion;
 use App\Models\TipoGrupo;
 use App\Models\TipoOferta;
@@ -20,12 +21,12 @@ class GrupoFactory extends Factory
     public function definition()
     {
 
-        $tipoGrupo       = TipoGrupo::all()->random();
-        $programa        = Programa::all()->random();
-        $nivelFormacion  = NivelFormacion::all()->random();
-        $tipoFormacion   = TipoFormacion::all()->random();
-        $estado          = EstadoGrupo::all()->random();
-        $tipoOferta      = TipoOferta::all()->random();
+        $tipoGrupo          = TipoGrupo::all()->random();
+        $proyectoFormativo  = proyectoFormativo::all()->random();
+        $nivelFormacion     = NivelFormacion::all()->random();
+        $tipoFormacion      = TipoFormacion::all()->random();
+        $estado             = EstadoGrupo::all()->random();
+        $tipoOferta         = TipoOferta::all()->random();
 
         return [
 
@@ -34,7 +35,7 @@ class GrupoFactory extends Factory
             'fechaFinalGrupo'   => $this->faker->randomElement(['2020/12/10', '2021/12/10']),
             'observacion'       => strtoupper($this->faker->text()),
             'idTipoGrupo'       => $tipoGrupo -> id,
-            'idPrograma'        => $programa -> id,
+            'idProyectoFormativo'        => $proyectoFormativo -> id,
             'idNivel'           => $nivelFormacion -> id,
             'idTipoFormacion'   => $tipoFormacion -> id,
             'idEstado'          => $estado -> id,
