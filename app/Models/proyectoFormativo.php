@@ -30,6 +30,16 @@ class proyectoFormativo extends Model
     //relacion muchos a muchos con fase
     public function fases()
     {
-        return $this->belongsToMany(Fase::class, 'asignacionFaseProyecto');
+        return $this->belongsToMany(
+            Fase::class,
+            asignacionFaseProyFormativo::class,
+            'idFase', 'idProyectoFormativo'
+        )->withPivot('id');
+            
+    }
+
+    public function centroFormativos()
+    {
+        return $this->belongsTo(CentroFormacion::class, 'idCentroFormacion');
     }
 }

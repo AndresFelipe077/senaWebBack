@@ -14,18 +14,25 @@ class CreateAsignacionParticipantesTable extends Migration
     public function up()
     {
         Schema::create('asignacionParticipante', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->unsignedInteger('idParticipante')->nullable();
             $table->foreign('idParticipante')->references('id')->on('usuario')->onDelete('cascade');
 
             $table->unsignedInteger('idGrupo')->nullable();
             $table->foreign('idGrupo')->references('id')->on('grupo')->onDelete('cascade');
 
+            $table->foreignId('idTipoParticipacion')->references('id')->on('tipoParticipacion')->onDelete('cascade');
+
+            $table->foreignId('idEstadoParticipantes')->references('id')->on('estadoParticipantes')->onDelete('cascade');
+
+
+
             $table->date('fechaInicial')->nullable();
 
             $table->date('fechaFinal')->nullable(); //Mientras nullable para pruebas
+            
 
-            $table->text('descripcion')->nullable();
+            // $table->text('descripcion')->nullable();
 
             $table->timestamps();
         });

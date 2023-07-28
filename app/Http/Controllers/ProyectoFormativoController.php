@@ -6,7 +6,18 @@ use App\Models\proyectoFormativo;
 use Illuminate\Http\Request;
 
 class ProyectoFormativoController extends Controller
-{
+{   
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'Programas',
+            'fases',
+            'centroFormativos'
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,14 +26,33 @@ class ProyectoFormativoController extends Controller
     public function index(Request $request)
     {
         $Programa = $request->input('Programas');
-        $proyectoFormativo = proyectoFormativo::with('Programas');
+        $centroFormacion = $request->input('CentroFormativos');
+        $proyectoFormativo = proyectoFormativo::with($this ->relations)->get();
 
         if($Programa){
             $proyectoFormativo->whereHas('Programa',function($q) use ($Programa){
                 return $q->select('id')->where('id',$Programa)->orWhere('nombrePrograma',$Programa);
             });
         };
-        return response()->json($proyectoFormativo->get());
+        
+        if($centroFormacion){
+            $proyectoFormativo->whereHas('centroFormacion',function($q) use ($centroFormacion){
+                return $q->select('id')->where('id',$centroFormacion)->orWhere('nombreCentro',$centroFormacion);
+            });
+        };
+
+        //quitar pivots
+        $newProyecto = $proyectoFormativo->map(function ($proyecto) {
+            $proyecto['fases'] = $proyecto['fases']->map(function ($proyectoF) {
+                $pivot = $proyectoF['pivot'];
+                unset($proyectoF['pivot']);
+                $proyectoF['fase_proyecto'] = $pivot;
+                return $proyectoF;
+            });
+            return $proyecto;
+        });
+
+        return response()->json($newProyecto);
     }
 
     
@@ -43,6 +73,11 @@ class ProyectoFormativoController extends Controller
         return response()->json($proyectoFormativo,200);
     }
 
+    public function showByIdPrograma(int $id){
+        $proyectos = proyectoFormativo::with($this -> relations) 
+        -> where('idPrograma',$id) -> get();
+        return response() -> json($proyectos);
+    }
     
     public function update(Request $request, int $id)
     {

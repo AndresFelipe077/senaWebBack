@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session as FacadesSession;
 
 class UserController extends Controller
 {
-    public function getUsers()
+    public function index()
     {
         $id = FacadesSession::get("company_id");
         $user = ActivationCompanyUser::with('company', 'user', 'user.persona', 'roles', 'estado')
@@ -78,12 +78,6 @@ class UserController extends Controller
         return $user;
     }
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  *
-    //  * @param  int $id
-    //  * @return \Illuminate\Http\Response
-    //  */
     public function destroy(int $id)
     {
         ActivationCompanyUser::where('user_id', $id)->delete();

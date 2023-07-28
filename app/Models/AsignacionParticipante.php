@@ -23,4 +23,14 @@ class AsignacionParticipante extends Model
         return $this->belongsTo(Grupo::class, 'idGrupo');
     }
 
+    public function tipoParticipacion()
+    {
+        return $this->belongsTo(TipoParticipacion::class, 'idTipoParticipacion');
+    }
+
+    public function estadoParticipantes()
+    {
+        return $this->belongsTo(estadoParticipante::class, 'idEstadoParticipantes');
+    }
+
 }

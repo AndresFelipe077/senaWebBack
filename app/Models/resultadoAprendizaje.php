@@ -13,7 +13,6 @@ class resultadoAprendizaje extends Model
     protected $fillable = [
         "rap",
         "codigoRap",
-        "numeroHoras",
         "idTipoRaps",
         "idCompetencia"
     ];
@@ -27,10 +26,19 @@ class resultadoAprendizaje extends Model
         return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
     }
 
-    //relacion muchos a muchos
-    public function competencias()
+    public function actividadesAprendizaje()
+    {
+        return $this->hasMany(actividadAprendizaje::class,'rap');
+    }
+
+
+    // Relación con el modelo Competencias
+    public function competencia()
     {
         return $this->belongsTo(Competencias::class, 'idCompetencia');
     }
-
+    public function tableCompetencia()
+    {
+        return $this->belongsTo(Competencias::class, 'competencias');
+    }
 }

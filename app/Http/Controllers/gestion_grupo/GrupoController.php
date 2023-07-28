@@ -81,6 +81,8 @@ class GrupoController extends Controller
       'idTipoOferta' => $data['idTipoOferta']
     ]);
 
+    $grupo->save();
+
     $infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
@@ -90,7 +92,6 @@ class GrupoController extends Controller
       if ($existeAsignacion) {
         return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
       } else {
-        $grupo->save();
         $this->guardarHorarioInfra($infraItem, $grupo->id);
       }
     }
