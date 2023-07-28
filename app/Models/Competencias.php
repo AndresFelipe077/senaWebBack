@@ -14,7 +14,7 @@ class Competencias extends Model
     protected $fillable = [
         "nombreCompetencia",
         "codigoCompetencia",
-        "idActividadProyecto",
+        "idPrograma",
 
     ];
 
@@ -22,9 +22,9 @@ class Competencias extends Model
 
 
     //relacion uno a muchos
-    public function actividadProyecto()
+    public function programas()
     {
-        return $this->belongsTo(ActividadProyecto::class, 'idActividadProyecto');
+        return $this->belongsTo(Programa::class, 'idPrograma');
     }
 
     //relacion muchos a  muchos

@@ -20,6 +20,9 @@ class CreateProyectoFormativosTable extends Migration
             $table->integer('tiempoEstimado');
             $table->integer('numeroTotalRaps');
 
+            $table->unsignedInteger('idCentroFormacion');
+            $table->foreign('idCentroFormacion')->references('id')->on('centroFormacion');
+
             $table->unsignedInteger('idPrograma');
             $table->foreign('idPrograma')->references('id')->on('programa');
 
