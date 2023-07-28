@@ -4,14 +4,8 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
-use App\Models\AsignacionParticipante;
-use App\Models\EstadoGrupoInfraestructura;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
-use App\Models\Infraestructura;
-use App\Models\Jornada;
-use ArrayObject;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
@@ -27,7 +21,7 @@ class GrupoController extends Controller
 
     $grupos = Grupo::with([
       'tipoGrupo',
-      'programa',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
@@ -119,8 +113,7 @@ class GrupoController extends Controller
   {
     $dato = Grupo::with([
       'tipoGrupo',
-      'programa',
-      'instructor.persona',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',

@@ -20,7 +20,7 @@ class ProyectoFormativoFactory extends Factory
         $centroFormacion  = CentroFormacion::all()->random();
 
         return [
-            'nombre'            => $this->faker->randomElement(['PROGRAMA 1', 'PROGRAMA 2']),
+            'nombre'            => $this->faker->randomElement(['PROYECTO FORMATIVO 1', 'PROYECTO FORMATIVO 2']),
             'codigo'            => $this->faker->randomElement([2502, 2342]),
             'idPrograma'        => $programa->id,
             'tiempoEstimado'    => $this->faker->randomElement([12, 40]),
