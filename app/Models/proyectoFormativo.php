@@ -42,4 +42,8 @@ class proyectoFormativo extends Model
     {
         return $this->belongsTo(CentroFormacion::class, 'idCentroFormacion');
     }
+    public function asignacionCompetencias()
+    {
+        return $this->belongsToMany(Competencias::class, 'asignacionCompetenciaProyecto', 'idProyecto', 'idCompetencia');
+    }
 }

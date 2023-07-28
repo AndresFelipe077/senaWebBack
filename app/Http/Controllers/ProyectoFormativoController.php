@@ -112,28 +112,26 @@ class ProyectoFormativoController extends Controller
 
     public function filtrarCompetenciasAsignadas($id)
     {
-        $asignacionCompetenciaProyecto = asignacionCompetenciaProyecto::with('competencias')->find($id);
+        $proyectoFormativo = proyectoFormativo::find($id);
     
-        
-        if (!$asignacionCompetenciaProyecto) {
-            return response()->json(['error' => 'Competencia not found'], 404);
+        if (!$proyectoFormativo) {
+            return response()->json(['error' => 'Proyecto Formativo not found'], 404);
         }
     
-        // se utiliza funcion para traer los roles que estan en activationCompanyUser
-        $assignedCompetencias = $asignacionCompetenciaProyecto->competencias;
+        // Obtener las competencias asignadas al proyecto formativo
+        $assignedCompetencias = $proyectoFormativo->asignacionCompetencias;
     
-        
+        // Obtener todas las competencias
         $allCompetencias = Competencias::all();
     
-        // se crea filtro para obtener los filtros que no estan en activationCompanyUser
+        // Filtrar las competencias no asignadas al proyecto formativo
         $unassignedCompetencias = $allCompetencias->diff($assignedCompetencias);
     
-       
         return response()->json([
-            'assigned_competencias' => $assignedCompetencias,
-            'unassigned_Competencias' => $unassignedCompetencias
+            'proyecto_formativo' => $proyectoFormativo,
+            'competencias_no_asignadas' => $unassignedCompetencias->unique()
         ]);
     }
-
-
+    
+    
 }
