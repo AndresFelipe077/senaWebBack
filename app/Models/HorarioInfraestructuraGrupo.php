@@ -23,5 +23,9 @@ class HorarioInfraestructuraGrupo extends Model
         return $this->belongsTo(Grupo::class, 'idGrupo');
     }
 
+    public function estado(){
+        return $this->belongsTo(EstadoGrupoInfraestructura::class, 'idEstado');
+    }
+
 
 }

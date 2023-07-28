@@ -16,23 +16,7 @@ use Illuminate\Http\Request;
 
 class GrupoController extends Controller
 {
-  private $relations;
 
-  public function __construct()
-  {
-    $this->relations = [
-      'tipoGrupo',
-      'programa',
-      // 'instructor.persona',
-      'nivelFormacion',
-      'tipoFormacion',
-      'estadoGrupo',
-      'tipoOferta',
-      'jornadas.diaJornada',
-      'participantes',
-      'infraestructuras'
-    ];
-  }
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -41,7 +25,17 @@ class GrupoController extends Controller
   public function index()
   {
 
-    $grupos = Grupo::with($this -> relations)->get();
+    $grupos = Grupo::with([
+      'tipoGrupo',
+      'programa',
+      'nivelFormacion',
+      'tipoFormacion',
+      'estadoGrupo',
+      'tipoOferta',
+      'jornadas',
+      'participantes',
+      'infraestructuras'
+    ])->get();
 
     //quitar pivots
     $newGrupos = $grupos->map(function ($grupo) {
@@ -87,16 +81,17 @@ class GrupoController extends Controller
       'idTipoOferta' => $data['idTipoOferta']
     ]);
 
+    $grupo->save();
+
     $infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
-
+      
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
 
       if ($existeAsignacion) {
         return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
       } else {
-        $grupo->save();
         $this->guardarHorarioInfra($infraItem, $grupo->id);
       }
     }
@@ -122,7 +117,18 @@ class GrupoController extends Controller
    */
   public function show(int $id)
   {
-    $dato = Grupo::with($this -> relations)->find($id);
+    $dato = Grupo::with([
+      'tipoGrupo',
+      'programa',
+      'instructor.persona',
+      'nivelFormacion',
+      'tipoFormacion',
+      'estadoGrupo',
+      'tipoOferta',
+      'jornadas',
+      'participantes',
+      'infraestructuras'
+    ])->find($id);
 
     if (!$dato) {
       return response()->json(['error' => 'El dato no fue encontrado'], 404);
@@ -143,48 +149,6 @@ class GrupoController extends Controller
     });
 
     return response()->json($dato);
-  }
-
-  public function showByIdInfra(int $id)
-  {
-
-    $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
-      $query->where('idInfraestructura', $id);
-    })->with($this->relations)->get();
-
-    $newGrupos = $grupos->map(function ($grupo) {
-      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-        $pivot = $infr['pivot'];
-        unset($infr['pivot']);
-        $infr['horario_infraestructura'] = $pivot;
-        return $infr;
-      });
-
-      return $grupo;
-    });
-
-    return response()->json($newGrupos);
-  }
-
-  public function showByIdSede(int $id)
-  {
-
-    $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
-      $query->where('idSede', $id);
-    })->with($this->relations)->get();
-
-    $newGrupos = $grupos->map(function ($grupo) {
-      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-        $pivot = $infr['pivot'];
-        unset($infr['pivot']);
-        $infr['horario_infraestructura'] = $pivot;
-        return $infr;
-      });
-
-      return $grupo;
-    });
-
-    return response()->json($newGrupos);
   }
 
 
@@ -300,6 +264,7 @@ class GrupoController extends Controller
     ]);
 
     $horarioInfraestructura->save();
+
   }
 
 
@@ -318,7 +283,7 @@ class GrupoController extends Controller
       ->update(['idEstado' => 1]); // Actualiza el campo idEstado a 1 (EN CURSO)
   }
 
-
+  
   /**
    * Verifica si hay asignación de infraestructuras en las jornadas y horarios especificados.
    *
@@ -394,4 +359,5 @@ class GrupoController extends Controller
 
     return false;
   }
+
 }
