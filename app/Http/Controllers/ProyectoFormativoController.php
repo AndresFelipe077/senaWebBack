@@ -132,6 +132,67 @@ class ProyectoFormativoController extends Controller
             'competencias_no_asignadas' => $unassignedCompetencias->unique()
         ]);
     }
+    public function eliminarMultipleCompetences(Request $request, int $id)
+    {
+        // Encuentra el proyecto formativo por su ID
+        $proyectoFormativo = proyectoFormativo::find($id);
     
+        // Verifica si el proyecto formativo existe
+        if (!$proyectoFormativo) {
+            return response()->json(['error' => 'Proyecto Formativo not found'], 404);
+        }
     
+        // Obtiene el cuerpo de la solicitud como una cadena
+        $requestBody = $request->getContent();
+    
+        // Convierte el cuerpo de la solicitud en un array
+        $requestData = json_decode($requestBody, true);
+    
+        // Obten las IDs de las competencias a eliminar
+        $competencesToRemove = $requestData['competencias'];
+    
+        // Si no se proporcionan competencias para eliminar, devuelve un error
+        if (!$competencesToRemove) {
+            return response()->json(['error' => 'No competencias provided to remove'], 400);
+        }
+    
+        // Si competencesToRemove no es un array, conviértelo en un array
+        if (!is_array($competencesToRemove)) {
+            $competencesToRemove = [$competencesToRemove];
+        }
+    
+        // Desasocia las competencias del proyecto formativo
+        $proyectoFormativo->asignacionCompetencias()->detach($competencesToRemove);
+    
+        return response()->json(['success' => 'Competencias removed successfully']);
+    }
+
+    public function assignCompetences(Request $request, int $id)
+{
+    // Encuentra el proyecto formativo por su ID
+    $proyectoFormativo = ProyectoFormativo::find($id);
+
+    // Verifica si el proyecto formativo existe
+    if (!$proyectoFormativo) {
+        return response()->json(['error' => 'Proyecto Formativo not found'], 404);
+    }
+
+    // Obtiene las IDs de las competencias a asignar
+    $competencesToAssign = $request->input('competencias');
+
+    // Si no se proporcionan competencias para asignar, devuelve un error
+    if (!$competencesToAssign) {
+        return response()->json(['error' => 'No competencias provided to assign'], 400);
+    }
+
+    // Si competencesToAssign no es un array, conviértelo en un array
+    if (!is_array($competencesToAssign)) {
+        $competencesToAssign = [$competencesToAssign];
+    }
+
+    // Asocia las competencias al proyecto formativo
+    $proyectoFormativo->asignacionCompetencias()->attach($competencesToAssign);
+
+    return response()->json(['success' => 'Competencias assigned successfully']);
+}
 }

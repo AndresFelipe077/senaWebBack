@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_usuario;
 use App\Http\Controllers\Controller;
 use App\Models\ActivationCompanyUser;
 use App\Models\Person;
+use App\Models\Rol;
 use App\Models\User;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
@@ -15,9 +16,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $id = FacadesSession::get("company_id");
+        // $id = FacadesSession::get("company_id");
         $user = ActivationCompanyUser::with('company', 'user', 'user.persona', 'roles', 'estado')
-            ->where('company_id', $id)
+            // ->where('company_id', $id)
             ->get();
 
         return response()->json($user);
@@ -67,25 +68,91 @@ class UserController extends Controller
     }
 
 
-    public function asignation(Request $request)
+    public function asignation(Request $request, $id)
     {
+    
+        $roleIds = (array) $request->input('roles', []);
+    
+        // Buscar los roles por sus id
+        $roles = Rol::whereIn('id', $roleIds)->pluck('name')->toArray();
+    
+        // Asignar los roles al usuario
+        $user = ActivationCompanyUser::find($id);
+        $userRoles = $user->getRoleNames()->toArray();
+    
+        // Agregar los nuevos roles a los roles existentes del usuario
+        $roles = array_merge($userRoles, $roles);
+    
+        // Asignar los roles actualizados al usuario
+        $user->syncRoles($roles);
+    
+        return response()->json(['message' => 'Roles asignados correctamente'], 200);
+    }
 
-        DB::table('model_has_roles')
-            ->where('model_id', $request->idActivation)
-            ->delete();
-        $user = ActivationCompanyUser::find($request->input('idActivation'));
-        $user->assignRole($request->input('roles', []));
-        return $user;
+    public function filtrarRolesAsignados($id)
+    {
+        $activationCompanyUser = ActivationCompanyUser::with('roles')->find($id);
+    
+        
+        if (!$activationCompanyUser) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        // se utiliza funcion para traer los roles que estan en activationCompanyUser
+        $assignedRoles = $activationCompanyUser->roles;
+    
+        
+        $allRoles = Rol::all();
+    
+        // se crea filtro para obtener los filtros que no estan en activationCompanyUser
+        $unassignedRoles = $allRoles->diff($assignedRoles);
+    
+       
+        return response()->json([
+            'assigned_roles' => $assignedRoles,
+            'unassigned_roles' => $unassignedRoles
+        ]);
     }
 
     public function destroy(int $id)
     {
-        ActivationCompanyUser::where('user_id', $id)->delete();
+        // Obtén el ActivationCompanyUser
+        $activationCompanyUser = ActivationCompanyUser::where('user_id', $id)->first();
+        
+        // Si el ActivationCompanyUser existe, desasigna los roles
+        if($activationCompanyUser) {
+            $activationCompanyUser->syncRoles([]); // Desasigna todos los roles
+            $activationCompanyUser->delete();
+        }
+    
+        // Obtén el User
         $user = User::findOrFail($id);
         $idPersona = $user->idpersona;
+    
+        // Elimina el User
         User::where('id', $id)->delete();
+    
+        // Elimina el Person
         Person::where('id', $idPersona)->delete();
+    
+        return response()->json(['message' => 'Roles elominados correctamente'], 204);
+    }
 
-        return response()->json([], 204);
+    public function unassignRoles(Request $request, $id)
+    {
+        $roleIds = (array) $request->input('roles', []);
+        
+        // Buscar los roles por sus id
+        $roles = Rol::whereIn('id', $roleIds)->get();
+        
+        // Obtener el usuario
+        $user = ActivationCompanyUser::find($id);
+        
+        // Quitar los roles especificados del usuario
+        foreach($roles as $role) {
+            $user->removeRole($role->name);
+        }
+        
+        return response()->json(['message' => 'Roles desasignados correctamente'], 200);
     }
 }
