@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\asignacionCompetenciaProyecto;
+use App\Models\Competencias;
 use App\Models\proyectoFormativo;
 use Illuminate\Http\Request;
 
@@ -49,8 +51,18 @@ class ProyectoFormativoController extends Controller
                 $proyectoF['fase_proyecto'] = $pivot;
                 return $proyectoF;
             });
-            return $proyecto;
+
+            $Proyecto = asignacionCompetenciaProyecto::with('competencias', 'proyectosFormativos')
+            // ->where('company_id', $id)
+            ->get();
+
+        return response()->json($Proyecto);
+
+            // return $proyecto;
         });
+
+
+
 
         return response()->json($newProyecto);
     }
@@ -97,4 +109,31 @@ class ProyectoFormativoController extends Controller
 
         return response()->json('eliminado con exito');
     }
+
+    public function filtrarCompetenciasAsignadas($id)
+    {
+        $asignacionCompetenciaProyecto = asignacionCompetenciaProyecto::with('competencias')->find($id);
+    
+        
+        if (!$asignacionCompetenciaProyecto) {
+            return response()->json(['error' => 'Competencia not found'], 404);
+        }
+    
+        // se utiliza funcion para traer los roles que estan en activationCompanyUser
+        $assignedCompetencias = $asignacionCompetenciaProyecto->competencias;
+    
+        
+        $allCompetencias = Competencias::all();
+    
+        // se crea filtro para obtener los filtros que no estan en activationCompanyUser
+        $unassignedCompetencias = $allCompetencias->diff($assignedCompetencias);
+    
+       
+        return response()->json([
+            'assigned_competencias' => $assignedCompetencias,
+            'unassigned_Competencias' => $unassignedCompetencias
+        ]);
+    }
+
+
 }

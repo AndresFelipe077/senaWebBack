@@ -3,12 +3,23 @@
 namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\gestion_programas\CompetenciasController;
 use App\Models\resultadoAprendizaje;
 use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class resultadoAprendizajeController extends Controller{
+
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'competencia',
+            'tipoRaps'
+        ];
+    }
+
+
     public function index(Request $request)
     {
         $competencia = $request->input('competencias');
@@ -33,24 +44,11 @@ class resultadoAprendizajeController extends Controller{
     //funcion para asignar los resultados a las competencias
     public function store(Request $request)
     {
-        $data = $request->all();
-
-        if (isset($data['rap'])) {
-            // Crear un nuevo resultado de aprendizaje
-            $resultadoA = new resultadoAprendizaje($data);
-            $resultadoA->save();
-            // Verificar si se proporcionó un ID de competencia en la solicitud
-            if (isset($data['idCompetencia'])) {
-                $competencia = Competencias::findOrFail($data['idCompetencia']);
-
-                // Agregar la competencia al resultado de aprendizaje
-                $resultadoA->competencias()->attach($competencia);
-            }
-
-            return response()->json($resultadoA, 201);
-        }
-
-        return response()->json(['error' => 'El campo "nombre" es requerido'], 400);
+        $data =$request->all();
+        $resultado = new resultadoAprendizaje($data);
+        $resultado->save();
+  
+        return response()->json($resultado);
     }
 
     
@@ -63,11 +61,9 @@ class resultadoAprendizajeController extends Controller{
 
     public function showByIdCompetencia(int $id)
     {
-        $raps = resultadoAprendizaje::whereHas('competencias', function ($query) use ($id) {
-            $query->where('idCompetencia', $id);
-        })->get();
-
-        return response() -> json($raps);
+            $resultados = resultadoAprendizaje::with($this -> relations ) 
+            -> where('idCompetencia',$id) -> get();
+            return response() -> json($resultados);
     }
 
     

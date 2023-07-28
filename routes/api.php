@@ -287,3 +287,5 @@ Route::post('prueba',[pruebaController::class,'import']);
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
+
+Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
