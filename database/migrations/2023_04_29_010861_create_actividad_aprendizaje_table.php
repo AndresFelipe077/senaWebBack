@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateResultadoAprendizajesTable extends Migration
+class CreateActividadAprendizajeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,19 @@ class CreateResultadoAprendizajesTable extends Migration
      */
     public function up()
     {
-        Schema::create('resultadoAprendizaje', function (Blueprint $table) {
+        Schema::create('actividadAprendizaje', function (Blueprint $table) {
             $table->increments('id');
-            $table->string ('rap',20);
-            $table->string('codigoRap',50);
-            $table->integer('numeroHoras');
-            $table->unsignedInteger('idTipoRaps');
-            $table->foreign('idTipoRaps')->references('id')->on('tipoRaps');
+            $table->string ('NombreAA',20);
+            $table->string('codigoAA',50);
+
+
+
+            $table->unsignedInteger('idEstado');
+            $table->foreign('idEstado')->references('id')->on('estado');
+            
 
             $table->timestamps();
+
         });
     }
 
@@ -32,6 +36,6 @@ class CreateResultadoAprendizajesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('resultadoAprendizaje');
+        Schema::dropIfExists('actividadAprendizaje');
     }
 }
