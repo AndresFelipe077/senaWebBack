@@ -288,7 +288,18 @@ Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 
+
+
+
+
+
+//////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
-Route::delete('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
 
 Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
+
+
+Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController::class, 'eliminarCompetencias']);
+
+
+Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);

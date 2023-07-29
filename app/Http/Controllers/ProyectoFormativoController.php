@@ -131,42 +131,38 @@ class ProyectoFormativoController extends Controller
             'proyecto_formativo' => $proyectoFormativo,
             'competencias_no_asignadas' => $unassignedCompetencias->unique()
         ]);
+        
+
     }
-    public function eliminarMultipleCompetences(Request $request, int $id)
-    {
-        // Encuentra el proyecto formativo por su ID
-        $proyectoFormativo = proyectoFormativo::find($id);
-    
-        // Verifica si el proyecto formativo existe
-        if (!$proyectoFormativo) {
-            return response()->json(['error' => 'Proyecto Formativo not found'], 404);
-        }
-    
-        // Obtiene el cuerpo de la solicitud como una cadena
-        $requestBody = $request->getContent();
-    
-        // Convierte el cuerpo de la solicitud en un array
-        $requestData = json_decode($requestBody, true);
-    
-        // Obten las IDs de las competencias a eliminar
+
+    public function eliminarCompetencias(Request $request, int $id)
+{
+    // Encuentra el proyecto formativo por su ID
+    $proyectoFormativo = ProyectoFormativo::find($id);
+
+    // Verifica si el proyecto formativo existe
+    if (!$proyectoFormativo) {
+        return response()->json(['error' => 'Proyecto Formativo not found'], 404);
+    }
+
+    // Obtiene el cuerpo de la solicitud como un array
+    $requestData = $request->toArray();
+
+    // Si se proporcionan competencias específicas, elimínalas
+    if (isset($requestData['competencias'])) {
         $competencesToRemove = $requestData['competencias'];
-    
-        // Si no se proporcionan competencias para eliminar, devuelve un error
-        if (!$competencesToRemove) {
-            return response()->json(['error' => 'No competencias provided to remove'], 400);
-        }
-    
-        // Si competencesToRemove no es un array, conviértelo en un array
         if (!is_array($competencesToRemove)) {
             $competencesToRemove = [$competencesToRemove];
         }
-    
-        // Desasocia las competencias del proyecto formativo
         $proyectoFormativo->asignacionCompetencias()->detach($competencesToRemove);
-    
-        return response()->json(['success' => 'Competencias removed successfully']);
-    }
 
+        return response()->json(['success' => 'Competencias eliminadas correctamente']);
+    }
+    // Si no se proporcionan competencias, no hagas nada
+    return response()->json(['message' => 'No competencias provided to remove'], 400);
+}
+
+    
     public function assignCompetences(Request $request, int $id)
 {
     // Encuentra el proyecto formativo por su ID
