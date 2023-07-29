@@ -32,8 +32,8 @@ class DatabaseSeeder extends Seeder
         // $path = 'database/seeders/sql/jornada.sql';
         // DB::unprepared(file_get_contents($path));
 
-        // $path = 'database/seeders/sql/estado_grupo_infraestructura.sql';
-        // DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/estado_grupo_infraestructura.sql';
+        DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/countries.sql';
         DB::unprepared(file_get_contents($path));
@@ -83,14 +83,14 @@ class DatabaseSeeder extends Seeder
 
         // $path = 'database/seeders/sql/tipo_grupo.sql';
         // DB::unprepared(file_get_contents($path));
-        // $path = 'database/seeders/sql/estado_grupo.sql';
-        // DB::unprepared(file_get_contents($path));
-        // $path = 'database/seeders/sql/nivel_formacion.sql';
-        // DB::unprepared(file_get_contents($path));
-        // $path = 'database/seeders/sql/tipo_formacion.sql';
-        // DB::unprepared(file_get_contents($path));
-        // $path = 'database/seeders/sql/tipo_oferta.sql';
-        // DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/estado_grupo.sql';
+        DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/nivel_formacion.sql';
+        DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/tipo_formacion.sql';
+        DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/tipo_oferta.sql';
+        DB::unprepared(file_get_contents($path));
 
         // proyectoFormativo::factory(10)->create();
 
