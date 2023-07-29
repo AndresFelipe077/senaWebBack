@@ -195,4 +195,6 @@ class ProyectoFormativoController extends Controller
 
     return response()->json(['success' => 'Competencias assigned successfully']);
 }
+
+
 }
