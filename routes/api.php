@@ -54,6 +54,7 @@ use App\Http\Controllers\TipoParticipacionController;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
+use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
 use App\Models\asignacionFaseProyFormativo;
@@ -285,3 +286,17 @@ Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignatio
 Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
 Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
 Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
+
+
+
+Route::get('criteriosEvalucaicon',[CriteriosEvaluacion::class,'index']);
+
+Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
+
+
+
+
+Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
+
+
+Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
