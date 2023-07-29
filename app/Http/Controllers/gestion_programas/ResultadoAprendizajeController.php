@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
+use App\Models\asignacionCompetenciaProyecto;
 use App\Models\resultadoAprendizaje;
 use App\Models\Competencias;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class resultadoAprendizajeController extends Controller{
         $competencia = $request->input('competencias');
         $tipoResultado = $request->input('tipoRaps');
         $resultados = resultadoAprendizaje::with('competencia', 'tipoRaps');
-        
+
         if ($competencia) {
             $resultados->whereHas('competencia', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
@@ -47,11 +48,11 @@ class resultadoAprendizajeController extends Controller{
         $data =$request->all();
         $resultado = new resultadoAprendizaje($data);
         $resultado->save();
-  
+
         return response()->json($resultado);
     }
 
-    
+
     public function show(int $id)
     {
         $resultadoA = resultadoAprendizaje::find($id);
@@ -61,12 +62,12 @@ class resultadoAprendizajeController extends Controller{
 
     public function showByIdCompetencia(int $id)
     {
-            $resultados = resultadoAprendizaje::with($this -> relations ) 
-            -> where('idCompetencia',$id) -> get();
+            $resultados = asignacionCompetenciaProyecto::with('competencias.resultadosAprendizaje')
+            -> where('id',$id) -> get();
             return response() -> json($resultados);
     }
 
-    
+
     public function update(Request $request, int $id)
     {
         $data = $request->all();
@@ -77,7 +78,7 @@ class resultadoAprendizajeController extends Controller{
         return response()->json($resultadoA);
     }
 
-    
+
     public function destroy(int $id)
     {
         $resultadoA = resultadoAprendizaje::findOrFail($id);

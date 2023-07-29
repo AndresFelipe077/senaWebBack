@@ -116,10 +116,12 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 // crear ruta para competencias 1 vanesa
 Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class,'showByIdActividadP']);
+Route::get('competencias/resultado/{id}', [CompetenciasController::class,'showByRestultado']);
+
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class,'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class,'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -138,6 +140,9 @@ Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetencia
 
 Route::resource('planeacion', PlaneacionController::class);
 Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
+Route::post('planeacions', [PlaneacionController::class, 'store']);
+Route::get('planeacion/resultado/{id}', [PlaneacionController::class,'showByRestultado']);
+
 
 //ruta tipo_programas
 Route::resource('tipo_programas',  TipoProgramasController::class);
