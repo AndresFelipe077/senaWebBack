@@ -46,4 +46,19 @@ class proyectoFormativo extends Model
     {
         return $this->belongsToMany(Competencias::class, 'asignacionCompetenciaProyecto', 'idProyecto', 'idCompetencia');
     }
+    public function competencias()
+    {
+        return $this->belongsToMany(Competencia::class);
+    }
+
+    public function eliminarCompetencia($competenciaId)
+    {
+        // Si se proporciona un array de IDs, se eliminan todas las competencias correspondientes
+        if (is_array($competenciaId)) {
+            return $this->competencias()->detach($competenciaId);
+        }
+        
+        // Si se proporciona un solo ID, se elimina la competencia correspondiente
+        return $this->competencias()->detach([$competenciaId]);
+    }
 }
