@@ -37,4 +37,8 @@ class Competencias extends Model
     {
         return $this->hasMany(resultadoAprendizaje::class, 'idCompetencia', 'id');
     }
+    public function proyectosFormativos()
+    {
+        return $this->belongsToMany(proyectoFormativo::class, 'asignacionCompetenciaProyecto', 'idCompetencia', 'idProyecto');
+    }
 }
