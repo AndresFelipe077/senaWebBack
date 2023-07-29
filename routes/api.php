@@ -303,3 +303,10 @@ Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController
 
 
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
+/////////////// asignacion roles
+Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);
+
+
+Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
+Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
+Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
