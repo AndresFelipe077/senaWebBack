@@ -56,6 +56,12 @@ class PermissionSeeder extends Seeder
         $this->savePermission(PermissionConst::REGIONAL, "Regional");
         $this->savePermission(PermissionConst::CENTRO_FORMACION, "gestion de centros de formacion");
         $this->savePermission(PermissionConst::GESTION_MATRICULA,"Gestión de matricula");
+        $this->savePermission(PermissionConst::GESTION_CRITERIOS_EVALUACION,"Gestión criterios de evaluacion");
+
+
+        
+
+   
 
 
     }

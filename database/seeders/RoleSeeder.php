@@ -67,9 +67,9 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_JORNADA,
             PermissionConst::CALENDARIO,
             PermissionConst::GESTION_MATRICULA,
-            PermissionConst::GESTION_FICHAS
+            PermissionConst::GESTION_FICHAS,
 
-
+            PermissionConst::GESTION_CRITERIOS_EVALUACION
         ]);
 
         $rapidoTambo->syncPermissions([
@@ -78,7 +78,7 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_GRUPO,
             PermissionConst::GESTION_TIPO_GRUPO,
             PermissionConst::GESTION_MATRICULA,
-
+            PermissionConst::GESTION_CRITERIOS_EVALUACION
 
         ]);
 

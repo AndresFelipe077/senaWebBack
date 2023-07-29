@@ -143,6 +143,7 @@ Route::resource('planeacion', PlaneacionController::class);
 Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
 Route::post('planeacions', [PlaneacionController::class, 'store']);
 Route::get('planeacion/resultado/{id}', [PlaneacionController::class,'showByRestultado']);
+Route::delete('/planeacion/{id}',[PlaneacionController::class,'destroy']);
 
 
 //ruta tipo_programas
