@@ -17,9 +17,9 @@ class CompetenciasFactory extends Factory
     //  para poder hacer datos de prueba ...............
     public function definition()
     {
-        return [
-            'nombreCompetencia' => $this->faker->text(),
-            'codigoCompetencia' => $this->faker->text(),
-        ];
+        // return [
+        //     'nombreCompetencia' => $this->faker->text(),
+        //     'codigoCompetencia' => $this->faker->text(),
+        // ];
     }
 }

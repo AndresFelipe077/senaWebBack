@@ -32,6 +32,9 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\TipoRapsController;
 use App\Http\Controllers\configuracionRapController;
+use App\Http\Controllers\AsignacionCompetenciaProyectoController;
+use App\Http\Controllers\PlaneacionController;
+
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
@@ -56,7 +59,7 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
-use App\Models\asignacionFaseProyFormativo;
+use App\Models\asignacionCompetenciaProyecto;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,10 +116,12 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 // crear ruta para competencias 1 vanesa
 Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class,'showByIdActividadP']);
+Route::get('competencias/resultado/{id}', [CompetenciasController::class,'showByRestultado']);
+
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class,'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class,'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -129,6 +134,14 @@ Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::cla
 
 Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
 Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class,'showByIdProyecto']);
+
+Route::resource('asignacionCompetenciaProyecto', AsignacionCompetenciaProyectoController::class);
+Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetenciaProyectoController::class,'showByIdProyecto']);
+
+Route::resource('planeacion', PlaneacionController::class);
+Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
+Route::post('planeacions', [PlaneacionController::class, 'store']);
+Route::get('planeacion/resultado/{id}', [PlaneacionController::class,'showByRestultado']);
 
 
 //ruta tipo_programas
@@ -285,3 +298,21 @@ Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignatio
 Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
 Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
 Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
+Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
+
+Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
+
+
+
+
+
+//////////////////////////////////competencias checks
+Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
+
+Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
+
+
+Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController::class, 'eliminarCompetencias']);
+
+
+Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
