@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
-        // $path = 'database/seeders/sql/jornada.sql';
-        // DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/jornada.sql';
+        DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/estado_grupo_infraestructura.sql';
         DB::unprepared(file_get_contents($path));
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
         // $path = 'database/seeders/sql/infraestructuras.sql';
         // DB::unprepared(file_get_contents($path));
 
-        // $this->call(DiaSeeder::class);
+        $this->call(DiaSeeder::class);
         // $this->call(EstadoRapSeeder::class);
 
 
