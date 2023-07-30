@@ -17,12 +17,16 @@ class Planeacion extends Model
     ];
     public $timestamps = false;
 
-
     public function actividadProyectos(){
         return $this->belongsTo(ActividadProyecto::class, 'idActividadProyecto');
     }
 
     public function resultados(){
         return $this->belongsTo(resultadoAprendizaje::class, 'idResultadoAprendizaje');
+    }
+
+    public function criteriosEvaluacion()
+    {
+        return $this->belongsToMany(criteriosEvaluacion::class, 'asociacionCriteriosPlaneacion', 'id_planeacion', 'id_criterioEvaluacion');
     }
 }

@@ -39,4 +39,6 @@ class PermissionConst
     const CENTRO_FORMACION         = 'CENTRO_FORMACION';
     const REGIONAL      = 'REGIONAL';
     const GESTION_MATRICULA        ='GESTION_MATRICULA';
+
+    const GESTION_CRITERIOS_EVALUACION       = 'GESTION_CRITERIOS_EVALUACION';
 }

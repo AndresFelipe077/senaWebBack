@@ -57,6 +57,7 @@ use App\Http\Controllers\TipoParticipacionController;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
+use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
 use App\Models\asignacionCompetenciaProyecto;
@@ -142,6 +143,7 @@ Route::resource('planeacion', PlaneacionController::class);
 Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
 Route::post('planeacions', [PlaneacionController::class, 'store']);
 Route::get('planeacion/resultado/{id}', [PlaneacionController::class,'showByRestultado']);
+Route::delete('/planeacion/{id}',[PlaneacionController::class,'destroy']);
 
 
 //ruta tipo_programas
@@ -291,9 +293,30 @@ Route::post('prueba',[pruebaController::class,'import']);
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
+/////////////// asignacion roles 
+Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);
+
+
+Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
+Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
+Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
+
+
+/////// criterios evaluacion
+Route::get('criteriosEvalucaicon',[CriteriosEvaluacion::class,'index']);
+Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
+Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
+Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
+
+
+
+
+
+/////////////////////////
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
+
 
 
 
