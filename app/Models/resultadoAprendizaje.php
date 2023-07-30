@@ -37,8 +37,5 @@ class resultadoAprendizaje extends Model
     {
         return $this->belongsTo(Competencias::class, 'idCompetencia');
     }
-    public function tableCompetencia()
-    {
-        return $this->belongsTo(Competencias::class, 'competencias');
-    }
+    
 }

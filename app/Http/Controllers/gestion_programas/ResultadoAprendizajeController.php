@@ -3,18 +3,30 @@
 namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\gestion_programas\CompetenciasController;
+use App\Models\asignacionCompetenciaProyecto;
 use App\Models\resultadoAprendizaje;
 use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class resultadoAprendizajeController extends Controller{
+
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'competencia',
+            'tipoRaps'
+        ];
+    }
+
+
     public function index(Request $request)
     {
         $competencia = $request->input('competencias');
         $tipoResultado = $request->input('tipoRaps');
         $resultados = resultadoAprendizaje::with('competencia', 'tipoRaps');
-        
+
         if ($competencia) {
             $resultados->whereHas('competencia', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
@@ -33,27 +45,14 @@ class resultadoAprendizajeController extends Controller{
     //funcion para asignar los resultados a las competencias
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data =$request->all();
+        $resultado = new resultadoAprendizaje($data);
+        $resultado->save();
 
-        if (isset($data['rap'])) {
-            // Crear un nuevo resultado de aprendizaje
-            $resultadoA = new resultadoAprendizaje($data);
-            $resultadoA->save();
-            // Verificar si se proporcionó un ID de competencia en la solicitud
-            if (isset($data['idCompetencia'])) {
-                $competencia = Competencias::findOrFail($data['idCompetencia']);
-
-                // Agregar la competencia al resultado de aprendizaje
-                $resultadoA->competencias()->attach($competencia);
-            }
-
-            return response()->json($resultadoA, 201);
-        }
-
-        return response()->json(['error' => 'El campo "nombre" es requerido'], 400);
+        return response()->json($resultado);
     }
 
-    
+
     public function show(int $id)
     {
         $resultadoA = resultadoAprendizaje::find($id);
@@ -63,14 +62,12 @@ class resultadoAprendizajeController extends Controller{
 
     public function showByIdCompetencia(int $id)
     {
-        $raps = resultadoAprendizaje::whereHas('competencias', function ($query) use ($id) {
-            $query->where('idCompetencia', $id);
-        })->get();
-
-        return response() -> json($raps);
+            $resultados = asignacionCompetenciaProyecto::with('competencias.resultadosAprendizaje')
+            -> where('id',$id) -> get();
+            return response() -> json($resultados);
     }
 
-    
+
     public function update(Request $request, int $id)
     {
         $data = $request->all();
@@ -81,7 +78,7 @@ class resultadoAprendizajeController extends Controller{
         return response()->json($resultadoA);
     }
 
-    
+
     public function destroy(int $id)
     {
         $resultadoA = resultadoAprendizaje::findOrFail($id);
