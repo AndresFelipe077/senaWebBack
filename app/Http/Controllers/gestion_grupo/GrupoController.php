@@ -62,6 +62,11 @@ class GrupoController extends Controller
   {
     $data = $request->all();
 
+    $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
+    if ($existingGrupo) {
+        return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+    }
+
     $grupo = new Grupo([
       'nombre' => $data['nombre'],
       'fechaInicialGrupo' => $data['fechaInicialGrupo'],
