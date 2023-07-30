@@ -10,11 +10,13 @@ class ActividadProyectoController extends Controller
 {
     public function index(Request $request)
     {
-        $fase = $request->input('faseProyecto');
-        $AP = ActividadProyecto::with('faseProyecto');
+
+        $fase = $request->input('fase');
+        $AP = ActividadProyecto::with('fase');
+
 
         if($fase){
-            $AP->whereHas('faseProyecto',function($q) use ($fase){
+            $AP->whereHas('fase',function($q) use ($fase){
                 return $q->select('id')->where('id',$fase)->orWhere('nombreFase',$fase);
             });
         };
@@ -22,7 +24,7 @@ class ActividadProyectoController extends Controller
         return response()->json($AP->get());
     }
 
-
+    
     public function store(Request $request)
     {
         $data = $request->all();
@@ -32,11 +34,11 @@ class ActividadProyectoController extends Controller
         return response()->json($AP,201);
     }
 
-
+    
     public function show(int $id)
     {
         $AP = ActividadProyecto::find($id);
-
+        
         return response()->json($AP,200);
     }
 
@@ -47,25 +49,7 @@ class ActividadProyectoController extends Controller
         return response() -> json($actividadP);
     }
 
-//     $asignacionFaseProyFormativo = asignacionFaseProyFormativo::with('fase', 'proyectoFormativo')
-//     ->where('idFaseProyecto', $id)
-//     ->get();
-
-// // Verifica si se encontró alguna asignación de fase con el ID dado
-// if ($asignacionFaseProyFormativo->isEmpty()) {
-//     return response()->json(['error' => 'Asignación de Fase no encontrada'], 404);
-// }
-
-// // Acceder a la fase relacionada desde la asignación de fase
-// $faseRelacionada = $asignacionFaseProyFormativo[0]->fase;
-
-// // Devolver la respuesta en formato JSON
-// return response()->json([
-//     'asignacion_fase_proyecto' => $asignacionFaseProyFormativo,
-//     'fase_relacionada' => $faseRelacionada,
-// ]);
-
-
+    
     public function update(Request $request, int $id)
     {
         $data = $request->all();

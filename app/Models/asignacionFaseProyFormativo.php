@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class asignacionFaseProyFormativo extends Model
 {
     use HasFactory;
-
+    
     protected $guarded = [];
 
 
     protected $table = 'asignacionFaseProyecto';
 
 
-
+   
     public function fase()
     {
         return $this->belongsTo(Fase::class, 'idFase');
@@ -26,5 +26,5 @@ class asignacionFaseProyFormativo extends Model
         return $this->belongsTo(proyectoFormativo::class, 'idProyectoFormativo');
     }
 
-
+    
 }
