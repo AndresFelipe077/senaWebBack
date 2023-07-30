@@ -8,23 +8,32 @@ use Illuminate\Http\Request;
 
 class PlaneacionController extends Controller
 {
-    public function store(Request $request){
-        $data = $request -> all();
-        $planeacion = Planeacion::create($data);
-        return response() -> json($planeacion);
-    }
 
-    public function showByIdActividadProyecto(int $id)
-    {
-        $resultados = Planeacion::with(['actividadProyectos','resultados'])
-        ->where('idActividadProyecto',$id) -> get();
-
-        return response() -> json($resultados);
-    }
 
     public function destroy(int $id)
     {
         $planeacion = Planeacion::findOrFail($id);
         $planeacion ->delete();
     }
+
+    public function store(Request $request)
+    {
+        $registros = $request->all();
+
+        try {
+            foreach ($registros as $registro) {
+        
+                Planeacion::create($registro);
+            }
+
+            return response()->json(['message' => 'Registros guardados correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al guardar los registros', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
+
+
+
 }
