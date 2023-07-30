@@ -302,10 +302,17 @@ Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::cl
 Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
 
 
-
+/////// criterios evaluacion
 Route::get('criteriosEvalucaicon',[CriteriosEvaluacion::class,'index']);
-
+Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
+Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
 Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
+
+
+
+
+
+/////////////////////////
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
@@ -313,10 +320,7 @@ Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'f
 
 
 
-Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
 
-
-Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
 
 //////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
