@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-
+        $this->savePermission(PermissionConst::HOME, "VER EL HOME");
         $this->savePermission(PermissionConst::GESTION_ROLES, "Gestión de roles");
         $this->savePermission(PermissionConst::GESTION_ROL_PERMISOS, "Gestión permisos del rol");
         $this->savePermission(PermissionConst::GESTION_USUARIO, "Gestión de usuarios");

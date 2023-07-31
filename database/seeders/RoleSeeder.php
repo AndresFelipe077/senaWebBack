@@ -26,6 +26,7 @@ class RoleSeeder extends Seeder
 
 
         $vt->syncPermissions([
+            PermissionConst::HOME,
             PermissionConst::GESTION_ROL_PERMISOS,
             PermissionConst::GESTION_ROLES,
             PermissionConst::GESTION_TIPO_CONTRATO,

@@ -13,12 +13,12 @@ class JornadaFactory extends Factory
      */
     public function definition()
     {
-        // return [
-        //     'nombreJornada' => $this->faker->randomElement(),
-        //     'descripcion'   => $this->faker->text(),
-        //     'horaInicial'   => $this->faker->randomElement(['12:12:12', '01:01:01']),
-        //     'horaFinal'     => $this->faker->randomElement(['07:12:12', '06:01:01']),
-        //     'numeroHoras'   => $this->faker->randomElement([12, 7]),
-        // ];
+        return [
+            'nombreJornada' => $this->faker->randomElement(),
+            'descripcion'   => $this->faker->text(),
+            'horaInicial'   => $this->faker->randomElement(['12:12:12', '01:01:01']),
+            'horaFinal'     => $this->faker->randomElement(['07:12:12', '06:01:01']),
+            'numeroHoras'   => $this->faker->randomElement([12, 7]),
+        ];
     }
 }
