@@ -25,4 +25,9 @@ class Planeacion extends Model
     public function resultados(){
         return $this->belongsTo(resultadoAprendizaje::class, 'idResultadoAprendizaje');
     }
+
+    public function actividadAprendizajes(){
+        return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
+    }
+
 }

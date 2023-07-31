@@ -29,7 +29,9 @@ class actividadAprendizaje extends Model
         return $this->belongsTo(Status::class, 'idEstado');
     }
 
-
+    public function planeacion(){
+        return $this->belongsTo(Planeacion::class);
+    }
 
 }
 
