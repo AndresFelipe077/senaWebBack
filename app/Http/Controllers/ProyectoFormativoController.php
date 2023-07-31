@@ -44,22 +44,19 @@ class ProyectoFormativoController extends Controller
         };
 
         //quitar pivots
-        // $newProyecto = $proyectoFormativo->map(function ($proyecto) {
-        //     $proyecto['fases'] = $proyecto['fases']->map(function ($proyectoF) {
-        //         $pivot = $proyectoF['pivot'];
-        //         unset($proyectoF['pivot']);
-        //         $proyectoF['fase_proyecto'] = $pivot;
-        //         return $proyectoF;
-        //     });
+        $newProyecto = $proyectoFormativo->map(function ($proyecto) {
+            $proyecto['fases'] = $proyecto['fases']->map(function ($proyectoF) {
+                $pivot = $proyectoF['pivot'];
+                unset($proyectoF['pivot']);
+                $proyectoF['fase_proyecto'] = $pivot;
+                return $proyectoF;
+            });
 
-        //     $Proyecto = asignacionCompetenciaProyecto::with('competencias', 'proyectosFormativos')
-        //     // ->where('company_id', $id)
-        //     ->get();
+            $Proyecto = asignacionCompetenciaProyecto::with('competencias', 'proyectosFormativos')
+            ->get();
 
-        // return response()->json($Proyecto);
-
-        //     // return $proyecto;
-        // });
+            return $proyecto;
+        });
         
         return response()->json($proyectoFormativo);
     }
