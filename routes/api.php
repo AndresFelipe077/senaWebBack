@@ -117,12 +117,10 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 // crear ruta para competencias 1 vanesa
 Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class,'showByIdActividadP']);
-Route::get('competencias/resultado/{id}', [CompetenciasController::class,'showByRestultado']);
-
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class,'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class,'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -293,7 +291,7 @@ Route::post('prueba',[pruebaController::class,'import']);
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
-/////////////// asignacion roles 
+/////////////// asignacion roles
 Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);
 
 
@@ -332,3 +330,8 @@ Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController
 
 
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
+
+
+Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
+Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
+Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
