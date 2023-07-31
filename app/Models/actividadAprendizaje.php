@@ -16,7 +16,7 @@ class actividadAprendizaje extends Model
         "NombreAA",
         "codigoAA",
         "idEstado",
-        "idRap"
+        "idPlaneacion"
     ];
 
     public $timestamps =false;
@@ -30,7 +30,7 @@ class actividadAprendizaje extends Model
     }
 
     public function planeacion(){
-        return $this->belongsTo(Planeacion::class);
+        return $this->belongsTo(Planeacion::class, 'idPlaneacion');
     }
 
 }

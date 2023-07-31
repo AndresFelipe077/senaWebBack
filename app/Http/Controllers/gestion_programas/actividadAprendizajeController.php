@@ -63,9 +63,10 @@ class actividadAprendizajeController extends Controller
         return response()->json($actividadAA);
     }
 
+
     public function showByIdRap(int $id){
-        $actividadesAprendizaje = actividadAprendizaje::with('rap')
-        -> where('idRap',$id) -> get();
+        $actividadesAprendizaje = actividadAprendizaje::with('planeacion')
+        -> where('idPlaneacion',$id) -> get();
 
         return response() -> json($actividadesAprendizaje);
     }

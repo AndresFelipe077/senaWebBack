@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class asignacionFaseProyFormativo extends Model
 {
     use HasFactory;
-
-    protected $guarded = [];
-
-
+    public static $snakeAttributes = false;
     protected $table = 'asignacionFaseProyecto';
+        protected $fillable = [
+        'idFase',
+        'idProyectoFormativo'
+    ];
 
 
 
