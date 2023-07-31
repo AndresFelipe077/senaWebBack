@@ -10,13 +10,11 @@ class ActividadProyectoController extends Controller
 {
     public function index(Request $request)
     {
-
-        $fase = $request->input('idFase');
+        $fase = $request->input('faseProyecto');
         $AP = ActividadProyecto::with('faseProyecto');
 
-
         if($fase){
-            $AP->whereHas('fase',function($q) use ($fase){
+            $AP->whereHas('faseProyecto',function($q) use ($fase){
                 return $q->select('id')->where('id',$fase)->orWhere('nombreFase',$fase);
             });
         };

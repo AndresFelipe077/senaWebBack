@@ -29,6 +29,10 @@ class DatabaseSeeder extends Seeder
 
         $path = 'database/seeders/sql/jornada.sql';
         DB::unprepared(file_get_contents($path));
+
+        $path = 'database/seeders/sql/estado_grupo_infraestructura.sql';
+        DB::unprepared(file_get_contents($path));
+
         $path = 'database/seeders/sql/countries.sql';
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/cities.sql';
