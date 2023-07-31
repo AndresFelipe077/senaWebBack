@@ -15,7 +15,7 @@ class actividadAprendizajeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    { 
+    {
         $estado = $request->input('estado');
         $ActividadAprendizaje = $request->input('rap');
         $actividadAprendizaje = actividadAprendizaje::with('estado', 'rap');
@@ -65,7 +65,7 @@ class actividadAprendizajeController extends Controller
 
     public function showByIdRap(int $id){
         $actividadesAprendizaje = actividadAprendizaje::with('rap')
-        -> where('idCompetenciaRap',$id) -> get();
+        -> where('idRap',$id) -> get();
 
         return response() -> json($actividadesAprendizaje);
     }

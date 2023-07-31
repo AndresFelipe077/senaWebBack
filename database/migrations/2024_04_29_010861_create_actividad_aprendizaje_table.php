@@ -18,11 +18,11 @@ class CreateActividadAprendizajeTable extends Migration
             $table->string ('NombreAA',20);
             $table->string('codigoAA',50);
 
-
+            $table->unsignedInteger('idPlaneacion');
+            $table->foreign('idPlaneacion')->references('id')->on('planeacion');
 
             $table->unsignedInteger('idEstado');
             $table->foreign('idEstado')->references('id')->on('estado');
-            
 
             $table->timestamps();
 
