@@ -30,4 +30,7 @@ class Planeacion extends Model
         return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
     }
 
+
+
+    
 }
