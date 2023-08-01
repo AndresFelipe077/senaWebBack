@@ -53,18 +53,12 @@ class ProyectoFormativoController extends Controller
             });
 
             $Proyecto = asignacionCompetenciaProyecto::with('competencias', 'proyectosFormativos')
-            // ->where('company_id', $id)
             ->get();
 
-        return response()->json($Proyecto);
-
-            // return $proyecto;
+            return $proyecto;
         });
-
-
-
-
-        return response()->json($newProyecto);
+        
+        return response()->json($proyectoFormativo);
     }
 
     
