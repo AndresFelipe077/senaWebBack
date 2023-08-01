@@ -29,8 +29,5 @@ class Planeacion extends Model
     public function actividadAprendizajes(){
         return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
     }
-
-
-
     
 }
