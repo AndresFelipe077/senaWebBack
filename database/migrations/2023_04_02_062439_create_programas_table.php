@@ -24,6 +24,7 @@ class CreateProgramasTable extends Migration
             $table->integer('creditosLectiva');
             $table->integer('creditosProductiva');
             $table->string ('rutaArchivo');
+            $table->string ('version');
 
             $table->unsignedInteger('idTipoPrograma');
             $table->foreign('idTipoPrograma')->references('id')->on('tipoPrograma');
