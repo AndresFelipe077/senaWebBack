@@ -8,14 +8,16 @@ use Spatie\Permission\Models\Role;
 
 class Rol extends Role
 {
+
+
     use HasFactory;
 
 
-    protected $guarded = [];
+    protected $fillable = ['name', 'guard_name', 'idCompany', 'rutaFoto'];
 
     public function company()
     {
         return $this->belongsTo(Company::class, 'idCompany');
     }
-    
+
 }

@@ -313,12 +313,6 @@ Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
 /////////////////////////
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 
-Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
-
-
-
-
-
 
 //////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
@@ -330,8 +324,3 @@ Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController
 
 
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
-
-
-Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
-Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
-Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
