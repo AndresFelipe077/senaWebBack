@@ -16,9 +16,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        // $id = FacadesSession::get("company_id");
+        $id = FacadesSession::get("company_id");
         $user = ActivationCompanyUser::with('company', 'user', 'user.persona', 'roles', 'estado')
-            // ->where('company_id', $id)
+            ->where('company_id', $id)
             ->get();
 
         return response()->json($user);
