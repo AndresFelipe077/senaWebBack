@@ -15,7 +15,6 @@ class resultadoAprendizajeController extends Controller{
     {
         $this->relations = [
             'competencia',
-            'tipoRaps'
         ];
     }
 
@@ -23,18 +22,11 @@ class resultadoAprendizajeController extends Controller{
     public function index(Request $request)
     {
         $competencia = $request->input('competencias');
-        $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('competencia', 'tipoRaps');
+        $resultados = resultadoAprendizaje::with('competencia');
         
         if ($competencia) {
             $resultados->whereHas('competencia', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
-            });
-        }
-
-        if ($tipoResultado) {
-            $resultados->whereHas('tipoRaps', function ($q) use ($tipoResultado) {
-                return $q->where('id', $tipoResultado)->orWhere('nombre', $tipoResultado);
             });
         }
 

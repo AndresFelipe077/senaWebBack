@@ -13,7 +13,6 @@ class Planeacion extends Model
     protected $fillable = [
         "idResultadoAprendizaje",
         "idActividadProyecto",
-        "horas"
     ];
     public $timestamps = false;
 
