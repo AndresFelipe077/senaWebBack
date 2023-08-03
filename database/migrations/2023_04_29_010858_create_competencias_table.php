@@ -18,9 +18,14 @@ class CreateCompetenciasTable extends Migration
             $table->increments('id');
             $table->text ('nombreCompetencia');
             $table->text ('codigoCompetencia');
-
-            $table->foreign('idPrograma')->references('id')->on('programa');
+            $table->integer ('horas');
+            $table->unsignedInteger('idTipoCompetencia');
             $table->unsignedInteger('idPrograma');
+
+            $table->foreign('idTipoCompetencia')->references('id')->on('tipoCompetencias');
+            $table->foreign('idPrograma')->references('id')->on('programa');
+
+
 
 
             $table->timestamps();

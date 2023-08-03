@@ -17,7 +17,6 @@ class CreatePlaneacionTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('idResultadoAprendizaje');
             $table->unsignedInteger('idActividadProyecto');
-            $table->integer('horas');
 
             $table->foreign('idResultadoAprendizaje')->references('id')->on('resultadoAprendizaje');
             $table->foreign('idActividadProyecto')->references('id')->on('actividadProyecto');
