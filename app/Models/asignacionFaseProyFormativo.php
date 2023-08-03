@@ -12,7 +12,8 @@ class asignacionFaseProyFormativo extends Model
     protected $table = 'asignacionFaseProyecto';
         protected $fillable = [
         'idFase',
-        'idProyectoFormativo'
+        'idProyectoFormativo',
+        'descripcion'
     ];
 
 

@@ -15,8 +15,8 @@ class CreateProgramasTable extends Migration
     {
         Schema::create('programa', function (Blueprint $table) {
             $table->increments('id');          
-            $table->string('nombrePrograma');
-            $table->string('codigoPrograma');
+            $table->text('nombrePrograma');
+            $table->text('codigoPrograma');
             $table->text('descripcionPrograma');
             $table->integer('totalHoras');
             $table->integer('etapaLectiva');
@@ -24,7 +24,7 @@ class CreateProgramasTable extends Migration
             $table->integer('creditosLectiva');
             $table->integer('creditosProductiva');
             $table->string ('rutaArchivo');
-            $table->string ('version');
+            $table->text ('version');
 
             $table->unsignedInteger('idTipoPrograma');
             $table->foreign('idTipoPrograma')->references('id')->on('tipoPrograma');
