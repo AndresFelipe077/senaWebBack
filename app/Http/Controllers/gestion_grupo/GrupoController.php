@@ -4,19 +4,29 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
-use App\Models\AsignacionParticipante;
-use App\Models\EstadoGrupoInfraestructura;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
-use App\Models\Infraestructura;
-use App\Models\Jornada;
-use ArrayObject;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
 {
+    private $relations;
 
+    public function __construct()
+    {
+        $this->relations = [
+            'tipoGrupo',
+            'programa',
+            // 'instructor.persona',
+            'nivelFormacion',
+            'tipoFormacion',
+            'estadoGrupo',
+            'tipoOferta',
+            'jornadas.diaJornada',
+            'participantes',
+            'infraestructuras'
+        ];
+    }
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -27,7 +37,7 @@ class GrupoController extends Controller
 
     $grupos = Grupo::with([
       'tipoGrupo',
-      'programa',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
@@ -68,13 +78,18 @@ class GrupoController extends Controller
   {
     $data = $request->all();
 
+    $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
+    if ($existingGrupo) {
+        return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+    }
+
     $grupo = new Grupo([
       'nombre' => $data['nombre'],
       'fechaInicialGrupo' => $data['fechaInicialGrupo'],
       'fechaFinalGrupo' => $data['fechaFinalGrupo'],
       'observacion' => $data['observacion'],
       'idTipoGrupo' => $data['idTipoGrupo'],
-      'idPrograma' => $data['idPrograma'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
       'idNivel' => $data['idNivel'],
       'idTipoFormacion' => $data['idTipoFormacion'],
       'idEstado' => $data['idEstado'],
@@ -86,7 +101,7 @@ class GrupoController extends Controller
     $infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
-      
+
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
 
       if ($existeAsignacion) {
@@ -119,8 +134,7 @@ class GrupoController extends Controller
   {
     $dato = Grupo::with([
       'tipoGrupo',
-      'programa',
-      'instructor.persona',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
@@ -151,6 +165,48 @@ class GrupoController extends Controller
     return response()->json($dato);
   }
 
+  public function showByIdInfra(int $id)
+    {
+
+        $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
+            $query->where('idInfraestructura', $id);
+        })->with($this->relations)->get();
+
+        $newGrupos = $grupos->map(function ($grupo) {
+            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+                $pivot = $infr['pivot'];
+                unset($infr['pivot']);
+                $infr['horario_infraestructura'] = $pivot;
+                return $infr;
+            });
+
+            return $grupo;
+        });
+
+        return response()->json($newGrupos);
+    }
+
+    public function showByIdSede(int $id)
+    {
+
+        $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
+            $query->where('idSede', $id);
+        })->with($this->relations)->get();
+
+        $newGrupos = $grupos->map(function ($grupo) {
+            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+                $pivot = $infr['pivot'];
+                unset($infr['pivot']);
+                $infr['horario_infraestructura'] = $pivot;
+                return $infr;
+            });
+
+            return $grupo;
+        });
+
+        return response()->json($newGrupos);
+    }
+
 
   /**
    * Actualizar estado de las infraestructuras y crear una nueva infraestructura con su grupo cuando se afecte esta
@@ -178,7 +234,7 @@ class GrupoController extends Controller
       'fechaFinalGrupo' => $data['fechaFinalGrupo'],
       'observacion' => $data['observacion'],
       'idTipoGrupo' => $data['idTipoGrupo'],
-      'idPrograma' => $data['idPrograma'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
       'idNivel' => $data['idNivel'],
       'idTipoFormacion' => $data['idTipoFormacion'],
       'idEstado' => $data['idEstado'],
@@ -283,7 +339,7 @@ class GrupoController extends Controller
       ->update(['idEstado' => 1]); // Actualiza el campo idEstado a 1 (EN CURSO)
   }
 
-  
+
   /**
    * Verifica si hay asignación de infraestructuras en las jornadas y horarios especificados.
    *
