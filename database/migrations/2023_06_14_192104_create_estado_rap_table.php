@@ -15,7 +15,7 @@ class CreateEstadoRapTable extends Migration
     {
         Schema::create('estadoRap', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombreEstado');
+            $table->text('nombreEstado');
             $table->timestamps();
         });
     }

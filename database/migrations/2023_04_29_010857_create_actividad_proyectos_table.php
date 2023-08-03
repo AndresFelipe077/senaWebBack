@@ -15,12 +15,12 @@ class CreateActividadProyectosTable extends Migration
     {
         Schema::create('actividadProyecto', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombreActividadProyecto');
+            $table->text('nombreActividadProyecto');
 
             $table->unsignedInteger('idFaseProyecto');
             $table->foreign('idFaseProyecto')->references('id')->on('asignacionFaseProyecto');
 
-            $table->string('codigoAP');
+            $table->text('codigoAP');
             $table->timestamps();
         });
     }

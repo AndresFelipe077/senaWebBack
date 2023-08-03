@@ -13,18 +13,12 @@ class resultadoAprendizaje extends Model
     protected $fillable = [
         "rap",
         "codigoRap",
-        "idTipoRaps",
         "idCompetencia"
     ];
     public $timestamps = false;
 
 
     // relacion uno a muchos entre raps y tipo raps
-
-    public function tipoRaps()
-    {
-        return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
-    }
 
     public function actividadesAprendizaje()
     {

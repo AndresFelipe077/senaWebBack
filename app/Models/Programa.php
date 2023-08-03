@@ -27,7 +27,8 @@ protected $appends = ['docUrl'];
     "etapaProductiva",
     "creditosLectiva",
     "creditosProductiva",
-    "rutaArchivo"
+    "rutaArchivo",
+    "version"
     ];
     public $timestamps = false;
 
