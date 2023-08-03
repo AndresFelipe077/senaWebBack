@@ -15,12 +15,12 @@ class AsociacionCriteriosPlaneacion extends Migration
     {
         Schema::create('asociacionCriteriosPlaneacion', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('id_planeacion')->nullable();
+            $table->unsignedInteger('id_planeacion');
              $table->unsignedBigInteger('id_criterioEvaluacion')->nullable();
        
 
-            $table->foreign('id_planeacion')->references('id')->on('planeacion')->onDelete('set null');
-            $table->foreign('id_criterioEvaluacion')->references('id')->on('criteriosEvaluacion')->onDelete('set null');
+            $table->foreign('id_planeacion')->references('id')->on('planeacion');
+            $table->foreign('id_criterioEvaluacion')->references('id')->on('criteriosEvaluacion');
             $table->timestamps();
         });
     }

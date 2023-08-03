@@ -29,4 +29,10 @@ class Planeacion extends Model
     {
         return $this->belongsToMany(criteriosEvaluacion::class, 'asociacionCriteriosPlaneacion', 'id_planeacion', 'id_criterioEvaluacion');
     }
+    public function actividadAprendizajes(){
+        return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
+    }
+
 }
+  
+

@@ -58,8 +58,8 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
 
 
-        TipoProgramas::factory(10)->create();
-        Programa::factory(10)->create();
+        TipoProgramas::factory(0)->create();
+        Programa::factory(0)->create();
 
         $this->call(CompanySeeder::class);
         $this->call(PermissionSeeder::class);
@@ -92,9 +92,9 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
 
-        proyectoFormativo::factory(10)->create();
+        proyectoFormativo::factory(0)->create();
 
-        Grupo::factory(10)->create();
+        Grupo::factory(0)->create();
     }
 
 }

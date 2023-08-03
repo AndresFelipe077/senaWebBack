@@ -16,20 +16,22 @@ class actividadAprendizaje extends Model
         "NombreAA",
         "codigoAA",
         "idEstado",
-        "idCompetenciaRap"
+        "idPlaneacion"
     ];
 
     public $timestamps =false;
     public function rap()
     {
-        return $this->belongsTo(AsignacionCompetenciaRap::class, 'idCompetenciaRap');
+        return $this->belongsTo(resultadoAprendizaje::class, 'idRap');
     }
     public function estado()
     {
         return $this->belongsTo(Status::class, 'idEstado');
     }
 
-
+    public function planeacion(){
+        return $this->belongsTo(Planeacion::class, 'idPlaneacion');
+    }
 
 }
 
