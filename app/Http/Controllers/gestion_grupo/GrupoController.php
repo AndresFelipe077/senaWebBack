@@ -299,6 +299,11 @@ class GrupoController extends Controller
     $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
     $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
 
+    if (strtotime($fechaFinal) < strtotime('today')) {
+      // Si la "fechaFinal" ya ha pasado, no se guarda por infraestructuras que han terminado.
+      return; // No se guarda la infraestructura y se sale de la función.
+    }
+
     // Verificar si existe una infraestructura anterior no actualizada
     $existingInfraestructura = HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
       ->where('idEstado', '<>', 5) // Excluir infraestructuras ya actualizadas
