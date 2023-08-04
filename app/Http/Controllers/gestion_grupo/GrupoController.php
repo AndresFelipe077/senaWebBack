@@ -24,7 +24,9 @@ class GrupoController extends Controller
       'tipoOferta',
       'jornadas.diaJornada',
       'participantes',
-      'infraestructuras'
+      'infraestructuras',
+      'infraestructuras.sede'
+
     ];
   }
   /**
@@ -44,7 +46,8 @@ class GrupoController extends Controller
       'tipoOferta',
       'jornadas',
       'participantes',
-      'infraestructuras'
+      'infraestructuras',
+      'infraestructuras.sede'
     ])->get();
 
     //quitar pivots
@@ -141,7 +144,8 @@ class GrupoController extends Controller
       'tipoOferta',
       'jornadas',
       'participantes',
-      'infraestructuras'
+      'infraestructuras',
+      'infraestructuras.sede'
     ])->find($id);
 
     if (!$dato) {
