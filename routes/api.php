@@ -335,3 +335,7 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
 Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
 Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
+
+
+///////////////////////
+Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
