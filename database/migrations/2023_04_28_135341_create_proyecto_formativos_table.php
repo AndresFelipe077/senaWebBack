@@ -15,8 +15,8 @@ class CreateProyectoFormativosTable extends Migration
     {
         Schema::create('proyectoFormativo', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre');
-            $table->string('codigo');
+            $table->text('nombre');
+            $table->text('codigo');
             $table->integer('tiempoEstimado');
             $table->integer('numeroTotalRaps');
 

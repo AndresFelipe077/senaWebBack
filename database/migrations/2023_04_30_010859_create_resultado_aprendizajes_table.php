@@ -15,12 +15,10 @@ class CreateResultadoAprendizajesTable extends Migration
     {
         Schema::create('resultadoAprendizaje', function (Blueprint $table) {
             $table->increments('id');
-            $table->string ('rap',20);
-            $table->string('codigoRap',50);
-            $table->unsignedInteger('idTipoRaps');
+            $table->text ('rap');
+            $table->text('codigoRap');
             $table->unsignedInteger('idCompetencia');
 
-            $table->foreign('idTipoRaps')->references('id')->on('tipoRaps');
             $table->foreign('IdCompetencia')->references('id')->on('competencias');
 
 

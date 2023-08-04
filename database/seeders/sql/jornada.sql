@@ -1,12 +1,6 @@
---
--- Dumping data for table `jornada`
---
+INSERT INTO `jornada` VALUES 
+(1,'AM','LUNES | MARTES | MIERCOLES | JUEVES | VIERNES','07:00:00','13:00:00',6,'2023-08-02 19:29:25','2023-08-02 19:29:25'),
+(2,'PM','LUNES | MARTES | MIERCOLES | JUEVES | VIERNES | SABADO','13:00:00','18:00:00',5,'2023-08-02 19:29:57','2023-08-02 19:30:17'),
+(3,'NOCHE','LUNES | MARTES | MIERCOLES | JUEVES | VIERNES','18:00:00','22:00:00',4,'2023-08-02 19:31:15','2023-08-02 19:31:15'),
+(4,'AM SABADO','SABADO','07:00:00','13:00:00',6,'2023-08-02 19:31:45','2023-08-02 19:31:45');
 
-INSERT INTO `jornada` (`id`, `nombreJornada`, `descripcion`, `horaInicial`, `horaFinal`, `numeroHoras`)
-VALUES
-(1, 'MAÑANA', 'Descripción de la jornada MAÑANA', '08:00:00', '12:00:00', 4),
-(2, 'TARDE', 'Descripción de la jornada TARDE', '13:00:00', '17:00:00', 4),
-(3, 'NOCHE', 'Descripción de la jornada NOCHE', '18:00:00', '22:00:00', 4);
-
-
--- --------------------------------------------------------

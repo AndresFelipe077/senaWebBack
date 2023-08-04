@@ -13,7 +13,6 @@ class Planeacion extends Model
     protected $fillable = [
         "idResultadoAprendizaje",
         "idActividadProyecto",
-        "horas"
     ];
     public $timestamps = false;
 
@@ -32,7 +31,7 @@ class Planeacion extends Model
     public function actividadAprendizajes(){
         return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
     }
-
+    
 }
   
 

@@ -30,7 +30,6 @@ use App\Http\Controllers\ProyectoFormativoController;
 use App\Http\Controllers\TipoProgramasController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
-use App\Http\Controllers\TipoRapsController;
 use App\Http\Controllers\configuracionRapController;
 use App\Http\Controllers\AsignacionCompetenciaProyectoController;
 use App\Http\Controllers\PlaneacionController;
@@ -60,6 +59,7 @@ use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
+use App\Http\Controllers\TipoCompetenciasController;
 use App\Models\asignacionCompetenciaProyecto;
 
 /*
@@ -126,7 +126,7 @@ Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeControl
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
 Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapController::class, 'showByCompetencia']);
 //rutas para tipo resultados aprendizaje
-Route::resource('tipo_resultados',  TipoRapsController::class);
+Route::resource('tipo_competencias',  TipoCompetenciasController::class);
 //rutas para actividad aprendizaje 3 vanesa
 Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
 Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::class,'showByIdRap']);
@@ -312,12 +312,6 @@ Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
 
 /////////////////////////
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
-
-Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
-
-
-
-
 
 
 //////////////////////////////////competencias checks

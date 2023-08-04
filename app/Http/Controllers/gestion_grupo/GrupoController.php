@@ -10,23 +10,23 @@ use Illuminate\Http\Request;
 
 class GrupoController extends Controller
 {
-    private $relations;
+  private $relations;
 
-    public function __construct()
-    {
-        $this->relations = [
-            'tipoGrupo',
-            'programa',
-            // 'instructor.persona',
-            'nivelFormacion',
-            'tipoFormacion',
-            'estadoGrupo',
-            'tipoOferta',
-            'jornadas.diaJornada',
-            'participantes',
-            'infraestructuras'
-        ];
-    }
+  public function __construct()
+  {
+    $this->relations = [
+      'tipoGrupo',
+      'programa',
+      // 'instructor.persona',
+      'nivelFormacion',
+      'tipoFormacion',
+      'estadoGrupo',
+      'tipoOferta',
+      'jornadas.diaJornada',
+      'participantes',
+      'infraestructuras'
+    ];
+  }
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -80,7 +80,7 @@ class GrupoController extends Controller
 
     $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
     if ($existingGrupo) {
-        return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+      return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
     }
 
     $grupo = new Grupo([
@@ -166,46 +166,46 @@ class GrupoController extends Controller
   }
 
   public function showByIdInfra(int $id)
-    {
+  {
 
-        $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
-            $query->where('idInfraestructura', $id);
-        })->with($this->relations)->get();
+    $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
+      $query->where('idInfraestructura', $id);
+    })->with($this->relations)->get();
 
-        $newGrupos = $grupos->map(function ($grupo) {
-            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-                $pivot = $infr['pivot'];
-                unset($infr['pivot']);
-                $infr['horario_infraestructura'] = $pivot;
-                return $infr;
-            });
+    $newGrupos = $grupos->map(function ($grupo) {
+      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+        $pivot = $infr['pivot'];
+        unset($infr['pivot']);
+        $infr['horario_infraestructura'] = $pivot;
+        return $infr;
+      });
 
-            return $grupo;
-        });
+      return $grupo;
+    });
 
-        return response()->json($newGrupos);
-    }
+    return response()->json($newGrupos);
+  }
 
-    public function showByIdSede(int $id)
-    {
+  public function showByIdSede(int $id)
+  {
 
-        $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
-            $query->where('idSede', $id);
-        })->with($this->relations)->get();
+    $grupos = Grupo::whereHas('infraestructuras', function ($query) use ($id) {
+      $query->where('idSede', $id);
+    })->with($this->relations)->get();
 
-        $newGrupos = $grupos->map(function ($grupo) {
-            $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-                $pivot = $infr['pivot'];
-                unset($infr['pivot']);
-                $infr['horario_infraestructura'] = $pivot;
-                return $infr;
-            });
+    $newGrupos = $grupos->map(function ($grupo) {
+      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+        $pivot = $infr['pivot'];
+        unset($infr['pivot']);
+        $infr['horario_infraestructura'] = $pivot;
+        return $infr;
+      });
 
-            return $grupo;
-        });
+      return $grupo;
+    });
 
-        return response()->json($newGrupos);
-    }
+    return response()->json($newGrupos);
+  }
 
 
   /**
@@ -299,6 +299,11 @@ class GrupoController extends Controller
     $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
     $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
 
+    if (strtotime($fechaFinal) < strtotime('today')) {
+      // Si la "fechaFinal" ya ha pasado, no se guarda por infraestructuras que han terminado.
+      return; // No se guarda la infraestructura y se sale de la función.
+    }
+
     // Verificar si existe una infraestructura anterior no actualizada
     $existingInfraestructura = HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
       ->where('idEstado', '<>', 5) // Excluir infraestructuras ya actualizadas
@@ -320,7 +325,6 @@ class GrupoController extends Controller
     ]);
 
     $horarioInfraestructura->save();
-
   }
 
 
@@ -415,5 +419,4 @@ class GrupoController extends Controller
 
     return false;
   }
-
 }
