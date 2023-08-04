@@ -6,15 +6,33 @@ use App\Models\AsociacionCriteriosPlaneacion;
 use App\Models\criteriosEvaluacion as ModelsCriteriosEvaluacion;
 use App\Models\Planeacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CriteriosEvaluacion extends Controller
 {
+
+
+
+    
 
     
     public function index()
     {
         $criterios = ModelsCriteriosEvaluacion::all();
         return response() -> json($criterios);
+    }
+
+
+    public function consulta($competenciaId) {
+       
+        $datos = DB::table('competencias')
+            ->join('resultadoAprendizaje', 'competencias.id', '=', 'resultadoAprendizaje.idCompetencia')
+            ->select('competencias.nombreCompetencia', 'resultadoAprendizaje.rap')
+            ->where('competencias.id', $competenciaId)
+            ->first();
+    
+        // Devuelve los datos
+        return $datos;
     }
 
 
