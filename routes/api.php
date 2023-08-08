@@ -196,8 +196,7 @@ Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJorna
 
 //grupos
 Route::resource('grupos', GrupoController::class);
-//buscador para el controlador grupos
-Route::get('obtenergrupos', [GrupoController::class, 'buscarGrupos']);
+// Get infraestructura and sede
 Route::get('grupos/infraestructura/{id}', [GrupoController::class,'showByIdInfra']);
 Route::get('grupos/sede/{id}', [GrupoController::class,'showByIdSede']);
 
