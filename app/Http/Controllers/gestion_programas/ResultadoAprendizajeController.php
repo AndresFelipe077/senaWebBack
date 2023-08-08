@@ -11,6 +11,8 @@ class resultadoAprendizajeController extends Controller{
 
     private $relations;
 
+
+    
     
     public function __construct()
     {
