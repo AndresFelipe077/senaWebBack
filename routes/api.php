@@ -257,7 +257,7 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
-Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
 
 
 
@@ -306,7 +306,7 @@ Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
 Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
 Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
 
-
+Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
 
 
 
@@ -326,10 +326,5 @@ Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
 
 
-Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
-Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
-Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
-
-
 ///////////////////////
-Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
+
