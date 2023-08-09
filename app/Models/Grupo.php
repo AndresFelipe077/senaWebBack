@@ -19,7 +19,7 @@ class Grupo extends Model
         return $this->belongsTo(TipoGrupo::class, 'idTipoGrupo', 'id');
     }
 
-    //Relacion uno a muchos Inversa(programa->Grupo)
+    //Relacion uno a muchos Inversa(proyectoFormativo->Grupo)
     public function proyectoFormativo()
     {
         return $this->belongsTo(proyectoFormativo::class, 'idProyectoFormativo', 'id');
