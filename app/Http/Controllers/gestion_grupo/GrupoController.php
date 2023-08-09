@@ -16,8 +16,7 @@ class GrupoController extends Controller
   {
     $this->relations = [
       'tipoGrupo',
-      'programa',
-      // 'instructor.persona',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
