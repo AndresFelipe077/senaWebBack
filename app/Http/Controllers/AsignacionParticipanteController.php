@@ -5,10 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\AsignacionParticipante;
 use App\Models\Grupo;
 use App\Models\Programa;
+use App\Models\proyectoFormativo;
 use Illuminate\Http\Request;
 
 class AsignacionParticipanteController extends Controller
+
 {
+
+
+
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'grupo',
+            'usuario',
+            'tipoParticipacion',
+            'EstadoParticipante',
+        ];
+    }
     public function index()
     {
         $data = AsignacionParticipante::with(['usuario', 'grupo'])->get();
@@ -51,9 +67,11 @@ class AsignacionParticipanteController extends Controller
 
 
 
-    public function obtenerGruposPorPrograma($idPrograma)
+    public function gruposPorPrograma($programaId)
     {
-        $grupos = Grupo::where('idPrograma', $idPrograma)->get();
+        $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
+            $query->where('idPrograma', $programaId);
+        })->get();
 
         return response()->json($grupos);
     }
