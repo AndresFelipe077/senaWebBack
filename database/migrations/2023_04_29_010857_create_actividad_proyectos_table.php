@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTipoRapsTable extends Migration
+class CreateActividadProyectosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateTipoRapsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipoRaps', function (Blueprint $table) {
+        Schema::create('actividadProyecto', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('nombre');
-            $table->text('codigo');
+            $table->text('nombreActividadProyecto');
+
+            $table->unsignedInteger('idFaseProyecto');
+            $table->foreign('idFaseProyecto')->references('id')->on('asignacionFaseProyecto');
+
+            $table->text('codigoAP');
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ class CreateTipoRapsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipoRaps');
+        Schema::dropIfExists('actividadProyecto');
     }
 }

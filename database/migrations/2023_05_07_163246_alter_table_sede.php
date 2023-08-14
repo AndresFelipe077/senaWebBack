@@ -17,7 +17,7 @@ class AlterTableSede extends Migration
             $table->unsignedInteger('idCiudad');
             $table->foreign('idCiudad')->references('id')->on('ciudad')->onDelete('cascade');
             $table->unsignedInteger('idCentroFormacion');
-            $table->foreign('idCentroFormacion')->references('id')->on('centroformacion')->onDelete('cascade');
+            $table->foreign('idCentroFormacion')->references('id')->on('centroFormacion')->onDelete('cascade');
         });
     }
 

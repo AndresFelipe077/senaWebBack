@@ -14,16 +14,11 @@ class CompanySeeder extends Seeder
     public function run()
     {
         \App\Models\Company::factory()->create([
-            'razonSocial' => "Virtual T",
+            'razonSocial' => "Sena",
             'rutaLogo' => '/default/logoSena.png'
 
         ]);
 
-        \App\Models\Company::factory()->create([
-            'razonSocial' => "Rápido Tambo",
-            'rutaLogo' => '/default/rapido-tambo-logo.jpg'
-        ]);
-
-        \App\Models\Company::factory(10)->create();
+        // \App\Models\Company::factory(10)->create();
     }
 }

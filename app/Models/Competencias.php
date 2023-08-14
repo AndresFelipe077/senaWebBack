@@ -14,23 +14,37 @@ class Competencias extends Model
     protected $fillable = [
         "nombreCompetencia",
         "codigoCompetencia",
-        "idActividadProyecto",
-      
+        "horas",
+        "idPrograma",
+        "idTipoCompetencia"
     ];
 
-    public $timestamps =false;
+    public $timestamps = false;
 
 
     //relacion uno a muchos
-    public function actividadProyecto()
+    public function programas()
     {
-        return $this->belongsTo(ActividadProyecto::class, 'idActividadProyecto');
+        return $this->belongsTo(tipoCompetencias::class, 'idPrograma');
     }
-    
+
+    public function tipoCompetencias()
+    {
+        return $this->belongsTo(tipoCompetencias::class, 'idTipoCompetencia');
+    }
+
     //relacion muchos a  muchos
     public function resultados()
-{
-    return $this->belongsToMany(ResultadoAprendizaje::class, 'asignacionCompetenciasRaps', 'idCompetencia', 'idRap');
-}
-}
+    {
+        return $this->belongsToMany(ResultadoAprendizaje::class, 'asignacionCompetenciasRaps', 'idCompetencia', 'idRap');
+    }
 
+    public function resultadosAprendizaje()
+    {
+        return $this->hasMany(resultadoAprendizaje::class, 'idCompetencia', 'id');
+    }
+    public function proyectosFormativos()
+    {
+        return $this->belongsToMany(proyectoFormativo::class, 'asignacionCompetenciaProyecto', 'idCompetencia', 'idProyecto');
+    }
+}

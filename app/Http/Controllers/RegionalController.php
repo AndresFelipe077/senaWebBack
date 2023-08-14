@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\regional;
+use App\Models\Regional;
 use Illuminate\Http\Request;
 
 class RegionalController extends Controller
@@ -17,7 +17,7 @@ class RegionalController extends Controller
     {
         $nombreRegional = $request->input('nombreRegional');
 
-        $regionales = regional::query();
+        $regionales = Regional::query();
         if ($nombreRegional) {
             $regionales->where('nombreRegional', $nombreRegional);
         }
@@ -34,7 +34,7 @@ class RegionalController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $regional = new regional($data);
+        $regional = new Regional($data);
         $regional->save();
 
         return response()->json($regional, 201);
@@ -48,7 +48,7 @@ class RegionalController extends Controller
      */
     public function show(int $id)
     {
-        $regional = regional::find($id);
+        $regional = Regional::find($id);
         return response()->json($regional);
     }
 
@@ -62,7 +62,7 @@ class RegionalController extends Controller
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $regional = regional::findOrFail($id);
+        $regional = Regional::findOrFail($id);
         $regional->fill($data);
         $regional->save();
 
@@ -77,7 +77,7 @@ class RegionalController extends Controller
      */
     public function destroy(int $id)
     {
-        $regional = regional::findOrFail($id);
+        $regional = Regional::findOrFail($id);
         $regional->delete();
 
         return response()->json([], 204);

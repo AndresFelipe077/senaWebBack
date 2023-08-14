@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAsignacionCompetenciasRapsTable extends Migration
+class CreateAsignacionCompetenciaProyectosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,13 @@ class CreateAsignacionCompetenciasRapsTable extends Migration
      */
     public function up()
     {
-        Schema::create('asignacionCompetenciasRaps', function (Blueprint $table) {
-
+        Schema::create('asignacionCompetenciaProyecto', function (Blueprint $table) {
             $table->increments('id');
-
-            
             $table->unsignedInteger('idCompetencia');
-            $table->foreign('idCompetencia')->references('id')->on('competencias');
+            $table->unsignedInteger('idProyecto');
 
-            $table->unsignedInteger('idRap');
-            $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
-
+            $table->foreign('idCompetencia')->references('id')->on('competencias')->onDelete('cascade');
+            $table->foreign('idProyecto')->references('id')->on('proyectoFormativo')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -35,6 +31,6 @@ class CreateAsignacionCompetenciasRapsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('asignacionCompetenciasRaps');
+        Schema::dropIfExists('asignacionCompetenciaProyecto');
     }
 }

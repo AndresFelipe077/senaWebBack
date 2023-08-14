@@ -15,8 +15,8 @@ class CreateFasesTable extends Migration
     {
         Schema::create('fase', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombreFase');
-            $table->string('codigoFase');
+            $table->text('nombreFase');
+            $table->text('codigoFase');
             $table->timestamps();
         });
     }

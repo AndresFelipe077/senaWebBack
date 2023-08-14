@@ -13,13 +13,13 @@ class ActividadProyecto extends Model
     protected $fillable = [
     "nombreActividadProyecto",
     "codigoAP",
-    "idFase"
+    "idFaseProyecto"
     ];
     public $timestamps = false;
 
-    public function fase()
+    public function faseProyecto()
     {
-        return $this->belongsTo(Fase::class, 'idFase');
+        return $this->belongsTo(asignacionFaseProyFormativo::class, 'idFaseProyecto');
     }
 
 }

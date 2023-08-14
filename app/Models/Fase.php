@@ -17,8 +17,19 @@ class Fase extends Model
     ];
     public $timestamps = false;
 
+    //relacion muchos a muchos con fase
+    public function proyectos()
+    {
+        return $this->belongsToMany(
+            proyectoFormativo::class,
+            asignacionFaseProyFormativo::class,
+            'idFase', 'idProyectoFormativo'
+        )->withPivot('id');
+    }
+
     public function proyectosFormativos()
     {
         return $this->belongsToMany(proyectoFormativo::class, 'asignacionFaseProyecto');
     }
+    
 }

@@ -15,16 +15,14 @@ class CreateActividadAprendizajeTable extends Migration
     {
         Schema::create('actividadAprendizaje', function (Blueprint $table) {
             $table->increments('id');
-            $table->string ('NombreAA',20);
-            $table->string('codigoAA',50);
+            $table->text ('NombreAA',20);
+            $table->text('codigoAA',50);
 
-
+            $table->unsignedInteger('idPlaneacion');
+            $table->foreign('idPlaneacion')->references('id')->on('planeacion');
 
             $table->unsignedInteger('idEstado');
             $table->foreign('idEstado')->references('id')->on('estado');
-
-            $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
-            $table->unsignedInteger('idRap');
 
             $table->timestamps();
 

@@ -14,7 +14,8 @@ class EstadoController extends Controller
      */
     public function index()
     {
-        //
+        $estado = Estado::all();
+        return response() -> json($estado);
     }
 
     /**
@@ -34,7 +35,7 @@ class EstadoController extends Controller
      * @param  \App\Models\Estado  $estado
      * @return \Illuminate\Http\Response
      */
-    public function show(Estado $estado)
+    public function show(int $estado)
     {
         //
     }

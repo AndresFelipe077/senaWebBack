@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TipoCompetencias;
 use App\Models\TipoRaps;
 use Illuminate\Http\Request;
 use Symfony\Contracts\Service\Attribute\Required;
 
-class TipoRapsController extends Controller
+class TipoCompetenciasController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,11 +16,11 @@ class TipoRapsController extends Controller
      */
     public function index(Request $request)
     {
-        $nombreTipoRap = $request->input('nombre');
+        $nombreTipoCompetencia = $request->input('nombre');
 
-        $tipoRaps = TipoRaps::query();
-        if($nombreTipoRap){
-            $tipoRaps->where('nombre',$nombreTipoRap);
+        $tipoRaps = TipoCompetencias::query();
+        if($nombreTipoCompetencia){
+            $tipoRaps->where('nombre',$nombreTipoCompetencia);
         }
 
         return response()->json($tipoRaps->get());
@@ -34,7 +35,9 @@ class TipoRapsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $tipoCompetencia = TipoCompetencias::create($data);
+        return response() -> json($tipoCompetencia);
     }
 
     /**
@@ -45,9 +48,9 @@ class TipoRapsController extends Controller
      */
     public function show($id)
     {
-        $tipoRaps = TipoRaps::find($id);
+        $tipoCompetencias = TipoCompetencias::find($id);
 
-        return response()->json($tipoRaps,200);
+        return response()->json($tipoCompetencias,200);
     }
 
     /**

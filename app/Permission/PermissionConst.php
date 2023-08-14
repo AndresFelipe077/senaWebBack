@@ -5,7 +5,7 @@ namespace App\Permission;
 class PermissionConst
 {
     // const GESTION_MENU = 'gestion_menu';
-
+    const HOME   = 'HOME';
     const GESTION_TIPO_CONTRATO    = 'GESTION_TIPO_CONTRATO';
     const GESTION_ROLES            = 'GESTION_ROLES';
     const GESTION_ROL_PERMISOS     = 'GESTION_ROL_PERMISOS';
@@ -35,10 +35,10 @@ class PermissionConst
     const GESTION_PAGO_NOMINA      = 'GESTION_PAGO_NOMINA';
     const GESTION_GRUPO            = 'GESTION_GRUPO'; // se crea constante de permiso GRUPO
     const GESTION_TIPO_GRUPO       = 'GESTION_TIPO_GRUPO'; // se crea constante de permiso TIPO_GRUPO
-    const CALENDARIO               = 'CALENDARIO';
     const CENTRO_FORMACION         = 'CENTRO_FORMACION';
     const REGIONAL      = 'REGIONAL';
     const GESTION_MATRICULA        ='GESTION_MATRICULA';
 
     const GESTION_FICHAS = 'GESTION_FICHAS';
+    const GESTION_CRITERIOS_EVALUACION       = 'GESTION_CRITERIOS_EVALUACION';
 }

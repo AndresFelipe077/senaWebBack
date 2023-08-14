@@ -4,25 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProyectoFormativosTable extends Migration
+class CreateCompetenciasTable extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
+    //''''''''creacion de la tabla'''''''''//
     public function up()
     {
-        Schema::create('proyectoFormativo', function (Blueprint $table) {
+        Schema::create('competencias', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre');
-            $table->string('codigo');
-            $table->integer('tiempoEstimado');
-            $table->integer('numeroTotalRaps');
-            $table->integer('idCentroFormacion');
-
+            $table->text ('nombreCompetencia');
+            $table->text ('codigoCompetencia');
+            $table->integer ('horas');
+            $table->unsignedInteger('idTipoCompetencia');
             $table->unsignedInteger('idPrograma');
+
+            $table->foreign('idTipoCompetencia')->references('id')->on('tipoCompetencias');
             $table->foreign('idPrograma')->references('id')->on('programa');
+
+
+
 
             $table->timestamps();
         });
@@ -35,6 +39,7 @@ class CreateProyectoFormativosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proyectoFormativo');
+        Schema::dropIfExists('competencias');
     }
+    
 }

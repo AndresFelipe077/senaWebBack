@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAsignacionFaseProgramaTable extends Migration
+class CreateAsignacionFaseProyectoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,10 +16,11 @@ class CreateAsignacionFaseProgramaTable extends Migration
         Schema::create('asignacionFaseProyecto', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('idFase');
-            $table->foreign('idFase')->references('id')->on('fase');
+            $table->unsignedInteger('idProyectoFormativo');
+            $table->text ('descripcion');
 
-            $table->unsignedInteger('idPrograma');
-            $table->foreign('idPrograma')->references('id')->on('programa');
+            $table->foreign('idProyectoFormativo')->references('id')->on('proyectoFormativo');
+            $table->foreign('idFase')->references('id')->on('fase');
 
             $table->timestamps();
         });

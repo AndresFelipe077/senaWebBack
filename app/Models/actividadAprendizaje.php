@@ -16,7 +16,7 @@ class actividadAprendizaje extends Model
         "NombreAA",
         "codigoAA",
         "idEstado",
-        "idRap"
+        "idPlaneacion"
     ];
 
     public $timestamps =false;
@@ -29,7 +29,9 @@ class actividadAprendizaje extends Model
         return $this->belongsTo(Status::class, 'idEstado');
     }
 
-
+    public function planeacion(){
+        return $this->belongsTo(Planeacion::class, 'idPlaneacion');
+    }
 
 }
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateActividadProyectosTable extends Migration
+class CreateTipoCompetenciasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateActividadProyectosTable extends Migration
      */
     public function up()
     {
-        Schema::create('actividadProyecto', function (Blueprint $table) {
+        Schema::create('tipoCompetencias', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombreActividadProyecto');
-
-            $table->unsignedInteger('idFase');
-            $table->foreign('idFase')->references('id')->on('fase');
-
-            $table->string('codigoAP');
+            $table->text('nombre');
+            $table->text('codigo');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateActividadProyectosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('actividadProyecto');
+        Schema::dropIfExists('tipoCompetencias');
     }
 }

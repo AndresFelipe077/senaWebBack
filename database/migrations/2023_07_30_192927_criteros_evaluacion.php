@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCalendario1sTable extends Migration
+class CriterosEvaluacion extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateCalendario1sTable extends Migration
      */
     public function up()
     {
-        Schema::create('calendario1s', function (Blueprint $table) {
+        Schema::create('criteriosEvaluacion', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('codigo'); 
+            $table->text('descripcion'); 
+            $table->timestamps(); 
         });
     }
 
@@ -26,6 +28,6 @@ class CreateCalendario1sTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calendario1s');
+        Schema::dropIfExists('criteriosEvaluacion');
     }
 }
