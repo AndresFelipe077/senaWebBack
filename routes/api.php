@@ -271,11 +271,22 @@ Route::resource('asignacionParticipantes', AsignacionParticipanteController::cla
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
 
 
-Route::get('grupos/programa/{idPrograma}', [AsignacionParticipanteController::class, 'gruposPorPrograma']);
+
+Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']);// SE BUSCA PROGRAMA
+
+// showByIdPrograma SE OBTIENE ES PROYECTOFORMATIVO
+
+Route::get('grupos/programa/{idPrograma}', [GrupoController::class, 'showByIdProyectoFor']); // se encuentra en grupo POR MEDIO DE ESE PROYECTOF
+
+
+
+
+
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
+
 
 
 

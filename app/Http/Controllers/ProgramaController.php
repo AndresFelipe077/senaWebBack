@@ -46,8 +46,8 @@ private function storeDocumento(Request $request, $default = true){
         $rutaDoc = Programa::RUTA_DOC_DEFAULT;
     }
     if($request->hasFile('archivo')){
-        $rutaDoc = 
-        '/storage/' . 
+        $rutaDoc =
+        '/storage/' .
         $request
         ->file('archivo')
         ->store(Programa::RUTA_DOC, ['disk' => 'public']);
@@ -91,5 +91,15 @@ private function storeDocumento(Request $request, $default = true){
         $programa->delete();
 
         return response()->json([],204);
+    }
+
+
+    public function buscarProgramas(Request $request)
+    {
+        $searchTerm = $request->input('search_term');
+
+        $programas = Programa::where('nombrePrograma', 'like', '%' . $searchTerm . '%')->get();
+
+        return response()->json($programas);
     }
 }

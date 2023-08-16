@@ -67,14 +67,9 @@ class AsignacionParticipanteController extends Controller
 
 
 
-    public function gruposPorPrograma($programaId)
-    {
-        $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
-            $query->where('idPrograma', $programaId);
-        })->get();
 
-        return response()->json($grupos);
-    }
+
+
 
     // public function obtenerAprendicesPorGrupo($idGrupo)
     // {
