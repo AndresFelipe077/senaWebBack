@@ -4,7 +4,6 @@ namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
 use App\Models\resultadoAprendizaje;
-use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class resultadoAprendizajeController extends Controller{
