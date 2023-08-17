@@ -276,7 +276,7 @@ Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']);
 
 // showByIdPrograma SE OBTIENE ES PROYECTOFORMATIVO
 
-Route::get('grupos/programa/{idPrograma}', [GrupoController::class, 'showByIdProyectoFor']); // se encuentra en grupo POR MEDIO DE ESE PROYECTOF
+Route::get('grupos/programa/{id}', [GrupoController::class, 'showByIdProyectoFor']); // se encuentra en grupo POR MEDIO DE ESE PROYECTOF
 
 
 

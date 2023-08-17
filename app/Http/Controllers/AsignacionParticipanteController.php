@@ -96,4 +96,5 @@ class AsignacionParticipanteController extends Controller
         return response()->json($asignaciones);
     }
 
+
 }
