@@ -45,7 +45,8 @@ use App\Http\Controllers\gestion_grupo\NivelFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
-use App\Http\Controllers\HorarioInfraestructuraGrupoController;
+use App\Http\Controllers\gestion_grupo\HorarioInfraestructuraGrupoController;
+use App\Http\Controllers\gestion_grupo\EstadoGrupoInfraestructuraController;
 use App\Models\AsignacionParticipante;
 
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
