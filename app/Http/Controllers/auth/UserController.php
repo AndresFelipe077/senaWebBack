@@ -67,6 +67,7 @@ class UserController extends Controller
     return response()->json($usuariosActives);
   }
 
+
   public function aprendicesActives()
   {
     $usuariosActivados = ActivationCompanyUser::role('APRENDIZ')->active()->get();

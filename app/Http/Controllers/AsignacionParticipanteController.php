@@ -84,6 +84,9 @@ class AsignacionParticipanteController extends Controller
 
     public function obtenerAprendicesPorGrupo($idGrupo)
     {
+
+        // $usuariosActivados = ActivationCompanyUser::role('APRENDIZ')->active()->get();
+
         $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
             ->whereIn('idEstadoParticipantes', function ($query) {
                 $query->select('id')
