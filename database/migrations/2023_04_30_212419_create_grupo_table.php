@@ -19,7 +19,7 @@ class CreateGrupoTable extends Migration
             $table->string('nombre')->unique();
             $table->date('fechaInicialGrupo');
             $table->date('fechaFinalGrupo');
-            $table->text('observacion');
+            $table->text('observacion')->nullable();
 
             $table->foreignId('idTipoGrupo')->references('id')->on('tipoGrupo');
 

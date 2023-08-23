@@ -45,7 +45,8 @@ use App\Http\Controllers\gestion_grupo\NivelFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
-use App\Http\Controllers\HorarioInfraestructuraGrupoController;
+use App\Http\Controllers\gestion_grupo\HorarioInfraestructuraGrupoController;
+use App\Http\Controllers\gestion_grupo\EstadoGrupoInfraestructuraController;
 use App\Models\AsignacionParticipante;
 
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
@@ -116,11 +117,11 @@ Route::put('asignar_roles', [Gestion_usuarioUserController::class, 'asignation']
 
 // crear ruta para competencias 1 vanesa
 Route::resource('competencias', CompetenciasController::class);
-Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class,'showByIdActividadP']);
+Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class, 'showByIdActividadP']);
 
 //rutas para resultado aprendizaje 2 vanesa
 Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class,'showByIdCompetencia']);
+Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class, 'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -129,19 +130,19 @@ Route::get('competenciaRap/competencia/{id}', [asignacionCompetenciaRapControlle
 Route::resource('tipo_competencias',  TipoCompetenciasController::class);
 //rutas para actividad aprendizaje 3 vanesa
 Route::resource('actividadAprendizaje', actividadAprendizajeController::class);
-Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::class,'showByIdRap']);
+Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::class, 'showByIdRap']);
 
 Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
-Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class,'showByIdProyecto']);
+Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class, 'showByIdProyecto']);
 
 Route::resource('asignacionCompetenciaProyecto', AsignacionCompetenciaProyectoController::class);
-Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetenciaProyectoController::class,'showByIdProyecto']);
+Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetenciaProyectoController::class, 'showByIdProyecto']);
 
 Route::resource('planeacion', PlaneacionController::class);
-Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class,'showByIdActividadProyecto']);
+Route::get('planeacion/actividadProyecto/{id}', [PlaneacionController::class, 'showByIdActividadProyecto']);
 Route::post('planeacions', [PlaneacionController::class, 'store']);
-Route::get('planeacion/resultado/{id}', [PlaneacionController::class,'showByRestultado']);
-Route::delete('/planeacion/{id}',[PlaneacionController::class,'destroy']);
+Route::get('planeacion/resultado/{id}', [PlaneacionController::class, 'showByRestultado']);
+Route::delete('/planeacion/{id}', [PlaneacionController::class, 'destroy']);
 
 
 //ruta tipo_programas
@@ -152,20 +153,20 @@ Route::resource('programas',  ProgramaController::class);
 Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
-Route::get('proyecto_formativo/programa/{id}', [ProyectoFormativoController::class,'showByIdPrograma']);
+Route::get('proyecto_formativo/programa/{id}', [ProyectoFormativoController::class, 'showByIdPrograma']);
 //ruta para fases
 Route::resource('fases', FaseController::class);
-Route::get('fases/proyecto/{id}', [FaseController::class,'showByIdProyecto']);
+Route::get('fases/proyecto/{id}', [FaseController::class, 'showByIdProyecto']);
 
 //ruta para actividades de proyecto
 Route::resource('actividad_proyecto', ActividadProyectoController::class);
-Route::get('actividad_proyecto/fase/{id}', [ActividadProyectoController::class,'showByIdFase']);
+Route::get('actividad_proyecto/fase/{id}', [ActividadProyectoController::class, 'showByIdFase']);
 //ruta para configuracion de rap
 Route::resource('configuracion_rap', configuracionRapController::class);
 //ruta para transferir participantes de fichas
 Route::post('transferir-ficha', [configuracionRapController::class, 'transferirFicha']);
 //ruta para optener los resultados de un participante
-Route::get('participantes/{participante_id}/resultados', [configuracionRapController::class , 'obtenerResultados']);
+Route::get('participantes/{participante_id}/resultados', [configuracionRapController::class, 'obtenerResultados']);
 
 
 //rutas para ciudad y departamento
@@ -174,7 +175,7 @@ Route::resource('ciudades', CityController::class);
 Route::get('ciudades/departamento/{id}', [CityController::class, 'showByDepartamento']);
 
 //rutas sede -> revisar y optimizar
-Route::resource('sedes',SedeController::class);
+Route::resource('sedes', SedeController::class);
 Route::get('sedes/ciudad/{id}', [SedeController::class, 'showByCiudad']);
 
 //ruta de areas
@@ -195,11 +196,12 @@ Route::resource('dias', DiaController::class);
 Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJornada']);
 
 //grupos
-Route::resource('grupos', GrupoController::class);
+Route::resource('grupos', GrupoController::class)->middleware('auth:sanctum');
 // Get infraestructura and sede
-Route::get('grupos/infraestructura/{id}', [GrupoController::class,'showByIdInfra']);
-Route::get('grupos/sede/{id}', [GrupoController::class,'showByIdSede']);
-
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('grupos/infraestructura/{id}', [GrupoController::class, 'showByIdInfra']);
+    Route::get('grupos/sede/{id}', [GrupoController::class, 'showByIdSede']);
+});
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 
@@ -211,24 +213,26 @@ Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
 
 
 //tipo de grupos
-Route::resource('tipogrupos', TipoGrupoController::class);
+Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
+    Route::resource('tipogrupos', TipoGrupoController::class)->middleware('auth:sanctum');
 
-Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
+    Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
-Route::resource('niveles_formacion', NivelFormacionController::class);
+    Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
 
-Route::resource('tipo_formaciones', TipoFormacionController::class);
+    Route::resource('niveles_formacion', NivelFormacionController::class);
 
-Route::resource('estado_grupos', EstadoGrupoController::class);
+    Route::resource('tipo_formaciones', TipoFormacionController::class);
 
-Route::resource('tipo_ofertas', TipoOfertaController::class);
+    Route::resource('estado_grupos', EstadoGrupoController::class);
 
-Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoController::class);
+    Route::resource('tipo_ofertas', TipoOfertaController::class);
 
-Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
+    Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoController::class);
 
+    Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
+});
 
 Route::resource('estados', EstadoController::class);
 
@@ -277,35 +281,35 @@ Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionPa
 
 
 
-Route::get('search/{table}/{query}',[QueryController::class,'show']);
+Route::get('search/{table}/{query}', [QueryController::class, 'show']);
 
 
 
 
 
-Route::post('aprendis',[AprendicesTmpController::class,'importar']);
-Route::post('prueba',[pruebaController::class,'import']);
+Route::post('aprendis', [AprendicesTmpController::class, 'importar']);
+Route::post('prueba', [pruebaController::class, 'import']);
 
 
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
 /////////////// asignacion roles
-Route::post('asignation/{id}', [Gestion_usuarioUserController::class ,'asignation']);
+Route::post('asignation/{id}', [Gestion_usuarioUserController::class, 'asignation']);
 
 
-Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class,'filtrarRolesAsignados' ]);
+Route::get('usuarios/{id}/roles', [Gestion_usuarioUserController::class, 'filtrarRolesAsignados']);
 Route::post('usuarios/{id}/desasignar-roles', [Gestion_usuarioUserController::class, 'unassignRoles']);
 Route::delete('/user/{id}', [Gestion_usuarioUserController::class, 'destroy']);
 
 
 /////// criterios evaluacion
-Route::get('criteriosEvalucaicon',[CriteriosEvaluacion::class,'index']);
-Route::delete('/criterio/delete/{id}',[CriteriosEvaluacion::class,'delete']);
-Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class,'update']);
-Route::post('criteriosEvalucaiconsup',[CriteriosEvaluacion::class,'store']);
+Route::get('criteriosEvalucaicon', [CriteriosEvaluacion::class, 'index']);
+Route::delete('/criterio/delete/{id}', [CriteriosEvaluacion::class, 'delete']);
+Route::post('/criterio/update/{id}', [CriteriosEvaluacion::class, 'update']);
+Route::post('criteriosEvalucaiconsup', [CriteriosEvaluacion::class, 'store']);
 
-Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
+Route::get('criteriosevaluacion/consulta/{id}', [CriteriosEvaluacion::class, 'consulta']);
 
 
 
@@ -314,7 +318,7 @@ Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::clas
 
 
 //////////////////////////////////competencias checks
-Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class,'filtrarCompetenciasAsignadas' ]);
+Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class, 'filtrarCompetenciasAsignadas']);
 
 Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
 
@@ -326,4 +330,3 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 
 ///////////////////////
-
