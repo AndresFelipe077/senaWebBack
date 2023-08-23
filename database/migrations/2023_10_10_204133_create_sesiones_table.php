@@ -14,14 +14,14 @@ class CreateSesionesTable extends Migration
     public function up()
     {
         Schema::create('sesiones', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('idConfiguracionRap');
+            $table->increments('id');
+            $table->unsignedInteger('idConfiguracionRap');
             $table->date('fecha');
             $table->boolean('asistencia');
             $table->time('horaLlegada');
             $table->integer('numberSesion');
 
-            // $table->foreign('idConfiguracionRap')->references('id')->on('configuracionRap');
+            $table->foreign('idConfiguracionRap')->references('id')->on('configuracionrap');
         });
     }
 

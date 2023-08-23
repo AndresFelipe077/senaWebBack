@@ -13,37 +13,51 @@ class configuracionRapController extends Controller
     public function index(Request $request)
     {
         $resultado = $request->input('resultados');
-        $participante = $request->input('participantes');
+        $instructor = $request->input('usuarios');
         $estado = $request->input('estados');
         $jornada = $request->input('jornadas');
-        $configuraconRap = configuracionRap::with('resultados','participantes','estados','jornadas');
+        $grupo = $request->input('grupos');
+        $infraestructura = $request->input('infraestructuras');
+        $configuracionRap = configuracionRap::with('resultados','usuarios','estados','jornadas','grupos','infraestructuras');
 
         if($resultado){
-            $configuraconRap->whereHas('resultados',function($q) use ($resultado){
+            $configuracionRap->whereHas('resultados',function($q) use ($resultado){
                 return $q->select('id')->where('id',$resultado)->orWhere('rap',$resultado);
             });
         };
 
-        if($participante){
-            $configuraconRap->whereHas('participantes',function($q) use ($participante){
-                return $q->select('id')->where('id',$participante)->orWhere('participantes',$participante);
+        if($instructor){
+            $configuracionRap->whereHas('usuarios',function($q) use ($instructor){
+                return $q->select('id')->where('id',$instructor)->orWhere('usuarios',$instructor);
             });
         };
 
         if($estado){
-            $configuraconRap->whereHas('estados',function($q) use ($estado){
+            $configuracionRap->whereHas('estados',function($q) use ($estado){
                 return $q->select('id')->where('id',$estado)->orWhere('estados',$estado);
             });
         };
 
         if($jornada){
-            $configuraconRap->whereHas('jornadas',function($q) use ($jornada){
+            $configuracionRap->whereHas('jornadas',function($q) use ($jornada){
                 return $q->select('id')->where('id',$jornada)->orWhere('jornadas',$jornada);
             });
         };
 
+        if($grupo){
+            $configuracionRap->whereHas('grupos',function($q) use ($grupo){
+                return $q->select('id')->where('id',$grupo)->orWhere('grupos',$grupo);
+            });
+        };
 
-        return response()->json($configuraconRap->get());
+        if($infraestructura){
+            $configuracionRap->whereHas('infraestructuras',function($q) use ($infraestructura){
+                return $q->select('id')->where('id',$infraestructura)->orWhere('infraestructuras',$infraestructura);
+            });
+        };
+
+
+        return response()->json($configuracionRap->get());
     }
 
 
@@ -81,44 +95,4 @@ class configuracionRapController extends Controller
 
         return response()->json([]);
     }
-
-
-
-    public function transferirFicha(Request $request)
-{
-    $participante_id = $request->input('participante_id');
-
-    // Obtener los RAP aprobados y pendientes/cursando del participante
-    $rap_aprobados = configuracionRap::where('idParticipante', $participante_id)
-        ->where('idEstado', 'aprovado')
-        ->pluck('idRap');
-
-    $rap_pendientes_cursando = configuracionRap::where('idParticipante', $participante_id)
-        ->whereIn('idEstado', ['pendiente', 'cursando'])
-        ->pluck('idRap');
-
-    // Verificar las validaciones
-    if ($rap_aprobados->contains($request->input('resultado_destino'))) {
-        return response()->json(['message' => 'Puede hacer el traslado de ficha']);
-    } elseif ($rap_pendientes_cursando->contains($request->input('resultado_destino'))) {
-        return response()->json(['message' => 'No puede hacer el traslado de ficha, aún no ha aprobado el RAP en el resultado destino']);
-    } elseif ($rap_pendientes_cursando->count() > 0) {
-        return response()->json(['message' => 'No puede hacer el traslado de ficha, debe terminar de cursar los RAP pendientes/cursando']);
-    } else {
-        return response()->json(['message' => 'No se puede realizar el traslado de ficha']);
-    }
-}
-
-public function obtenerResultados($participante_id) {
-    $participante = AsignacionParticipante::find($participante_id);
-
-    $resultados = ConfiguracionRap::where('idParticipante', $participante->id)
-        ->with('resultados')
-        ->get();
-
-    foreach ($resultados as $configuracion) {
-        $resultadoParticipante = $configuracion->resultados;
-        return response()->json(['holi']);
-    }
-}
 }
