@@ -141,7 +141,7 @@ class GrupoController extends Controller
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
-      'jornadas',
+      'jornadas.diaJornada',
       'participantes',
       'infraestructuras',
       'infraestructuras.sede'
