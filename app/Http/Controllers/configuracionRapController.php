@@ -81,7 +81,7 @@ class configuracionRapController extends Controller
     /**
      * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
      */
-    public function getHoursLostForRap(): JsonResponse
+    public function getHoursLostForRap(int $idCompetencia): JsonResponse
     {
 
         
