@@ -20,7 +20,7 @@ class CreateSesionesTable extends Migration
             $table->boolean('asistencia');
             $table->time('horaLlegada');
             $table->integer('numberSesion');
-            $table->dateTime('fecha');
+            $table->date('fecha');
 
             $table->foreign('idconfiguracionRap')->references('id')->on('configuracionrap');
             $table->foreign('idasignacionParticipante')->references('id')->on('asignacionParticipante');

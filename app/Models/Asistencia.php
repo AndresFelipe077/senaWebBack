@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sesiones extends Model
+class Asistencia extends Model
 {
     use HasFactory;
 
@@ -31,5 +31,4 @@ class Sesiones extends Model
     {
         return $this->belongsTo(AsignacionParticipante::class, 'idAsignacionParticipante');
     }
-
 }

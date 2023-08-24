@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sesiones;
+use App\Models\Asistencia;
 use Illuminate\Http\Request;
 
 class SesionesController extends Controller
@@ -60,7 +60,7 @@ class SesionesController extends Controller
             $asistencia = Asistencia::findOrFail($id);
             $asistencia->update($data);
     
-            return response()->json($sesiones, 200);
+            return response()->json($asistencia, 200);
         }
     
         /**
