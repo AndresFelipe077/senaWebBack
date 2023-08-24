@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AsignacionParticipante;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
+use Illuminate\Http\JsonResponse;
 
 class configuracionRapController extends Controller
 {
@@ -75,6 +76,17 @@ class configuracionRapController extends Controller
     {
         $configuracionRap = configuracionRap::find($id);
         return response()->json($configuracionRap,200);
+    }
+
+    /**
+     * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
+     */
+    public function getHoursLostForRap(): JsonResponse
+    {
+
+        
+
+        return response()->json();
     }
 
 

@@ -357,3 +357,7 @@ Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'cons
 //
 Route::resource('sesiones', SesionesController::class);//llamo a todos las funciones
 //
+
+// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+
+Route::get('horasRapsPerdidos', [configuracionRapController::class, 'getHoursLostForRap']);
