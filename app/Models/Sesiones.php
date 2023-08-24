@@ -14,10 +14,10 @@ class Sesiones extends Model
     protected $fillable =[
        'id',
        'idConfiguracionRap',
-       'fecha',
        'asistencia',
        'horaLlegada',
-       'numberSesion'
+       'numberSesion',
+       'fecha'
     ];
     public $timestamps = false;
 

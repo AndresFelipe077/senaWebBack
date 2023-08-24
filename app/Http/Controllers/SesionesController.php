@@ -10,39 +10,37 @@ class SesionesController extends Controller
         /**
          * Display a listing of the resource.
          */
-        public function index()
+        public function index(Request $request)
         {
-            $sesiones = Sesiones::with('configuracionRap.participantes')->get();
-    
-            return view('sesiones.index', compact('sesiones'));
+
+            // $grupos = $request->input('configuracionRap');
+            
+            $Sesiones = Sesiones::with('configuracionRap', 'configuracionRap.grupos' ,'configuracionRap.usuarios')->get();
+
+            if($Sesiones){
+                $Sesiones->wherehas('configuracionRap',function($q) use ($Sesiones){
+                    return $q->select('id')->where('id',$Sesiones)->orwhere('configuracionRap',$Sesiones);       
+                });
+            };
+
+            return response()->json($Sesiones);
         }
-    
-        /**
-         * Display the specified resource.
-         */
-        public function show($id)
-        {
-            $sesion = Sesiones::with('configuracionRap')->find($id);
-    
-            return view('sesiones.show', compact('sesion'));
-        }
-    
         /**
          * Store a newly created resource in storage.
          */
         public function store(Request $request)
         {
-            $data = $request->validate([
-                'idConfiguracionRap' => 'required',
-                'fecha' => 'required',
-                'asistencia' => 'required',
-                'horaLlegada' => 'required',
-                'numberSesion' => 'required'
-            ]);
-    
-            $sesion = Sesiones::create($data);
-    
-            return response()->json($sesion, 201);
+        $data = $request->all();    
+        $sesiones = new Sesiones($data);
+        $sesiones ->save();
+        return response()->json($sesiones,201);
+            
+        }
+
+        public function show($id)
+        {
+            $sesion = Sesiones::with('configuracionRap')->find($id);
+            return view('sesiones.show', compact('sesion'));
         }
     
         /**
@@ -58,10 +56,10 @@ class SesionesController extends Controller
                 'numberSesion' => 'required'
             ]);
     
-            $sesion = Sesiones::findOrFail($id);
-            $sesion->update($data);
+            $sesiones = Sesiones::findOrFail($id);
+            $sesiones->update($data);
     
-            return response()->json($sesion, 200);
+            return response()->json($sesiones, 200);
         }
     
         /**

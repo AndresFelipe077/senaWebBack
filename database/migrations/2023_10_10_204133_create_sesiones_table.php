@@ -16,10 +16,10 @@ class CreateSesionesTable extends Migration
         Schema::create('sesiones', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('idConfiguracionRap');
-            $table->date('fecha');
             $table->boolean('asistencia');
             $table->time('horaLlegada');
             $table->integer('numberSesion');
+            $table->dateTime('fecha');
 
             $table->foreign('idConfiguracionRap')->references('id')->on('configuracionrap');
         });
