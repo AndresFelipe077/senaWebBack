@@ -41,7 +41,7 @@ class PermissionSeeder extends Seeder
 
 
 
-        $this->savePermission(PermissionConst::GESTION_FICHAS, "Gestión Fichas");
+
 
 
 
@@ -52,7 +52,6 @@ class PermissionSeeder extends Seeder
         $this->savePermission(PermissionConst::GESTION_PAGO_NOMINA, "Gestión de pagos de Nomina");
         $this->savePermission(PermissionConst::GESTION_GRUPO, "Gestion de grupos");// se crea permiso en archivo seeder
         $this->savePermission(PermissionConst::GESTION_TIPO_GRUPO, "Gestion de tipos de grupos");// se crea permiso en archivo seeder
-        $this->savePermission(PermissionConst::CALENDARIO, "Calendario");
         $this->savePermission(PermissionConst::REGIONAL, "Regional");
         $this->savePermission(PermissionConst::CENTRO_FORMACION, "gestion de centros de formacion");
         $this->savePermission(PermissionConst::GESTION_MATRICULA,"Gestión de matricula");
@@ -63,6 +62,8 @@ class PermissionSeeder extends Seeder
 
    
 
+
+        $this->savePermission(PermissionConst::GESTION_FICHAS, "Gestión Fichas");
 
     }
 

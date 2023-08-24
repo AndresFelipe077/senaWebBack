@@ -48,4 +48,10 @@ class configuracionRap extends Model
     public function grupos(){
         return $this->belongsTo(grupo::class, 'idGrupo');
     }
+
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class, 'idConfiguracionRap');
+    }
+
 }
