@@ -54,6 +54,7 @@ use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
 use App\Http\Controllers\TipoParticipacionController;
+use App\Models\TipoParticipacion;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
@@ -208,7 +209,6 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 
 
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
 
 
 
@@ -238,10 +238,6 @@ Route::resource('estados', EstadoController::class);
 
 
 
-// ttttttttttttttttttttttt
-
-Route::resource('asignacion_participante', AsignacionParticipante::class);
-// gggggggggggggggg
 
 
 
@@ -258,7 +254,6 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
-Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
 
 
@@ -270,14 +265,39 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 
 
-Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
+
+
+
+Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']);// SE BUSCA PROGRAMA
+
+// showByIdPrograma SE OBTIENE ES PROYECTOFORMATIVO
+
+Route::get('grupos/programa/{id}', [GrupoController::class, 'showByIdProyectoFor']); // se encuentra en grupo POR MEDIO DE ESE PROYECTOF
+
+
+
+
+
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
 
-//
+
+
+
+
+
+///////////////////////////////////////////////////////////
 
 
 

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateAsignacionParticipantesTable extends Migration
 {
@@ -30,12 +31,13 @@ class CreateAsignacionParticipantesTable extends Migration
             $table->date('fechaInicial')->nullable();
 
             $table->date('fechaFinal')->nullable(); //Mientras nullable para pruebas
-            
+
 
             // $table->text('descripcion')->nullable();
 
             $table->timestamps();
         });
+
     }
 
     /**

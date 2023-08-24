@@ -41,7 +41,7 @@ class PermissionSeeder extends Seeder
 
 
 
-        $this->savePermission(PermissionConst::GESTION_FICHAS, "Gestión Fichas");
+
 
 
 
@@ -62,6 +62,8 @@ class PermissionSeeder extends Seeder
 
    
 
+
+        $this->savePermission(PermissionConst::GESTION_FICHAS, "Gestión Fichas");
 
     }
 
