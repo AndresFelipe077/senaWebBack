@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSesionesTable extends Migration
+class CreateAsistenciaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -22,8 +22,8 @@ class CreateSesionesTable extends Migration
             $table->integer('numberSesion');
             $table->date('fecha');
 
-            $table->foreign('idconfiguracionRap')->references('id')->on('configuracionrap');
-            $table->foreign('idasignacionParticipante')->references('id')->on('asignacionParticipante');
+            $table->foreign('idConfiguracionRap')->references('id')->on('configuracionrap');
+            $table->foreign('idAsignacionParticipante')->references('id')->on('asignacionParticipante');
         });
     }
 
