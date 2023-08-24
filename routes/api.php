@@ -61,8 +61,10 @@ use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\pruebaController;
+use App\Http\Controllers\SesionesController;
 use App\Http\Controllers\TipoCompetenciasController;
 use App\Models\asignacionCompetenciaProyecto;
+use App\Models\Sesiones;
 
 /*
 |--------------------------------------------------------------------------
@@ -350,3 +352,8 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 
 ///////////////////////
+Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
+
+//
+Route::resource('sesiones', SesionesController::class);//llamo a todos las funciones
+//
