@@ -15,8 +15,8 @@ class CreateAsistenciaTable extends Migration
     {
         Schema::create('asistencia', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('idconfiguracionRap');
-            $table->unsignedBigInteger('idasignacionParticipante');
+            $table->unsignedInteger('idConfiguracionRap');
+            $table->unsignedInteger('idAsignacionParticipante');
             $table->boolean('asistencia');
             $table->time('horaLlegada');
             $table->integer('numberSesion');
