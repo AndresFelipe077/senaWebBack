@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sesiones;
+use App\Models\Asistencia;
 use Illuminate\Http\Request;
 
 class SesionesController extends Controller
@@ -15,15 +15,15 @@ class SesionesController extends Controller
 
             // $grupos = $request->input('configuracionRap');
             
-            $Sesiones = Sesiones::with('configuracionRap', 'configuracionRap.grupos' ,'configuracionRap.usuarios')->get();
+            $Asistencia = Asistencia::with('configuracionRap', 'configuracionRap.grupos' ,'configuracionRap.usuarios')->get();
 
-            if($Sesiones){
-                $Sesiones->wherehas('configuracionRap',function($q) use ($Sesiones){
-                    return $q->select('id')->where('id',$Sesiones)->orwhere('configuracionRap',$Sesiones);       
+            if($Asistencia){
+                $Asistencia->wherehas('configuracionRap',function($q) use ($Asistencia){
+                    return $q->select('id')->where('id',$Asistencia)->orwhere('configuracionRap',$Asistencia);       
                 });
             };
 
-            return response()->json($Sesiones);
+            return response()->json($Asistencia);
         }
         /**
          * Store a newly created resource in storage.
@@ -31,16 +31,16 @@ class SesionesController extends Controller
         public function store(Request $request)
         {
         $data = $request->all();    
-        $sesiones = new Sesiones($data);
-        $sesiones ->save();
-        return response()->json($sesiones,201);
+        $asistencia = new Asistencia($data);
+        $asistencia ->save();
+        return response()->json($asistencia,201);
             
         }
 
         public function show($id)
         {
-            $sesion = Sesiones::with('configuracionRap')->find($id);
-            return view('sesiones.show', compact('sesion'));
+            $asistencia = Asistencia::with('configuracionRap')->find($id);
+            return response()->json($asistencia);
         }
     
         /**
@@ -50,16 +50,17 @@ class SesionesController extends Controller
         {
             $data = $request->validate([
                 'idConfiguracionRap' => 'required',
+                'idAsignacionParticipnte'=>'required',
                 'fecha' => 'required',
                 'asistencia' => 'required',
                 'horaLlegada' => 'required',
                 'numberSesion' => 'required'
             ]);
     
-            $sesiones = Sesiones::findOrFail($id);
-            $sesiones->update($data);
+            $asistencia = Asistencia::findOrFail($id);
+            $asistencia->update($data);
     
-            return response()->json($sesiones, 200);
+            return response()->json($asistencia, 200);
         }
     
         /**
@@ -67,8 +68,8 @@ class SesionesController extends Controller
          */
         public function destroy($id)
         {
-            $sesion = Sesiones::findOrFail($id);
-            $sesion->delete();
+            $asistencia = Asistencia::findOrFail($id);
+            $asistencia->delete();
     
             return response()->json(null, 204);
         }

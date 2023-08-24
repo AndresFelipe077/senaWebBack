@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sesiones extends Model
+class Asistencia extends Model
 {
     use HasFactory;
 
     public static $snakeAttributes = false;
-    protected $table = "sesiones";
+    protected $table = "asistencia";
     protected $fillable =[
        'id',
        'idConfiguracionRap',
+       'idAsignacionParticipante',
        'asistencia',
        'horaLlegada',
        'numberSesion',
@@ -23,7 +24,11 @@ class Sesiones extends Model
 
     public function configuracionRap()
     {
-        return $this->belongsTo(ConfiguracionRap::class, 'idConfiguracionRap');
+        return $this->belongsTo(ConfiguracionRap::class,'idConfiguracionRap');
     }
 
+    public function asignacionParticipante()
+    {
+        return $this->belongsTo(AsignacionParticipante::class, 'idAsignacionParticipante');
+    }
 }

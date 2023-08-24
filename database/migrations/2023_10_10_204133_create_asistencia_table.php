@@ -13,15 +13,17 @@ class CreateSesionesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sesiones', function (Blueprint $table) {
+        Schema::create('asistencia', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('idConfiguracionRap');
+            $table->unsignedInteger('idconfiguracionRap');
+            $table->unsignedBigInteger('idasignacionParticipante');
             $table->boolean('asistencia');
             $table->time('horaLlegada');
             $table->integer('numberSesion');
-            $table->dateTime('fecha');
+            $table->date('fecha');
 
-            $table->foreign('idConfiguracionRap')->references('id')->on('configuracionrap');
+            $table->foreign('idconfiguracionRap')->references('id')->on('configuracionrap');
+            $table->foreign('idasignacionParticipante')->references('id')->on('asignacionParticipante');
         });
     }
 
@@ -32,6 +34,6 @@ class CreateSesionesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sesiones');
+        Schema::dropIfExists('asistencia');
     }
 }
