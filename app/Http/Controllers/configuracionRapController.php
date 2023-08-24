@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionParticipante;
+use App\Models\Competencias;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
+use App\Models\resultadoAprendizaje;
 use Illuminate\Http\JsonResponse;
 
 class configuracionRapController extends Controller
@@ -81,12 +83,14 @@ class configuracionRapController extends Controller
     /**
      * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
      */
-    public function getHoursLostForRap(int $idCompetencia): JsonResponse
+    public function getHoursLostForRap($idRap): JsonResponse
     {
 
-        
+        $rapsByCompetencia = resultadoAprendizaje::whereHas('competencia', function ($query) use ($idRap) {
+            $query->where('idCompetencia', $idRap);
+          })->with('competencia')->get();
 
-        return response()->json();
+        return response()->json($rapsByCompetencia);
     }
 
 

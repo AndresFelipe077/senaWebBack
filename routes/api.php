@@ -360,4 +360,4 @@ Route::resource('asistencia', AsistenciaController::class);//llamo a todos las f
 
 // Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
 
-Route::get('horasRapsPerdidos/{$idCompetencia}', [configuracionRapController::class, 'getHoursLostForRap']);
+Route::get('horasRapsPerdidos/{idCompetencia}', [configuracionRapController::class, 'getHoursLostForRap']);
