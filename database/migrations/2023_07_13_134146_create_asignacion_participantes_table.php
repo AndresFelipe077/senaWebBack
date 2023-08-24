@@ -33,7 +33,7 @@ class CreateAsignacionParticipantesTable extends Migration
             $table->date('fechaFinal')->nullable(); //Mientras nullable para pruebas
 
 
-            // $table->text('descripcion')->nullable();
+             $table->text('observacion')->nullable();
 
             $table->timestamps();
         });
