@@ -30,7 +30,7 @@ class configuracionRap extends Model
     }
 
     public function usuarios(){
-        return $this->belongsTo(user::class, 'idInstructor');
+        return $this->belongsTo(User::class, 'idInstructor');
     }
 
     public function estados(){

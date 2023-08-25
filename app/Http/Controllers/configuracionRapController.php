@@ -93,7 +93,7 @@ class configuracionRapController extends Controller
 				$query->select('id', 'numeroHoras');
 			}, 'resultados.competencia' => function ($query) {
 				$query->select('id', 'horas');
-			}])
+			}, 'usuarios.persona']) // Relationships
 			->withCount(['asistencias as inasistencias' => function ($query) {
 				$query->where('asistencia', 0);
 			}])
