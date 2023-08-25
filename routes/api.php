@@ -60,11 +60,11 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\pruebaController;
-use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\TipoCompetenciasController;
 use App\Models\asignacionCompetenciaProyecto;
-use App\Models\Asistencia;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -272,7 +272,7 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
+Route::get('asignacionParticipantes', [AsignacionParticipanteController::class, 'index']);
 
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
 
@@ -293,7 +293,7 @@ Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtene
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
-
+Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']);
 
 
 
@@ -352,12 +352,9 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 
 ///////////////////////
-Route::get('criteriosevaluacion/consulta/{id}',[CriteriosEvaluacion::class,'consulta']);
 
-//
-Route::resource('asistencia', AsistenciaController::class);//llamo a todos las funciones
-//
 
-// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+//////////////
+Route::get('poreso', [HistorialDocumentoController::class, 'index']);
 
-Route::get('horasRapsPerdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+Route::get('crear-historial', [HistorialDocumentoController::class, 'crearHistorialDesdeRegistros']);

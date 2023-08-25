@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\AsignacionParticipante;
+use App\Models\estadoParticipante;
 use App\Models\Grupo;
 use App\Models\Programa;
 use App\Models\proyectoFormativo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AsignacionParticipanteController extends Controller
 
@@ -33,13 +36,16 @@ class AsignacionParticipanteController extends Controller
 
 
 
-    public function obtenerAsignacionesParticipantes()
-    {
-        $asignaciones = AsignacionParticipante::with('grupo')->get();
+   public function obtenerAsignacionesParticipantes()
+{
+    $asignaciones = AsignacionParticipante::with('grupo')->get();
 
-        $data = [];
-        foreach ($asignaciones as $asignacion) {
-            $grupo = $asignacion->grupo;
+    $data = [];
+    foreach ($asignaciones as $asignacion) {
+        $grupo = $asignacion->grupo;
+
+        // Verificar si el grupo es válido antes de acceder a la propiedad idPrograma
+        if ($grupo) {
             $idPrograma = $grupo->idPrograma;
 
             // Obtener todos los detalles del programa
@@ -48,23 +54,25 @@ class AsignacionParticipanteController extends Controller
             // Agregar los datos necesarios al arreglo
             $data[] = [
                 'asignacionParticipantes' => $asignacion,
-
-
                 'nombreGrupo' => $grupo->nombre,
-                'nombrePrograma' => $programa->nombrePrograma,
-
-
-
-
+                'nombrePrograma' => $programa ? $programa->nombrePrograma : null, // Verificar si $programa es válido
                 'idPrograma' => $idPrograma,
                 'programa' => $programa, // Agregar el programa completo
             ];
         }
-
-        return response()->json($data);
     }
 
+    return response()->json($data);
+}
 
+
+
+public function crearHistorialDesdeRegistros()
+{
+   
+    $data = AsignacionParticipante::with(['usuario', 'grupo'])->get();
+    return response()->json($data);
+}
 
 
 
