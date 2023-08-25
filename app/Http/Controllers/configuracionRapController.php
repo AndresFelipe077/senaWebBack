@@ -8,6 +8,7 @@ use App\Models\Competencias;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
 use App\Models\resultadoAprendizaje;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class configuracionRapController extends Controller
@@ -86,43 +87,53 @@ class configuracionRapController extends Controller
 	 */
 	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
 	{
+
+		$usuario = User::with('persona')->find($idInstructor);
+
 		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
-			->with(['asistencias' => function ($query) {
-				$query->where('asistencia', 0);
+			->with(['asistencias' => function ($query) use ($idInstructor) {
+				$query->whereIn('idConfiguracionRap', function ($subquery) use ($idInstructor) {
+					$subquery->select('id')
+						->from('configuracionRap')
+						->where('idInstructor', $idInstructor);
+				})->where('asistencia', 0);
 			}, 'jornadas' => function ($query) {
 				$query->select('id', 'numeroHoras');
 			}, 'resultados.competencia' => function ($query) {
 				$query->select('id', 'horas');
-			}, 'usuarios.persona']) // Relationships
-			->withCount(['asistencias as inasistencias' => function ($query) {
-				$query->where('asistencia', 0);
 			}])
-			->get(['id', 'horas', 'idJornada', 'idRap']);
+			->get(['id', 'horas', 'idJornada', 'idRap', 'idInstructor']);
 
 		$rapsByCompetencia->each(function ($rap) {
 			$calculatedValue = 0;
 
 			if ($rap->jornadas) {
-				$calculatedValue = $rap->jornadas->numeroHoras;
+				$calculatedValue = $rap->horas;
 			}
 
 			$rap->calculatedValue = $calculatedValue;
 		});
 
+		$totalInasistencias = 0; // Agregar un contador para las inasistencias totales
 		$hoursLost = 0;
 
 		foreach ($rapsByCompetencia as $rap) {
-			$hoursLost += $rap->calculatedValue * $rap->inasistencias; // Preguntar si es una regla de tres
-																																// o las inasistencias se multiplican por las horas de configuracionRap
+			$inasistenciasCount = $rap->asistencias->count();
+			$totalInasistencias += $inasistenciasCount; // Sumar al contador total
+			$hoursLost += $rap->calculatedValue * $inasistenciasCount;
 		}
 
 		$result = [
 			'hoursLost' => $hoursLost,
+			'totalInasistencias' => $totalInasistencias,
+			'usuario' => $usuario,
 			'inasistenciaRaps' => $rapsByCompetencia->toArray()
 		];
 
 		return response()->json($result);
 	}
+
+
 
 
 	public function update(Request $request, $id)
