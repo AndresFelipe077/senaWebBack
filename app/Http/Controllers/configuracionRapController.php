@@ -85,7 +85,7 @@ class configuracionRapController extends Controller
 	 * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
+	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor): JsonResponse
 	{
 
 		$usuario = User::with('persona')->find($idInstructor);
@@ -132,9 +132,6 @@ class configuracionRapController extends Controller
 
 		return response()->json($result);
 	}
-
-
-
 
 	public function update(Request $request, $id)
 	{
