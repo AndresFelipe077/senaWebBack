@@ -84,37 +84,6 @@ class configuracionRapController extends Controller
 	 * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	/*public function getHoursLostForRapInCompetenciaByInstructor($idInstructor): JsonResponse
-	{
-
-		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
-			->with(['asistencias' => function ($query) {
-				$query->where('asistencia', 0);
-			}, 'jornadas' => function ($query) {
-				$query->select('id', 'numeroHoras');
-			}])
-			->withCount(['asistencias as inasistencias' => function ($query) {
-				$query->where('asistencia', 0);
-			}])
-			->get(['id', 'horas', 'idJornada']);
-
-		$rapsByCompetencia->each(function ($rap) {
-			$calculatedValue = 0;
-
-			if ($rap->jornadas) {
-				$calculatedValue = $rap->jornadas->numeroHoras;
-			}
-
-			$rap->calculatedValue = $calculatedValue;
-
-		});
-
-		$hoursLost = 0;
-
-		$hoursLost = $rapsByCompetencia->calculatedValue * $rapsByCompetencia->inasistencias;
-
-		return response()->json($rapsByCompetencia);
-	}*/
 	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
 	{
 		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
@@ -122,6 +91,8 @@ class configuracionRapController extends Controller
 				$query->where('asistencia', 0);
 			}, 'jornadas' => function ($query) {
 				$query->select('id', 'numeroHoras');
+			}, 'resultados.competencia' => function ($query) {
+				$query->select('id', 'horas');
 			}])
 			->withCount(['asistencias as inasistencias' => function ($query) {
 				$query->where('asistencia', 0);
@@ -141,18 +112,17 @@ class configuracionRapController extends Controller
 		$hoursLost = 0;
 
 		foreach ($rapsByCompetencia as $rap) {
-			$hoursLost += $rap->calculatedValue * $rap->inasistencias;
+			$hoursLost += $rap->calculatedValue * $rap->inasistencias; // Preguntar si es una regla de tres
+																																// o las inasistencias se multiplican por las horas de configuracionRap
 		}
 
 		$result = [
 			'hoursLost' => $hoursLost,
-			'rapsByCompetencia' => $rapsByCompetencia->toArray()
+			'inasistenciaRaps' => $rapsByCompetencia->toArray()
 		];
 
 		return response()->json($result);
 	}
-
-
 
 
 	public function update(Request $request, $id)
