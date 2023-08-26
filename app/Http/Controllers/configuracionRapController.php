@@ -8,6 +8,7 @@ use App\Models\Competencias;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
 use App\Models\resultadoAprendizaje;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class configuracionRapController extends Controller
@@ -84,89 +85,11 @@ class configuracionRapController extends Controller
 	 * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	/*public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
+	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor): JsonResponse
 	{
-		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
-			->with(['asistencias' => function ($query) use ($idInstructor) {
-				$query->whereIn('idConfiguracionRap', function ($subquery) use ($idInstructor) {
-					$subquery->select('id')
-						->from('configuracionrap')
-						->where('idInstructor', $idInstructor);
-				})->where('asistencia', 0);
-			}, 'jornadas' => function ($query) {
-				$query->select('id', 'numeroHoras');
-			}, 'resultados.competencia' => function ($query) {
-				$query->select('id', 'horas');
-			}, 'usuarios.persona'])
-			->withCount(['asistencias as inasistencias'])
-			->get(['id', 'horas', 'idJornada', 'idRap', 'idInstructor', 'idpersona']);
 
+		$usuario = User::with('persona')->find($idInstructor);
 
-		$rapsByCompetencia->each(function ($rap) {
-			$calculatedValue = 0;
-
-			if ($rap->jornadas) {
-				// $calculatedValue = $rap->jornadas->numeroHoras;
-				$calculatedValue = $rap->horas;
-			}
-
-			$rap->calculatedValue = $calculatedValue;
-		});
-
-		$hoursLost = 0;
-
-		foreach ($rapsByCompetencia as $rap) {
-			$hoursLost += $rap->calculatedValue * $rap->inasistencias; // Preguntar si es una regla de tres
-			// o las inasistencias se multiplican por las horas de configuracionRap
-		}
-
-		$result = [
-			'hoursLost' => $hoursLost,
-			'inasistenciaRaps' => $rapsByCompetencia->toArray()
-		];
-
-		return response()->json($result);
-	}*/
-
-	/*public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
-	{
-		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
-			->with(['asistencias' => function ($query) use ($idInstructor) {
-				$query->where('asistencia', 0);
-			}, 'jornadas' => function ($query) {
-				$query->select('id', 'numeroHoras');
-			}, 'resultados.competencia' => function ($query) {
-				$query->select('id', 'horas');
-			}, 'usuarios.persona'])
-			->get(['id', 'horas', 'idJornada', 'idRap', 'idInstructor']);
-
-		$rapsByCompetencia->each(function ($rap) {
-			$calculatedValue = 0;
-
-			if ($rap->jornadas) {
-				$calculatedValue = $rap->horas;
-			}
-
-			$rap->calculatedValue = $calculatedValue;
-		});
-
-		$hoursLost = 0;
-
-		foreach ($rapsByCompetencia as $rap) {
-			$inasistenciasCount = $rap->asistencias->count(); // Contar las inasistencias en esta configuración
-			$hoursLost += $rap->calculatedValue * $inasistenciasCount;
-		}
-
-		$result = [
-			'hoursLost' => $hoursLost,
-			'inasistenciaRaps' => $rapsByCompetencia->toArray()
-		];
-
-		return response()->json($result);
-	}*/
-
-	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor)
-	{
 		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
 			->with(['asistencias' => function ($query) use ($idInstructor) {
 				$query->whereIn('idConfiguracionRap', function ($subquery) use ($idInstructor) {
@@ -178,7 +101,7 @@ class configuracionRapController extends Controller
 				$query->select('id', 'numeroHoras');
 			}, 'resultados.competencia' => function ($query) {
 				$query->select('id', 'horas');
-			}, 'usuarios.persona'])
+			}])
 			->get(['id', 'horas', 'idJornada', 'idRap', 'idInstructor']);
 
 		$rapsByCompetencia->each(function ($rap) {
@@ -202,15 +125,13 @@ class configuracionRapController extends Controller
 
 		$result = [
 			'hoursLost' => $hoursLost,
-			'totalInasistencias' => $totalInasistencias, // Agregar el total de inasistencias
+			'totalInasistencias' => $totalInasistencias,
+			'usuario' => $usuario,
 			'inasistenciaRaps' => $rapsByCompetencia->toArray()
 		];
 
 		return response()->json($result);
 	}
-
-
-
 
 	public function update(Request $request, $id)
 	{

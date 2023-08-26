@@ -30,7 +30,7 @@ class AsignacionParticipante extends Model
 
     public function estadoParticipantes()
     {
-        return $this->belongsTo(estadoParticipante::class, 'idEstadoParticipantes','detalleEstado');
+        return $this->belongsTo(estadoParticipante::class, 'idEstadoParticipantes');
     }
 
 }

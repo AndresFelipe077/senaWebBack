@@ -355,6 +355,7 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 
 //////////////
-Route::get('poreso', [HistorialDocumentoController::class, 'index']);
 
-Route::get('crear-historial', [HistorialDocumentoController::class, 'crearHistorialDesdeRegistros']);
+Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
+// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
