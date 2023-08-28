@@ -363,3 +363,5 @@ Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::cl
 Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 
 Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
+
+Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
