@@ -44,7 +44,7 @@ class GrupoController extends Controller
       'estadoGrupo',
       'tipoOferta',
       'jornadas',
-      'participantes',
+      'participantes.persona',
       'infraestructuras',
       'infraestructuras.sede'
     ])->get();
@@ -56,6 +56,13 @@ class GrupoController extends Controller
         unset($infr['pivot']);
         $infr['horario_infraestructura'] = $pivot;
         return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
       });
 
       $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
@@ -86,16 +93,16 @@ class GrupoController extends Controller
     }
 
     $grupo = new Grupo([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idNivel' => $data['idNivel'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta']
+      'idNivel'             => $data['idNivel'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta']
     ]);
 
     $grupo->save();
