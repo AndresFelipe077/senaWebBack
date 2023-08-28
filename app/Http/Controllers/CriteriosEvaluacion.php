@@ -22,19 +22,17 @@ class CriteriosEvaluacion extends Controller
         return response() -> json($criterios);
     }
 
-
-    public function consulta($competenciaId) {
-       
-        $datos = DB::table('competencias')
-            ->join('resultadoAprendizaje', 'competencias.id', '=', 'resultadoAprendizaje.idCompetencia')
+    public function consulta($rapId) {
+        $datos = DB::table('resultadoAprendizaje')
+            ->join('competencias', 'resultadoAprendizaje.idCompetencia', '=', 'competencias.id')
             ->select('competencias.nombreCompetencia', 'resultadoAprendizaje.rap')
-            ->where('competencias.id', $competenciaId)
-            ->first();
+            ->where('resultadoAprendizaje.id', $rapId)
+            ->get();
     
         // Devuelve los datos
         return $datos;
     }
-
+    
 
     public function store(Request $request)
     {
