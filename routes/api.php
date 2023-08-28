@@ -360,6 +360,6 @@ Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHi
 // Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
 Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
-Route::post('assig_instructor_to_tag', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
+Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 
-Route::post('assig_aprendices_to_tag', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
+Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
