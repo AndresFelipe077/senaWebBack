@@ -16,26 +16,27 @@ class AsignacionParticipanteController extends Controller
 
 {
 
-
-
   private $relations;
 
   public function __construct()
   {
     $this->relations = [
       'grupo',
+      'grupo.infraestructuras',
+      'grupo.infraestructuras.sede',
+      'grupo.participantes',
+      'grupo.jornadas.diaJornada',
       'usuario',
       'tipoParticipacion',
-      'EstadoParticipante',
+      'estadoParticipantes',
     ];
   }
+
   public function index()
   {
     $data = AsignacionParticipante::with(['usuario', 'grupo'])->get();
     return response()->json($data);
   }
-
-
 
   public function obtenerAsignacionesParticipantes()
   {
@@ -67,12 +68,6 @@ class AsignacionParticipanteController extends Controller
   }
 
 
-
-
-
-
-
-
   // public function obtenerAprendicesPorGrupo($idGrupo)
   // {
   //     $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
@@ -100,6 +95,7 @@ class AsignacionParticipanteController extends Controller
 
     return response()->json($asignaciones);
   }
+
   public function crearHistorialDesdeRegistros()
   {
     try {
@@ -233,7 +229,8 @@ class AsignacionParticipanteController extends Controller
   {
 
     $fichasByInstructor = AsignacionParticipante::where('idParticipante', $idInstructor)
-      ->with(['grupo'])->get();
+      ->where('idTipoParticipacion', 3)
+      ->with($this->relations)->get();
 
     return response()->json($fichasByInstructor);
 
