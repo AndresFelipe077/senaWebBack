@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
+use App\Models\TipoGrupo;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
@@ -431,22 +432,38 @@ class GrupoController extends Controller
   }
 
 
-//   public function showByIdProyectoFor($programaId)
-//   {
-//       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
-//           $query->where('idPrograma', $programaId);
-//       })->get();
+  //   public function showByIdProyectoFor($programaId)
+  //   {
+  //       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
+  //           $query->where('idPrograma', $programaId);
+  //       })->get();
 
-//       return response()->json($grupos);
-//   }
+  //       return response()->json($grupos);
+  //   }
 
-  public function showByIdProyectoFor(int $id){
-    $grupos=Grupo::with($this -> relations)
-    -> where('idProyectoFormativo',$id) -> get();
-    return response() -> json($grupos);
+  public function showByIdProyectoFor(int $id)
+  {
+    $grupos = Grupo::with($this->relations)
+      ->where('idProyectoFormativo', $id)->get();
+    return response()->json($grupos);
   }
 
 
+  /**
+   * Get Fichas depending by parameter
+   *
+   * @param String $nombreTipoGrupo
+   * @return \Illuminate\Http\JsonResponse A JSON response containing the participant mappings.
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getTipoGrupoByParameter($nombreTipoGrupo)
+  {
+    $grupo = Grupo::whereHas('tipoGrupo', function ($query) use ($nombreTipoGrupo) {
+      $query->where('nombreTipoGrupo', $nombreTipoGrupo);
+    })->get();
+
+    return $grupo;
+  }
 
 
 }

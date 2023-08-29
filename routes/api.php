@@ -207,17 +207,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
-
-
-
-
-
+Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
 
 
 //tipo de grupos
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::resource('tipogrupos', TipoGrupoController::class)->middleware('auth:sanctum');
+
 
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
@@ -234,6 +231,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('horario_infraestructura_grupo', HorarioInfraestructuraGrupoController::class);
 
     Route::get('horario_infraestructura_grupo/grupo/{id}', [HorarioInfraestructuraGrupoController::class, 'infraestructuraByGrupo']);
+
+    // Querys searchs
+    Route::get('tipo_grupos_by_parameter/{nombreTipoGrupo}', [GrupoController::class, 'getTipoGrupoByParameter']);
+
+
 });
 
 Route::resource('estados', EstadoController::class);
@@ -278,7 +280,7 @@ Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
 
 
 
-Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']);// SE BUSCA PROGRAMA
+Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']); // SE BUSCA PROGRAMA
 
 // showByIdPrograma SE OBTIENE ES PROYECTOFORMATIVO
 
