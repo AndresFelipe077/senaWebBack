@@ -54,14 +54,17 @@ use App\Http\Controllers\gestion_infraestructuras\InfraestructuraController;
 use App\Http\Controllers\gestion_infraestructuras\SedeController;
 use App\Http\Controllers\MatriculaController;
 use App\Http\Controllers\TipoParticipacionController;
+use App\Models\TipoParticipacion;
 use App\Http\Controllers\QueryController;
 use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\pruebaController;
 use App\Http\Controllers\TipoCompetenciasController;
 use App\Models\asignacionCompetenciaProyecto;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -208,7 +211,6 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 
 
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);
 
 
 
@@ -238,10 +240,6 @@ Route::resource('estados', EstadoController::class);
 
 
 
-// ttttttttttttttttttttttt
-
-Route::resource('asignacion_participante', AsignacionParticipante::class);
-// gggggggggggggggg
 
 
 
@@ -258,7 +256,6 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
-Route::resource('asignacionParticipantes', AsignacionParticipanteController::class);
 
 
 
@@ -270,14 +267,39 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 
 
-Route::get('/asignacionParticipantes/programas/{idPrograma}/grupos', [AsignacionParticipanteController::class, 'obtenerGruposPorPrograma']);
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Route::get('asignacionParticipantes', [AsignacionParticipanteController::class, 'index']);
+
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
+
+
+
+Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']);// SE BUSCA PROGRAMA
+
+// showByIdPrograma SE OBTIENE ES PROYECTOFORMATIVO
+
+Route::get('grupos/programa/{id}', [GrupoController::class, 'showByIdProyectoFor']); // se encuentra en grupo POR MEDIO DE ESE PROYECTOF
+
+
+
+
+
 
 Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtenerAsignacionesParticipantes']);
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
+Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']);
 
-//
+
+
+
+
+///////////////////////////////////////////////////////////
 
 
 
@@ -330,3 +352,16 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 
 ///////////////////////
+
+
+//////////////
+
+Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
+// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+
+Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
+
+Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
+
+Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);

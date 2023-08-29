@@ -17,7 +17,6 @@ class TipoProgramasController extends Controller
             $tipoProgramas->where('nombreTipoPrograma', $nombreTipoPrograma);
         }
         return response()->json($tipoProgramas->get());
-
     }
 
 

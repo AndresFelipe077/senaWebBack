@@ -4,121 +4,150 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionParticipante;
+use App\Models\Competencias;
 use Illuminate\Http\Request;
 use App\Models\configuracionRap;
+use App\Models\resultadoAprendizaje;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class configuracionRapController extends Controller
 {
 
-    public function index(Request $request)
-    {
-        $resultado = $request->input('resultados');
-        $participante = $request->input('participantes');
-        $estado = $request->input('estados');
-        $jornada = $request->input('jornadas');
-        $configuraconRap = configuracionRap::with('resultados','participantes','estados','jornadas');
+	public function index(Request $request)
+	{
+		$resultado = $request->input('resultados');
+		$instructor = $request->input('usuarios');
+		$estado = $request->input('estados');
+		$jornada = $request->input('jornadas');
+		$grupo = $request->input('grupos');
+		$infraestructura = $request->input('infraestructuras');
+		$configuracionRap = configuracionRap::with('resultados', 'usuarios', 'estados', 'jornadas', 'grupos', 'infraestructuras');
 
-        if($resultado){
-            $configuraconRap->whereHas('resultados',function($q) use ($resultado){
-                return $q->select('id')->where('id',$resultado)->orWhere('rap',$resultado);
-            });
-        };
+		if ($resultado) {
+			$configuracionRap->whereHas('resultados', function ($q) use ($resultado) {
+				return $q->select('id')->where('id', $resultado)->orWhere('rap', $resultado);
+			});
+		};
 
-        if($participante){
-            $configuraconRap->whereHas('participantes',function($q) use ($participante){
-                return $q->select('id')->where('id',$participante)->orWhere('participantes',$participante);
-            });
-        };
+		if ($instructor) {
+			$configuracionRap->whereHas('usuarios', function ($q) use ($instructor) {
+				return $q->select('id')->where('id', $instructor)->orWhere('usuarios', $instructor);
+			});
+		};
 
-        if($estado){
-            $configuraconRap->whereHas('estados',function($q) use ($estado){
-                return $q->select('id')->where('id',$estado)->orWhere('estados',$estado);
-            });
-        };
+		if ($estado) {
+			$configuracionRap->whereHas('estados', function ($q) use ($estado) {
+				return $q->select('id')->where('id', $estado)->orWhere('estados', $estado);
+			});
+		};
 
-        if($jornada){
-            $configuraconRap->whereHas('jornadas',function($q) use ($jornada){
-                return $q->select('id')->where('id',$jornada)->orWhere('jornadas',$jornada);
-            });
-        };
+		if ($jornada) {
+			$configuracionRap->whereHas('jornadas', function ($q) use ($jornada) {
+				return $q->select('id')->where('id', $jornada)->orWhere('jornadas', $jornada);
+			});
+		};
 
+		if ($grupo) {
+			$configuracionRap->whereHas('grupos', function ($q) use ($grupo) {
+				return $q->select('id')->where('id', $grupo)->orWhere('grupos', $grupo);
+			});
+		};
 
-        return response()->json($configuraconRap->get());
-    }
-
-
-    public function store(Request $request)
-    {
-        $data = $request->all();
-
-        $configuracionRap = new configuracionRap($data);
-        $configuracionRap->save();
-        return response()->json($configuracionRap,201);
-    }
-
-
-    public function show($id)
-    {
-        $configuracionRap = configuracionRap::find($id);
-        return response()->json($configuracionRap,200);
-    }
+		if ($infraestructura) {
+			$configuracionRap->whereHas('infraestructuras', function ($q) use ($infraestructura) {
+				return $q->select('id')->where('id', $infraestructura)->orWhere('infraestructuras', $infraestructura);
+			});
+		};
 
 
-    public function update(Request $request, $id)
-    {
-        $data = $request->all();
-        $configuracionRap = configuracionRap::findOrFail($id);
-        $configuracionRap->fill($data);
-        $configuracionRap->save();
-
-        return response()->json($configuracionRap,203);
-    }
-
-    public function destroy($id)
-    {
-        $configuracionRap = configuracionRap::findOrFail($id);
-        $configuracionRap->delete();
-
-        return response()->json([]);
-    }
+		return response()->json($configuracionRap->get());
+	}
 
 
+	public function store(Request $request)
+	{
+		$data = $request->all();
 
-    public function transferirFicha(Request $request)
-{
-    $participante_id = $request->input('participante_id');
+		$configuracionRap = new configuracionRap($data);
+		$configuracionRap->save();
+		return response()->json($configuracionRap, 201);
+	}
 
-    // Obtener los RAP aprobados y pendientes/cursando del participante
-    $rap_aprobados = configuracionRap::where('idParticipante', $participante_id)
-        ->where('idEstado', 'aprovado')
-        ->pluck('idRap');
 
-    $rap_pendientes_cursando = configuracionRap::where('idParticipante', $participante_id)
-        ->whereIn('idEstado', ['pendiente', 'cursando'])
-        ->pluck('idRap');
+	public function show($id)
+	{
+		$configuracionRap = configuracionRap::find($id);
+		return response()->json($configuracionRap, 200);
+	}
 
-    // Verificar las validaciones
-    if ($rap_aprobados->contains($request->input('resultado_destino'))) {
-        return response()->json(['message' => 'Puede hacer el traslado de ficha']);
-    } elseif ($rap_pendientes_cursando->contains($request->input('resultado_destino'))) {
-        return response()->json(['message' => 'No puede hacer el traslado de ficha, aún no ha aprobado el RAP en el resultado destino']);
-    } elseif ($rap_pendientes_cursando->count() > 0) {
-        return response()->json(['message' => 'No puede hacer el traslado de ficha, debe terminar de cursar los RAP pendientes/cursando']);
-    } else {
-        return response()->json(['message' => 'No se puede realizar el traslado de ficha']);
-    }
-}
+	/**
+	 * Hours that are lost due to raps that the competition has depending on the attendance of the instructor
+	 * @author Andres Felipe Pizo Luligo
+	 */
+	public function getHoursLostForRapInCompetenciaByInstructor($idInstructor): JsonResponse
+	{
 
-public function obtenerResultados($participante_id) {
-    $participante = AsignacionParticipante::find($participante_id);
+		$usuario = User::with('persona')->find($idInstructor);
 
-    $resultados = ConfiguracionRap::where('idParticipante', $participante->id)
-        ->with('resultados')
-        ->get();
+		$rapsByCompetencia = ConfiguracionRap::where('idInstructor', $idInstructor)
+			->with(['asistencias' => function ($query) use ($idInstructor) {
+				$query->whereIn('idConfiguracionRap', function ($subquery) use ($idInstructor) {
+					$subquery->select('id')
+						->from('configuracionRap')
+						->where('idInstructor', $idInstructor);
+				})->where('asistencia', 0);
+			}, 'jornadas' => function ($query) {
+				$query->select('id', 'numeroHoras');
+			}, 'resultados.competencia' => function ($query) {
+				$query->select('id', 'horas');
+			}])
+			->get(['id', 'horas', 'idJornada', 'idRap', 'idInstructor']);
 
-    foreach ($resultados as $configuracion) {
-        $resultadoParticipante = $configuracion->resultados;
-        return response()->json(['holi']);
-    }
-}
+		$rapsByCompetencia->each(function ($rap) {
+			$calculatedValue = 0;
+
+			if ($rap->jornadas) {
+				$calculatedValue = $rap->horas;
+			}
+
+			$rap->calculatedValue = $calculatedValue;
+		});
+
+		$totalInasistencias = 0; // Agregar un contador para las inasistencias totales
+		$hoursLost = 0;
+
+		foreach ($rapsByCompetencia as $rap) {
+			$inasistenciasCount = $rap->asistencias->count();
+			$totalInasistencias += $inasistenciasCount; // Sumar al contador total
+			$hoursLost += $rap->calculatedValue * $inasistenciasCount;
+		}
+
+		$result = [
+			'hoursLost' => $hoursLost,
+			'totalInasistencias' => $totalInasistencias,
+			'usuario' => $usuario,
+			'inasistenciaRaps' => $rapsByCompetencia->toArray()
+		];
+
+		return response()->json($result);
+	}
+
+	public function update(Request $request, $id)
+	{
+		$data = $request->all();
+		$configuracionRap = configuracionRap::findOrFail($id);
+		$configuracionRap->fill($data);
+		$configuracionRap->save();
+
+		return response()->json($configuracionRap, 203);
+	}
+
+	public function destroy($id)
+	{
+		$configuracionRap = configuracionRap::findOrFail($id);
+		$configuracionRap->delete();
+
+		return response()->json([]);
+	}
 }

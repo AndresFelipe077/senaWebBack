@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Http\Middleware\Permisions;
 use App\Models\ActivationCompanyUser;
 use App\Models\Person;
-use App\Models\User;
 use App\Permission\PermissionConst;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -20,7 +18,22 @@ class RoleSeeder extends Seeder
     public function run()
     {
         $vt = new Role();
-        $vt->name = "Admin";
+        $vt->name = "ADMIN";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
+        $vt->name = "INSTRUCTOR";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
+        $vt->name = "LIDER";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
+        $vt->name = "APRENDIZ";
         $vt->idCompany = 1;
         $vt->save();
 
@@ -45,7 +58,7 @@ class RoleSeeder extends Seeder
 
 
 
-// permisao vanesas
+            // permisao vanesas
             PermissionConst::GESTION_COMPETENCIA,
             PermissionConst::GESTION_ACTIVIDAD_APRENDIZAJE,
             PermissionConst::GESTION_RESULTADO_APRENDIZAJE,
@@ -62,18 +75,16 @@ class RoleSeeder extends Seeder
 
             PermissionConst::GESTION_JORNADA,
             PermissionConst::GESTION_MATRICULA,
+
             PermissionConst::GESTION_FICHAS,
 
             PermissionConst::GESTION_CRITERIOS_EVALUACION
         ]);
 
         $emailAdmin = "admin@gmail.com";
-        Person::factory()
-            ->hasUsuario(1, ['email' => $emailAdmin])
-            ->create([
-                'email'  => $emailAdmin,
-            ]);
-
+        Person::factory()->hasUsuario(1, ['email' => $emailAdmin])->create([
+            'email' => $emailAdmin,
+        ]);
 
         $activation = ActivationCompanyUser::factory()->create([
             'company_id' => 1,
@@ -82,6 +93,5 @@ class RoleSeeder extends Seeder
         ]);
 
         $activation->assignRole($vt);
-
     }
 }
