@@ -422,4 +422,16 @@ class GrupoController extends Controller
 
     return false;
   }
+
+
+
+
+
+  public function getFichasByGroup() {
+
+    return ;
+  }
+
+
+
 }
