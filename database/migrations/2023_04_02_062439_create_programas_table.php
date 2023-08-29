@@ -17,13 +17,13 @@ class CreateProgramasTable extends Migration
             $table->increments('id');          
             $table->text('nombrePrograma');
             $table->text('codigoPrograma');
-            $table->text('descripcionPrograma');
+            $table->text('descripcionPrograma')->nullable();
             $table->integer('totalHoras');
             $table->integer('etapaLectiva');
             $table->integer('etapaProductiva');
             $table->integer('creditosLectiva');
             $table->integer('creditosProductiva');
-            $table->string ('rutaArchivo');
+            $table->string ('rutaArchivo')->nullable();
             $table->text ('version');
 
             $table->unsignedInteger('idTipoPrograma');
