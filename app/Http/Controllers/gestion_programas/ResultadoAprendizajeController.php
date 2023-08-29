@@ -60,6 +60,13 @@ class resultadoAprendizajeController extends Controller{
             return response() -> json($resultados);
     }
 
+    public function showByIdActividaP(int $id)
+    {
+            $resultados = resultadoAprendizaje::with($this -> relations ) 
+            -> where('idCompetencia',$id) -> get();
+            return response() -> json($resultados);
+    }
+
     
     public function update(Request $request, int $id)
     {
