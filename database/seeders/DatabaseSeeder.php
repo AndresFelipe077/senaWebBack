@@ -64,7 +64,6 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
 
         $this->call(DiaSeeder::class);
-        // $this->call(EstadoRapSeeder::class);
 
         $path = 'database/seeders/sql/tipo_programa.sql';
         DB::unprepared(file_get_contents($path));

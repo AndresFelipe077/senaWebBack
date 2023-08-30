@@ -24,6 +24,8 @@ class PlaneacionController extends Controller
             return response()->json(['message' => 'Error al eliminar el registro', 'error' => $e->getMessage()], 500);
         }
     }
+
+
     public function store(Request $request)
     {
         try {
@@ -57,5 +59,13 @@ class PlaneacionController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al guardar los registros', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function showByIdActividadProyecto(int $id)
+    {
+        $resultados = Planeacion::with(['actividadProyectos','resultados'])
+        ->where('idActividadProyecto',$id) -> get();
+
+        return response() -> json($resultados);
     }
 }
