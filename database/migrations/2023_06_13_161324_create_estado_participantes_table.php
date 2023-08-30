@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateEstadoParticipantesTable extends Migration
@@ -18,6 +19,16 @@ class CreateEstadoParticipantesTable extends Migration
             $table->string('detalleEstado');
             $table->timestamps();
         });
+
+        DB::table('estadoParticipantes')->insert([
+            ['detalleEstado' => 'ACTIVO'],
+            ['detalleEstado' => 'PENDIENTE'],
+            ['detalleEstado' => 'TRASLADO'],
+            ['detalleEstado' => 'CANCELADO'],
+            ['detalleEstado' => 'RETIRO VOLUNTARIO'],
+            ['detalleEstado' => 'DESERTADO'],
+
+        ]);
     }
 
     /**

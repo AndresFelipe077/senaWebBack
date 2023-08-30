@@ -141,7 +141,7 @@ class GrupoController extends Controller
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
-      'jornadas',
+      'jornadas.diaJornada',
       'participantes',
       'infraestructuras',
       'infraestructuras.sede'
@@ -422,4 +422,24 @@ class GrupoController extends Controller
 
     return false;
   }
+
+
+//   public function showByIdProyectoFor($programaId)
+//   {
+//       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
+//           $query->where('idPrograma', $programaId);
+//       })->get();
+
+//       return response()->json($grupos);
+//   }
+
+  public function showByIdProyectoFor(int $id){
+    $grupos=Grupo::with($this -> relations)
+    -> where('idProyectoFormativo',$id) -> get();
+    return response() -> json($grupos);
+  }
+
+
+
+
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEstadoRapTable extends Migration
+class CreateEstadoConfiguracionRap extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateEstadoRapTable extends Migration
      */
     public function up()
     {
-        Schema::create('estadoRap', function (Blueprint $table) {
+        Schema::create('estadoConfiguracionRap', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('nombreEstado');
+            $table->string('estado');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateEstadoRapTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estadoRap');
+        Schema::dropIfExists('estadoConfiguracionRap');
     }
 }

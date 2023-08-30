@@ -62,6 +62,7 @@ class RoleSeeder extends Seeder
 
             PermissionConst::GESTION_JORNADA,
             PermissionConst::GESTION_MATRICULA,
+            
             PermissionConst::GESTION_FICHAS,
 
             PermissionConst::GESTION_CRITERIOS_EVALUACION
