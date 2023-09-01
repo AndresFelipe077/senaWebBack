@@ -9,6 +9,6 @@ class WebController extends Controller
 {
     public function index()
     {
-        return File::get(public_path() . '/index.html');
+        return view('welcome');
     }
 }
