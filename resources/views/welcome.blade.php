@@ -432,6 +432,8 @@
         <div class="center-imgs flex justify-center pt-8 sm:justify-start sm:pt-0">
           <img style="margin-right: 50px;" src="{{ asset('default/logoSena.png') }}" alt="Logo SENA" height="150px" width="150px">
 
+          <img style="margin-right: 50px;" src="{{ asset('default/sofain.png') }}" alt="Logo SOFAIN" height="130px" width="300px">
+
           <div style="margin-top: 50px;">
             <svg viewBox="0 0 651 192" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-16 w-auto text-gray-700 sm:h-20">
               <g clip-path="url(#clip0)" fill="#EF3B2D">
