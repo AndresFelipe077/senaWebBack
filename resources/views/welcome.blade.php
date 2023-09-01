@@ -12,6 +12,14 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
+  <script>
+    document.addEventListener('dragstart', function(evt) {
+      if (evt.target.tagName == 'IMG') {
+        evt.preventDefault();
+      }
+    });
+  </script>
+
   <!-- Styles -->
   <style>
     /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -21,7 +29,16 @@
     }
 
     body {
-      margin: 0
+      margin: 0;
+      -youbkit-touch-callout: none;
+      /*iOS Safari*/
+      -youbkit-user-select: none;
+      /* Chrome 6.0+, Safari 3.1+, Edge y Opera 15+ */
+      -moz-user-select: none;
+      /*Firefox*/
+      -ms-user-select: none;
+      /* IE 10+ y Edge */
+      user-select: none;
     }
 
     a {
