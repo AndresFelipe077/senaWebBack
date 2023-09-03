@@ -13,8 +13,8 @@ class resultadoAprendizaje extends Model
     protected $fillable = [
         "rap",
         "codigoRap",
-        "numeroHoras",
-        "idTipoRaps"
+        "idTipoRaps",
+        "idCompetencia"
     ];
     public $timestamps = false;
 
@@ -30,21 +30,6 @@ class resultadoAprendizaje extends Model
     {
         return $this->hasMany(actividadAprendizaje::class,'rap');
     }
-
-
-    
-    //relacion muchos a muchos
-    public function competencias()
-    {
-        return $this->belongsToMany(
-            Competencias::class,
-            AsignacionCompetenciaRap::class, 
-            'idRap', 'idCompetencia'
-        ) -> withPivot('id');
-        
-    }
-
-
 
 
     // Relación con el modelo Competencias

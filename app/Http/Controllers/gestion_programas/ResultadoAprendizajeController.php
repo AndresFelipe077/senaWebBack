@@ -23,10 +23,14 @@ class resultadoAprendizajeController extends Controller{
     public function index(Request $request)
     {
         $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('tipoRaps');
+        $resultados = resultadoAprendizaje::with('competencias', 'tipoRaps');
         
 // rrrrrrrevkizar
-
+        if ($competencia) {
+            $resultados->whereHas('competencias', function ($q) use ($competencia) {
+                return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
+            });
+        }
 
         if ($tipoResultado) {
             $resultados->whereHas('tipoRaps', function ($q) use ($tipoResultado) {

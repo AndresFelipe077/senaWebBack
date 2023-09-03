@@ -7,7 +7,16 @@ use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 
 class AsignacionFaseProyFormativoController extends Controller
-{
+{   
+
+    private $relations;
+
+    public function _construct(){
+        $this->relations = [
+            'fase',
+            'proyectoFormativo'
+        ];
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +24,7 @@ class AsignacionFaseProyFormativoController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -43,6 +52,14 @@ class AsignacionFaseProyFormativoController extends Controller
         //
     }
 
+    public function showByIdProyecto(int $id)
+    {
+        $fases = AsignacionFaseProyFormativo::with(['fase','proyectoFormativo'])
+        ->where('idProyectoFormativo',$id) -> get();
+
+        return response() -> json($fases);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -61,8 +78,9 @@ class AsignacionFaseProyFormativoController extends Controller
      * @param  \App\Models\asignacionFaseProyFormativo  $asignacionFaseProyFormativo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(asignacionFaseProyFormativo $asignacionFaseProyFormativo)
+    public function destroy(int $id)
     {
-        //
+        $asignacionFaseP = asignacionFaseProyFormativo::findOrFail($id);
+        $asignacionFaseP -> delete();
     }
 }

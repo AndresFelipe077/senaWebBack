@@ -43,8 +43,8 @@ class ActividadProyectoController extends Controller
     }
 
     public function showByIdFase(int $id){
-        $actividadP = ActividadProyecto::with('fase')
-        ->where('idFase',$id) -> get();
+        $actividadP = ActividadProyecto::with('faseProyecto.fase','faseProyecto.proyectoFormativo')
+        ->where('idFaseProyecto',$id) -> get();
 
         return response() -> json($actividadP);
     }
