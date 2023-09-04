@@ -14,9 +14,11 @@ class configuracionRap extends Model
     protected $fillable = [
         'id',
         'idRap',
-        'idParticipante',
+        'idInstructor',
         'idEstado',
         'idJornada',
+        'idInfraestructura',
+        'idGrupo',
         'fechaInicial',
         'fechaFinal'
     ];
@@ -27,17 +29,29 @@ class configuracionRap extends Model
         return $this->belongsTo(resultadoAprendizaje::class, 'idRap');
     }
 
-    public function participantes(){
-        return $this->belongsTo(AsignacionParticipante::class, 'idParticipante');
+    public function usuarios(){
+        return $this->belongsTo(User::class, 'idInstructor');
     }
 
     public function estados(){
-        return $this->belongsTo(estadoRap::class, 'idEstado');
+        return $this->belongsTo(estadoConfiguracionRap::class, 'idEstado');
     }
 
     public function jornadas(){
         return $this->belongsTo(Jornada::class, 'idJornada');
     }
+
+    public function infraestructuras(){
+        return $this->belongsTo(infraestructura::class, 'idInfraestructura');
+    }
     
+    public function grupos(){
+        return $this->belongsTo(grupo::class, 'idGrupo');
+    }
+
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class, 'idConfiguracionRap');
+    }
 
 }

@@ -4,14 +4,9 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
-use App\Models\AsignacionParticipante;
-use App\Models\EstadoGrupoInfraestructura;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
-use App\Models\Infraestructura;
-use App\Models\Jornada;
-use ArrayObject;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\TipoGrupo;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
@@ -22,15 +17,16 @@ class GrupoController extends Controller
   {
     $this->relations = [
       'tipoGrupo',
-      'programa',
-      // 'instructor.persona',
+      'proyectoFormativo',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
       'jornadas.diaJornada',
       'participantes',
-      'infraestructuras'
+      'infraestructuras',
+      'infraestructuras.sede'
+
     ];
   }
   /**
@@ -41,7 +37,18 @@ class GrupoController extends Controller
   public function index()
   {
 
-    $grupos = Grupo::with($this -> relations)->get();
+    $grupos = Grupo::with([
+      'tipoGrupo',
+      'proyectoFormativo',
+      'nivelFormacion',
+      'tipoFormacion',
+      'estadoGrupo',
+      'tipoOferta',
+      'jornadas',
+      'participantes.persona',
+      'infraestructuras',
+      'infraestructuras.sede'
+    ])->get();
 
     //quitar pivots
     $newGrupos = $grupos->map(function ($grupo) {
@@ -50,6 +57,13 @@ class GrupoController extends Controller
         unset($infr['pivot']);
         $infr['horario_infraestructura'] = $pivot;
         return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
       });
 
       $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
@@ -74,18 +88,25 @@ class GrupoController extends Controller
   {
     $data = $request->all();
 
+    $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
+    if ($existingGrupo) {
+      return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+    }
+
     $grupo = new Grupo([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
-      'idPrograma' => $data['idPrograma'],
-      'idNivel' => $data['idNivel'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta']
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
+      'idNivel'             => $data['idNivel'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta']
     ]);
+
+    $grupo->save();
 
     $infraestructuras = $data['infraestructuras'];
 
@@ -96,7 +117,6 @@ class GrupoController extends Controller
       if ($existeAsignacion) {
         return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
       } else {
-        $grupo->save();
         $this->guardarHorarioInfra($infraItem, $grupo->id);
       }
     }
@@ -122,7 +142,18 @@ class GrupoController extends Controller
    */
   public function show(int $id)
   {
-    $dato = Grupo::with($this -> relations)->find($id);
+    $dato = Grupo::with([
+      'tipoGrupo',
+      'proyectoFormativo',
+      'nivelFormacion',
+      'tipoFormacion',
+      'estadoGrupo',
+      'tipoOferta',
+      'jornadas.diaJornada',
+      'participantes',
+      'infraestructuras',
+      'infraestructuras.sede'
+    ])->find($id);
 
     if (!$dato) {
       return response()->json(['error' => 'El dato no fue encontrado'], 404);
@@ -214,7 +245,7 @@ class GrupoController extends Controller
       'fechaFinalGrupo' => $data['fechaFinalGrupo'],
       'observacion' => $data['observacion'],
       'idTipoGrupo' => $data['idTipoGrupo'],
-      'idPrograma' => $data['idPrograma'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
       'idNivel' => $data['idNivel'],
       'idTipoFormacion' => $data['idTipoFormacion'],
       'idEstado' => $data['idEstado'],
@@ -278,6 +309,11 @@ class GrupoController extends Controller
 
     $fechaInicial = $data['horario_infraestructura']['fechaInicial'];
     $fechaFinal = $data['horario_infraestructura']['fechaFinal'];
+
+    if (strtotime($fechaFinal) < strtotime('today')) {
+      // Si la "fechaFinal" ya ha pasado, no se guarda por infraestructuras que han terminado.
+      return; // No se guarda la infraestructura y se sale de la función.
+    }
 
     // Verificar si existe una infraestructura anterior no actualizada
     $existingInfraestructura = HorarioInfraestructuraGrupo::where('idGrupo', $idGrupo)
@@ -394,4 +430,40 @@ class GrupoController extends Controller
 
     return false;
   }
+
+
+  //   public function showByIdProyectoFor($programaId)
+  //   {
+  //       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
+  //           $query->where('idPrograma', $programaId);
+  //       })->get();
+
+  //       return response()->json($grupos);
+  //   }
+
+  public function showByIdProyectoFor(int $id)
+  {
+    $grupos = Grupo::with($this->relations)
+      ->where('idProyectoFormativo', $id)->get();
+    return response()->json($grupos);
+  }
+
+
+  /**
+   * Get Fichas depending by parameter
+   *
+   * @param String $nombreTipoGrupo
+   * @return \Illuminate\Http\JsonResponse A JSON response containing the participant mappings.
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getTipoGrupoByParameter($nombreTipoGrupo)
+  {
+    $grupo = Grupo::whereHas('tipoGrupo', function ($query) use ($nombreTipoGrupo) {
+      $query->where('nombreTipoGrupo', $nombreTipoGrupo);
+    })->get();
+
+    return $grupo;
+  }
+
+
 }

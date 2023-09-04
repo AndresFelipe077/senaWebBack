@@ -13,18 +13,12 @@ class resultadoAprendizaje extends Model
     protected $fillable = [
         "rap",
         "codigoRap",
-        "idTipoRaps",
         "idCompetencia"
     ];
     public $timestamps = false;
 
 
     // relacion uno a muchos entre raps y tipo raps
-
-    public function tipoRaps()
-    {
-        return $this->belongsTo(TipoRaps::class, 'idTipoRaps');
-    }
 
     public function actividadesAprendizaje()
     {
@@ -33,19 +27,9 @@ class resultadoAprendizaje extends Model
 
 
     // Relación con el modelo Competencias
-
+    public function competencia()
+    {
+        return $this->belongsTo(Competencias::class, 'idCompetencia');
+    }
     
-    // public function competencia()
-    // {
-    //     return $this->belongsTo(Competencias::class, 'idCompetencia');
-    // }
-    // public function tableCompetencia()
-    // {
-    //     return $this->belongsTo(Competencias::class, 'competencias');
-    // }
-
-
-
-
-    // correcion para los pivots
 }

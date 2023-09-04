@@ -14,8 +14,9 @@ class Competencias extends Model
     protected $fillable = [
         "nombreCompetencia",
         "codigoCompetencia",
+        "horas",
         "idPrograma",
-
+        "idTipoCompetencia"
     ];
 
     public $timestamps = false;
@@ -24,7 +25,12 @@ class Competencias extends Model
     //relacion uno a muchos
     public function programas()
     {
-        return $this->belongsTo(Programa::class, 'idPrograma');
+        return $this->belongsTo(tipoCompetencias::class, 'idPrograma');
+    }
+
+    public function tipoCompetencias()
+    {
+        return $this->belongsTo(tipoCompetencias::class, 'idTipoCompetencia');
     }
 
     //relacion muchos a  muchos
@@ -36,5 +42,9 @@ class Competencias extends Model
     public function resultadosAprendizaje()
     {
         return $this->hasMany(resultadoAprendizaje::class, 'idCompetencia', 'id');
+    }
+    public function proyectosFormativos()
+    {
+        return $this->belongsToMany(proyectoFormativo::class, 'asignacionCompetenciaProyecto', 'idCompetencia', 'idProyecto');
     }
 }

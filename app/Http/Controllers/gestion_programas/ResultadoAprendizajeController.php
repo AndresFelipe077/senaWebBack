@@ -3,38 +3,33 @@
 namespace App\Http\Controllers\gestion_programas;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\gestion_programas\CompetenciasController;
 use App\Models\resultadoAprendizaje;
-use App\Models\Competencias;
 use Illuminate\Http\Request;
 
 class resultadoAprendizajeController extends Controller{
 
-
     private $relations;
 
-  public function __construct()
-  {
-    $this->relations = [
-      'competencias',
 
-    ];
-  }
+    
+    
+    public function __construct()
+    {
+        $this->relations = [
+            'competencia',
+        ];
+    }
+
+
     public function index(Request $request)
     {
-        $tipoResultado = $request->input('tipoRaps');
-        $resultados = resultadoAprendizaje::with('competencias', 'tipoRaps');
+        $competencia = $request->input('competencias');
+        $resultados = resultadoAprendizaje::with('competencia');
         
 // rrrrrrrevkizar
         if ($competencia) {
             $resultados->whereHas('competencias', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
-            });
-        }
-
-        if ($tipoResultado) {
-            $resultados->whereHas('tipoRaps', function ($q) use ($tipoResultado) {
-                return $q->where('id', $tipoResultado)->orWhere('nombre', $tipoResultado);
             });
         }
 
@@ -44,37 +39,11 @@ class resultadoAprendizajeController extends Controller{
     //funcion para asignar los resultados a las competencias
     public function store(Request $request)
     {
-
-
-
-
-        $rap = resultadoAprendizaje::with($this -> relations)->get();
-
-        //quitar pivots
-        $newRap = $rap->map(function ($rapp) {
-          $rapp['competecias'] = $rapp['competencias']->map(function ($infr) {
-            $pivot = $infr['pivot'];
-            unset($infr['pivot']);
-            $infr['Competencias'] = $pivot;
-            return $infr;
-          });
-    
-          return $rapp;
-          
-        });
-        return response()->json($newRap);
-        // $data = $request->all();
-
-        // if (isset($data['rap'])) {
-        //     // Crear un nuevo resultado de aprendizaje
-        //     $resultadoA = new resultadoAprendizaje($data);
-        //     $resultadoA->save();
-        //     // Verificar si se proporcionó un ID de competencia en la solicitud
-
-        //     return response()->json($resultadoA, 201);
-        // }
-
-        // return response()->json(['error' => 'El campo "nombre" es requerido'], 400);
+        $data =$request->all();
+        $resultado = new resultadoAprendizaje($data);
+        $resultado->save();
+  
+        return response()->json($resultado);
     }
 
     
@@ -87,11 +56,9 @@ class resultadoAprendizajeController extends Controller{
 
     public function showByIdCompetencia(int $id)
     {
-        $raps = resultadoAprendizaje::whereHas('competencias', function ($query) use ($id) {
-            $query->where('idCompetencia', $id);
-        })->get();
-
-        return response() -> json($raps);
+            $resultados = resultadoAprendizaje::with($this -> relations ) 
+            -> where('idCompetencia',$id) -> get();
+            return response() -> json($resultados);
     }
 
     

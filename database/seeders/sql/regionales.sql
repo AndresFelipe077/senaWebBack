@@ -1,3 +1,3 @@
-INSERT INTO `regional` (`nombreRegional`, `descripcion`) VALUES
-('CAUCA','tiene sedes en zonas rurales'),
-('CALI','sedes del sector agro');
+INSERT INTO `regional` VALUES 
+(1,'CAUCA','REGIONAL DEL CAUCA',NULL,NULL);
+

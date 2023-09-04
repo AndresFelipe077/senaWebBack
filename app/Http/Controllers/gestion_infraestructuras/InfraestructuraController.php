@@ -189,6 +189,31 @@ class InfraestructuraController extends Controller
         $registro->save();
     }
 
+    /*public function update(Request $request, int $id)
+    {
+        $request->validate([
+            'object.nombreInfraestructura' => 'required',
+            'object.capacidad' => 'required',
+            'object.idArea' => 'required',
+            'object.idSede' => 'required'
+        ]);
+
+        $data = $request->input('object');
+
+        $registro = InfraEstructura::findOrFail($id);
+
+        $registro->update($data);
+
+        // Cargar relaciones si fueron proporcionadas
+        if ($request->has('relations')) {
+            $relations = $request->input('relations');
+            $registro->load($relations);
+        }
+
+        return response()->json($registro);
+    }*/
+
+
     /**
      * Remove the specified resource from storage.
      */

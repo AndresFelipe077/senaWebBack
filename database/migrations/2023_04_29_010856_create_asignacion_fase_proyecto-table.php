@@ -16,10 +16,11 @@ class CreateAsignacionFaseProyectoTable extends Migration
         Schema::create('asignacionFaseProyecto', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('idFase');
-            $table->foreign('idFase')->references('id')->on('fase');
-
             $table->unsignedInteger('idProyectoFormativo');
+            $table->text ('descripcion');
+
             $table->foreign('idProyectoFormativo')->references('id')->on('proyectoFormativo');
+            $table->foreign('idFase')->references('id')->on('fase');
 
             $table->timestamps();
         });

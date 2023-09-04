@@ -19,10 +19,10 @@ class Grupo extends Model
         return $this->belongsTo(TipoGrupo::class, 'idTipoGrupo', 'id');
     }
 
-    //Relacion uno a muchos Inversa(programa->Grupo)
-    public function programa()
+    //Relacion uno a muchos Inversa(proyectoFormativo->Grupo)
+    public function proyectoFormativo()
     {
-        return $this->belongsTo(Programa::class, 'idPrograma', 'id');
+        return $this->belongsTo(proyectoFormativo::class, 'idProyectoFormativo', 'id');
     }
 
     //relacion con horarioInfraestructuraGrupo pertenecientes a grupo con infraestructura

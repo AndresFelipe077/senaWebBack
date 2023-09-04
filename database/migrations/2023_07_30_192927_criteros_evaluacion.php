@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTipoRapsTable extends Migration
+class CriterosEvaluacion extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateTipoRapsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipoRaps', function (Blueprint $table) {
-            $table->increments('id');
-            $table->text('nombre');
-            $table->text('codigo');
-            $table->timestamps();
+        Schema::create('criteriosEvaluacion', function (Blueprint $table) {
+            $table->id();
+            $table->string('codigo'); 
+            $table->text('descripcion'); 
+            $table->timestamps(); 
         });
     }
 
@@ -28,6 +28,6 @@ class CreateTipoRapsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipoRaps');
+        Schema::dropIfExists('criteriosEvaluacion');
     }
 }

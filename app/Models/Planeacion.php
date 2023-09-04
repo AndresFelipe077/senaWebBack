@@ -13,10 +13,8 @@ class Planeacion extends Model
     protected $fillable = [
         "idResultadoAprendizaje",
         "idActividadProyecto",
-        "horas"
     ];
     public $timestamps = false;
-
 
     public function actividadProyectos(){
         return $this->belongsTo(ActividadProyecto::class, 'idActividadProyecto');
@@ -25,4 +23,15 @@ class Planeacion extends Model
     public function resultados(){
         return $this->belongsTo(resultadoAprendizaje::class, 'idResultadoAprendizaje');
     }
+
+    public function criteriosEvaluacion()
+    {
+        return $this->belongsToMany(criteriosEvaluacion::class, 'asociacionCriteriosPlaneacion', 'id_planeacion', 'id_criterioEvaluacion');
+    }
+    public function actividadAprendizajes(){
+        return $this->hasMany(actividadAprendizaje::class, 'idPlaneacion');
+    }
+    
 }
+  
+

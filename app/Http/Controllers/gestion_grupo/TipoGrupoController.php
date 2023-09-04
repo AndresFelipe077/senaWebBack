@@ -18,6 +18,11 @@ class TipoGrupoController extends Controller
     return response()->json(TipoGrupo::all(), 200);
   }
 
+  public function getTipoGrupoFicha()
+  {
+    return TipoGrupo::where('nombreTipoGrupo', 'FICHA')->get();
+  }
+
   /**
    * Store a newly created resource in storage.
    *
@@ -55,12 +60,12 @@ class TipoGrupoController extends Controller
 
   public function update(Request $request, int $id)
   {
-      $data = $request->all();
-      $tipoGrupo = TipoGrupo::findOrFail($id);
-      $tipoGrupo->fill($data);
-      $tipoGrupo->save();
+    $data = $request->all();
+    $tipoGrupo = TipoGrupo::findOrFail($id);
+    $tipoGrupo->fill($data);
+    $tipoGrupo->save();
 
-      return response()->json($tipoGrupo);
+    return response()->json($tipoGrupo);
   }
   /**
    * Remove the specified resource from storage.

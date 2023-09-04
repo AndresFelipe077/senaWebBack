@@ -12,7 +12,13 @@ class asignacionFaseProyFormativo extends Model
     protected $guarded = [];
 
 
+    public static $snakeAttributes = false;
     protected $table = 'asignacionFaseProyecto';
+        protected $fillable = [
+        'idFase',
+        'idProyectoFormativo',
+        'descripcion'
+    ];
 
 
    

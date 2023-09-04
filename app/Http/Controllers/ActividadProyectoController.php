@@ -10,13 +10,11 @@ class ActividadProyectoController extends Controller
 {
     public function index(Request $request)
     {
-
-        $fase = $request->input('fase');
-        $AP = ActividadProyecto::with('fase');
-
+        $fase = $request->input('faseProyecto');
+        $AP = ActividadProyecto::with('faseProyecto');
 
         if($fase){
-            $AP->whereHas('fase',function($q) use ($fase){
+            $AP->whereHas('faseProyecto',function($q) use ($fase){
                 return $q->select('id')->where('id',$fase)->orWhere('nombreFase',$fase);
             });
         };
@@ -24,7 +22,7 @@ class ActividadProyectoController extends Controller
         return response()->json($AP->get());
     }
 
-    
+
     public function store(Request $request)
     {
         $data = $request->all();
@@ -34,11 +32,11 @@ class ActividadProyectoController extends Controller
         return response()->json($AP,201);
     }
 
-    
+
     public function show(int $id)
     {
         $AP = ActividadProyecto::find($id);
-        
+
         return response()->json($AP,200);
     }
 
@@ -49,7 +47,6 @@ class ActividadProyectoController extends Controller
         return response() -> json($actividadP);
     }
 
-    
     public function update(Request $request, int $id)
     {
         $data = $request->all();

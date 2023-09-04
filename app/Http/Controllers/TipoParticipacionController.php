@@ -16,5 +16,4 @@ class TipoParticipacionController extends Controller
 
 
 
-
 }

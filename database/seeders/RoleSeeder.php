@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Http\Middleware\Permisions;
 use App\Models\ActivationCompanyUser;
 use App\Models\Person;
-use App\Models\User;
 use App\Permission\PermissionConst;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -20,17 +18,28 @@ class RoleSeeder extends Seeder
     public function run()
     {
         $vt = new Role();
-        $vt->name = "Admin";
+        $vt->name = "ADMIN";
         $vt->idCompany = 1;
         $vt->save();
 
-        $rapidoTambo = new Role();
-        $rapidoTambo->name = "Admin";
-        $rapidoTambo->idCompany = 2;
-        $rapidoTambo->save();
+        $vt = new Role();
+        $vt->name = "INSTRUCTOR";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
+        $vt->name = "LIDER";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
+        $vt->name = "APRENDIZ";
+        $vt->idCompany = 1;
+        $vt->save();
 
 
         $vt->syncPermissions([
+            PermissionConst::HOME,
             PermissionConst::GESTION_ROL_PERMISOS,
             PermissionConst::GESTION_ROLES,
             PermissionConst::GESTION_TIPO_CONTRATO,
@@ -49,7 +58,7 @@ class RoleSeeder extends Seeder
 
 
 
-// permisao vanesas
+            // permisao vanesas
             PermissionConst::GESTION_COMPETENCIA,
             PermissionConst::GESTION_ACTIVIDAD_APRENDIZAJE,
             PermissionConst::GESTION_RESULTADO_APRENDIZAJE,
@@ -65,30 +74,17 @@ class RoleSeeder extends Seeder
             PermissionConst::GESTION_INFRAESTRUCTURA,
 
             PermissionConst::GESTION_JORNADA,
-            PermissionConst::CALENDARIO,
-            PermissionConst::GESTION_MATRICULA,
-            PermissionConst::GESTION_FICHAS
-
-
-        ]);
-
-        $rapidoTambo->syncPermissions([
-            PermissionConst::GESTION_TIPO_CONTRATO,
-            PermissionConst::GESTION_USUARIO,
-            PermissionConst::GESTION_GRUPO,
-            PermissionConst::GESTION_TIPO_GRUPO,
             PermissionConst::GESTION_MATRICULA,
 
+            PermissionConst::GESTION_FICHAS,
 
+            PermissionConst::GESTION_CRITERIOS_EVALUACION
         ]);
 
         $emailAdmin = "admin@gmail.com";
-        Person::factory()
-            ->hasUsuario(1, ['email' => $emailAdmin])
-            ->create([
-                'email'  => $emailAdmin,
-            ]);
-
+        Person::factory()->hasUsuario(1, ['email' => $emailAdmin])->create([
+            'email' => $emailAdmin,
+        ]);
 
         $activation = ActivationCompanyUser::factory()->create([
             'company_id' => 1,
@@ -97,14 +93,5 @@ class RoleSeeder extends Seeder
         ]);
 
         $activation->assignRole($vt);
-
-        $activation = ActivationCompanyUser::factory()->create([
-            'company_id' => 2,
-            'user_id' => 1,
-            'state_id' => 1
-        ]);
-
-        $activation->assignRole($rapidoTambo);
-
     }
 }
