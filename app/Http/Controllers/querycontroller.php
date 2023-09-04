@@ -82,6 +82,10 @@ class QueryController extends Controller
             $resultados[$claveHash][] = $registro;
         }
 
+
+
+        
+
         // Si solo hay un resultado, devuelves el objeto directamente
         if (count($resultados) === 1) {
             return reset($resultados);

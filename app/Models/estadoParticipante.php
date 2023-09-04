@@ -12,4 +12,9 @@ class estadoParticipante extends Model
     protected $table = 'estadoParticipantes';
 
     protected $guarded = [];
+
+    public function historiales()
+    {
+        return $this->hasMany(estadoParticipante::class, 'detalleEstado');
+    }
 }

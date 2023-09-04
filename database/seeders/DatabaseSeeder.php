@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Grupo;
+use App\Models\Programa;
+use App\Models\proyectoFormativo;
+use App\Models\TipoProgramas;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
  
@@ -44,8 +48,8 @@ class DatabaseSeeder extends Seeder
         // DB::unprepared(file_get_contents($path));
 
 
-        // TipoProgramas::factory(0)->create();
-        // Programa::factory(0)->create();
+        TipoProgramas::factory(5)->create();
+        Programa::factory(5)->create();
 
         $this->call(CompanySeeder::class);
         $this->call(PermissionSeeder::class);
@@ -65,8 +69,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(DiaSeeder::class);
 
-        $path = 'database/seeders/sql/tipo_programa.sql';
-        DB::unprepared(file_get_contents($path));
+        // $path = 'database/seeders/sql/tipo_programa.sql';
+        // DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/fases.sql';
         DB::unprepared(file_get_contents($path));
 
@@ -79,8 +83,8 @@ class DatabaseSeeder extends Seeder
 
 
 
-        // $path = 'database/seeders/sql/tipo_grupo.sql';
-        // DB::unprepared(file_get_contents($path));
+        $path = 'database/seeders/sql/tipo_grupo.sql';
+        DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/estado_grupo.sql';
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/nivel_formacion.sql';
@@ -90,9 +94,13 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
 
-        // proyectoFormativo::factory(0)->create();
+        proyectoFormativo::factory(5)->create();
 
-        // Grupo::factory(0)->create();
+        Grupo::factory(5)->create();
+
+        $path = 'database/seeders/sql/asignacion_participante.sql';
+        DB::unprepared(file_get_contents($path));
+
     }
 
 }

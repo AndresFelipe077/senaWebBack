@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
+use App\Models\TipoGrupo;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
@@ -16,7 +17,7 @@ class GrupoController extends Controller
   {
     $this->relations = [
       'tipoGrupo',
-      'proyectoFormativo',
+      'proyectoFormativo.programas.tipoPrograma',
       'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
@@ -36,18 +37,7 @@ class GrupoController extends Controller
   public function index()
   {
 
-    $grupos = Grupo::with([
-      'tipoGrupo',
-      'proyectoFormativo',
-      'nivelFormacion',
-      'tipoFormacion',
-      'estadoGrupo',
-      'tipoOferta',
-      'jornadas',
-      'participantes',
-      'infraestructuras',
-      'infraestructuras.sede'
-    ])->get();
+    $grupos = Grupo::with($this->relations)->get();
 
     //quitar pivots
     $newGrupos = $grupos->map(function ($grupo) {
@@ -56,6 +46,13 @@ class GrupoController extends Controller
         unset($infr['pivot']);
         $infr['horario_infraestructura'] = $pivot;
         return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
       });
 
       $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
@@ -86,16 +83,16 @@ class GrupoController extends Controller
     }
 
     $grupo = new Grupo([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idNivel' => $data['idNivel'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta']
+      'idNivel'             => $data['idNivel'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta']
     ]);
 
     $grupo->save();
@@ -422,4 +419,40 @@ class GrupoController extends Controller
 
     return false;
   }
+
+
+  //   public function showByIdProyectoFor($programaId)
+  //   {
+  //       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
+  //           $query->where('idPrograma', $programaId);
+  //       })->get();
+
+  //       return response()->json($grupos);
+  //   }
+
+  public function showByIdProyectoFor(int $id)
+  {
+    $grupos = Grupo::with($this->relations)
+      ->where('idProyectoFormativo', $id)->get();
+    return response()->json($grupos);
+  }
+
+
+  /**
+   * Get Fichas depending by parameter
+   *
+   * @param String $nombreTipoGrupo
+   * @return \Illuminate\Http\JsonResponse A JSON response containing the participant mappings.
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getTipoGrupoByParameter($nombreTipoGrupo)
+  {
+    $grupo = Grupo::whereHas('tipoGrupo', function ($query) use ($nombreTipoGrupo) {
+      $query->where('nombreTipoGrupo', $nombreTipoGrupo);
+    })->get();
+
+    return $grupo;
+  }
+
+
 }

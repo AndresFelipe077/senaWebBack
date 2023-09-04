@@ -30,7 +30,7 @@ class configuracionRap extends Model
     }
 
     public function usuarios(){
-        return $this->belongsTo(user::class, 'idInstructor');
+        return $this->belongsTo(User::class, 'idInstructor');
     }
 
     public function estados(){
@@ -48,4 +48,10 @@ class configuracionRap extends Model
     public function grupos(){
         return $this->belongsTo(grupo::class, 'idGrupo');
     }
+
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class, 'idConfiguracionRap');
+    }
+
 }
