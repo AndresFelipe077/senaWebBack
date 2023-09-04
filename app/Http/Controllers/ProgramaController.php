@@ -7,12 +7,19 @@ use Illuminate\Http\Request;
 
 class ProgramaController extends Controller {
 
+    private array $relations;
+
+    function __construct()
+    {
+        $this->relations = ['estado','tipoPrograma'];
+    }
+
     public function index(Request $request)
     {
 
         $estado = $request->input('estado');
         $tipoPrograma = $request->input('tipoPrograma');
-        $programas = Programa::with('estado','tipoPrograma');
+        $programas = Programa::with($this->relations);
 
 
         if($tipoPrograma){
@@ -36,6 +43,7 @@ class ProgramaController extends Controller {
         $programa = new Programa($data);
         $programa->rutaArchivo = $this->storeDocumento($request);
         $programa->save();
+        $programa = Programa::with($this->relations)->findOrFail($programa->id);
         return response()->json($programa,201);
     }
 
@@ -77,7 +85,7 @@ private function storeDocumento(Request $request, $default = true){
     public function update(Request $request, int  $id)
     {
         $data = $request->all();
-        $programa = Programa::findOrFail($id);
+        $programa = Programa::with($this->relations) ->findOrFail($id);
         $programa->fill($data);
         $programa->save();
 
