@@ -18,7 +18,6 @@ class GrupoController extends Controller
     $this->relations = [
       'tipoGrupo',
       'proyectoFormativo.programas.tipoPrograma',
-      'nivelFormacion',
       'tipoFormacion',
       'estadoGrupo',
       'tipoOferta',
@@ -131,18 +130,7 @@ class GrupoController extends Controller
    */
   public function show(int $id)
   {
-    $dato = Grupo::with([
-      'tipoGrupo',
-      'proyectoFormativo',
-      'nivelFormacion',
-      'tipoFormacion',
-      'estadoGrupo',
-      'tipoOferta',
-      'jornadas.diaJornada',
-      'participantes',
-      'infraestructuras',
-      'infraestructuras.sede'
-    ])->find($id);
+    $dato = Grupo::with($this->relations)->find($id);
 
     if (!$dato) {
       return response()->json(['error' => 'El dato no fue encontrado'], 404);

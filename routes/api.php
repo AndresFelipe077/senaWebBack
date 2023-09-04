@@ -41,7 +41,6 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 use App\Http\Controllers\gestion_grupo\AsignacionJornadaGrupoController;
 use App\Http\Controllers\gestion_grupo\EstadoGrupoController;
 use App\Http\Controllers\gestion_grupo\GrupoController;
-use App\Http\Controllers\gestion_grupo\NivelFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
@@ -219,8 +218,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
     Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
-
-    Route::resource('niveles_formacion', NivelFormacionController::class);
 
     Route::resource('tipo_formaciones', TipoFormacionController::class);
 

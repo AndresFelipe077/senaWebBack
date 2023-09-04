@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\EstadoGrupo;
-use App\Models\NivelFormacion;
 use App\Models\Programa;
 use App\Models\proyectoFormativo;
 use App\Models\TipoFormacion;
@@ -23,7 +22,6 @@ class GrupoFactory extends Factory
 
         $tipoGrupo          = TipoGrupo::all()->random();
         $proyectoFormativo  = proyectoFormativo::all()->random();
-        $nivelFormacion     = NivelFormacion::all()->random();
         $tipoFormacion      = TipoFormacion::all()->random();
         $estado             = EstadoGrupo::all()->random();
         $tipoOferta         = TipoOferta::all()->random();
@@ -36,7 +34,6 @@ class GrupoFactory extends Factory
             'observacion'         => strtoupper($this->faker->text()),
             'idTipoGrupo'         => $tipoGrupo -> id,
             'idProyectoFormativo' => $proyectoFormativo -> id,
-            'idNivel'             => $nivelFormacion -> id,
             'idTipoFormacion'     => $tipoFormacion -> id,
             'idEstado'            => $estado -> id,
             'idTipoOferta'        => $tipoOferta -> id,

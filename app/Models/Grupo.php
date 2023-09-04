@@ -35,12 +35,6 @@ class Grupo extends Model
         ) -> withPivot('id','fechaInicial', 'fechaFinal');
     }
 
-    //Relacion uno a muchos Inversa(nivelFormacion->Grupo)
-    public function nivelFormacion()
-    {
-        return $this->belongsTo(NivelFormacion::class, 'idNivel', 'id');
-    }
-
     //Relacion uno a muchos Inversa(tipoFormacion->Grupo)
     public function tipoFormacion()
     {

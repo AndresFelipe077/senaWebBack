@@ -87,8 +87,6 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/estado_grupo.sql';
         DB::unprepared(file_get_contents($path));
-        $path = 'database/seeders/sql/nivel_formacion.sql';
-        DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/tipo_formacion.sql';
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/tipo_oferta.sql';
