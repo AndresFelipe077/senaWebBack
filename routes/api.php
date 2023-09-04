@@ -198,7 +198,7 @@ Route::resource('dias', DiaController::class);
 Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJornada']);
 
 //grupos
-Route::resource('grupos', GrupoController::class);
+Route::resource('grupos', GrupoController::class)->middleware('auth:sanctum');
 // Get infraestructura and sede
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('grupos/infraestructura/{id}', [GrupoController::class, 'showByIdInfra']);
