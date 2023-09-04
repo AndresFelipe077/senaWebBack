@@ -88,7 +88,6 @@ class GrupoController extends Controller
       'observacion'         => $data['observacion'],
       'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idNivel'             => $data['idNivel'],
       'idTipoFormacion'     => $data['idTipoFormacion'],
       'idEstado'            => $data['idEstado'],
       'idTipoOferta'        => $data['idTipoOferta']
@@ -223,7 +222,6 @@ class GrupoController extends Controller
       'observacion' => $data['observacion'],
       'idTipoGrupo' => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idNivel' => $data['idNivel'],
       'idTipoFormacion' => $data['idTipoFormacion'],
       'idEstado' => $data['idEstado'],
       'idTipoOferta' => $data['idTipoOferta'],

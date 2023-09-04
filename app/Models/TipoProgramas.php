@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TipoProgramas extends Model
 {
@@ -16,4 +17,10 @@ class TipoProgramas extends Model
         "descripcion"
     ];
     public $timestamps = false;
+
+    public function programas()
+    {
+        return $this->hasMany(Programa::class, 'idTipoPrograma');
+    }
+
 }
