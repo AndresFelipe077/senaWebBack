@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
-use App\Models\TipoGrupo;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
