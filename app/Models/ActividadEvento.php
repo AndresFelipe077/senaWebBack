@@ -24,4 +24,9 @@ class ActividadEvento extends Model
         return $this->belongsTo(AsignacionParticipante::class);
     }
 
+    public function jornada(): BelongsTo
+    {
+        return $this->belongsTo(Jornada::class);
+    }
+
 }

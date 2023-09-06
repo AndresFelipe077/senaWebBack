@@ -45,7 +45,7 @@ use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
 use App\Http\Controllers\gestion_grupo\HorarioInfraestructuraGrupoController;
-use App\Http\Controllers\gestion_grupo\EstadoGrupoInfraestructuraController;
+use App\Http\Controllers\gestion_grupo\ActividadEventoController;
 use App\Models\AsignacionParticipante;
 
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
@@ -198,7 +198,6 @@ Route::resource('dias', DiaController::class);
 Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJornada']);
 
 //grupos
-Route::resource('grupos', GrupoController::class);
 // Get infraestructura and sede
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('grupos/infraestructura/{id}', [GrupoController::class, 'showByIdInfra']);
@@ -206,14 +205,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
-Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
 
-
-//tipo de grupos
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::resource('tipogrupos', TipoGrupoController::class)->middleware('auth:sanctum');
+    Route::resource('grupos', GrupoController::class);
 
+    Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
+
+    Route::resource('tipogrupos', TipoGrupoController::class);
+
+    Route::resource('actividad_eventos', ActividadEventoController::class);
 
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
@@ -231,8 +232,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Querys searchs
     Route::get('tipo_grupos_by_parameter/{nombreTipoGrupo}', [GrupoController::class, 'getTipoGrupoByParameter']);
-
-
 });
 
 Route::resource('estados', EstadoController::class);
