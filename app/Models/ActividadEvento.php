@@ -24,9 +24,14 @@ class ActividadEvento extends Model
         return $this->belongsTo(AsignacionParticipante::class, 'idParticipante');
     }
 
-    public function jornada(): BelongsTo
+    //relacion con los grupos jornada pertenecientes a un grupo
+    public function jornadas()
     {
-        return $this->belongsTo(Jornada::class, 'idJornada');
+        return $this->belongsToMany(
+            Jornada::class,
+            AsignacionJornadaActividadEvento::class,
+            'idActividadEvento', 'idJornada'
+        ) -> withPivot('id');
     }
 
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActividadEvento;
+use App\Models\AsignacionJornadaActividadEvento;
 use Illuminate\Http\Request;
 
 class ActividadEventoController extends Controller
@@ -16,7 +17,7 @@ class ActividadEventoController extends Controller
   {
     $this->relations = [
       'infraestructura',
-      'jornada.diaJornada',
+      'jornadas.diaJornada',
       'participantes',
     ];
   }
@@ -28,7 +29,20 @@ class ActividadEventoController extends Controller
    */
   public function index()
   {
-    return response()->json(ActividadEvento::with($this->relations)->get(), 200);
+    $ActividadEventos = ActividadEvento::with($this->relations)->get();
+
+    //quitar pivots
+    $newActividadEventos = $ActividadEventos->map(function ($actividadEvento) {
+
+      $actividadEvento['jornadas'] = $actividadEvento['jornadas']->map(function ($jornada) {
+        $pivot = $jornada['pivot'];
+        unset($jornada['pivot']);
+        $jornada['jornada_actividad_evento'] = $pivot;
+        return $jornada;
+      });
+      return $actividadEvento;
+    });
+    return response()->json($newActividadEventos, 200);
   }
 
   /**
@@ -41,9 +55,8 @@ class ActividadEventoController extends Controller
   {
     $data = $request->all();
 
-    // Verificar si esta el array pero vacio si es asi retorna not data
-    if(isset($data['participantes']) && is_array($data['participantes']) && empty($data['participantes']))
-    {
+    // Verificar si esta el array pero vacio si es asi, retorna not data
+    if (isset($data['participantes']) && is_array($data['participantes']) && empty($data['participantes'])) {
       return response()->json(['message' => 'participantes not have data'], 500);
     }
 
@@ -56,7 +69,6 @@ class ActividadEventoController extends Controller
       $observacion = $data['observacion'];
       $fechaInicial = $data['fechaInicial'];
       $fechaFinal = $data['fechaFinal'];
-      $idJornada = $data['idJornada'];
 
       foreach ($data['participantes'] as $idParticipante) {
         $actividad = new ActividadEvento([
@@ -65,18 +77,38 @@ class ActividadEventoController extends Controller
           'observacion'       => $observacion,
           'fechaInicial'      => $fechaInicial,
           'fechaFinal'        => $fechaFinal,
-          'idJornada'         => $idJornada
         ]);
 
         $actividad->save();
+
+        foreach ($request->jornadas as $jornadaItem) {
+          foreach ($jornadaItem as $jItem) {
+            $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jItem];
+            $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
+            $asignacionJornadaactividadEvento->save();
+          }
+        }
+
         $actividades[] = $actividad;
       }
+
+      $actividades = ActividadEvento::with($this->relations)->findOrFail($actividad->id);
 
       return response()->json($actividades, 201);
     } else {
       // Si no es un array, crear un solo registro normal
       $actividad = new ActividadEvento($data);
       $actividad->save();
+
+      foreach ($request->jornadas as $jornadaItem) {
+        foreach ($jornadaItem as $jItem) {
+          $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jItem];
+          $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
+          $asignacionJornadaactividadEvento->save();
+        }
+      }
+
+      $actividad = ActividadEvento::with($this->relations)->findOrFail($actividad->id);
 
       return response()->json($actividad, 201);
     }
@@ -106,11 +138,23 @@ class ActividadEventoController extends Controller
   public function update(Request $request, int $id)
   {
     $data = $request->all();
-    $ActividadEvento = ActividadEvento::findOrFail($id);
-    $ActividadEvento->fill($data);
-    $ActividadEvento->save();
+    $actividadEvento = ActividadEvento::findOrFail($id);
+    $actividadEvento->fill($data);
+    $actividadEvento->save();
 
-    return response()->json($ActividadEvento);
+    AsignacionJornadaActividadEvento::where('idActividadEvento', $actividadEvento->id)->delete();
+
+    if ($request->jornadas) {
+      foreach ($request->jornadas as $jornadaItem) {
+        foreach ($jornadaItem as $jItem) {
+          $info = ['idActividadEvento' => $actividadEvento->id, 'idJornada' => $jItem];
+          $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
+          $asignacionJornadaactividadEvento->save();
+        }
+      }
+    }
+
+    return response()->json($actividadEvento);
   }
 
   /**
@@ -129,5 +173,4 @@ class ActividadEventoController extends Controller
       return ["result" => "delete failed"];
     }
   }
-
 }

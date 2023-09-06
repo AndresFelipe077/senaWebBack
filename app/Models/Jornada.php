@@ -25,9 +25,14 @@ class Jornada extends Model
         return $this->belongsToMany('App\Models\Dia', 'asignacionDiaJornada', 'idJornada', 'idDia');
     }
 
-    public function actividadEventos(): HasMany
+    public function grupo()
     {
-        return $this->hasMany(ActividadEvento::class, 'idJornada');
+        return $this->belongsToMany('App\Models\Grupo', 'asignacionJornadaGrupo', 'idJornada', 'idGrupo');
+    }
+
+    public function actividadEvento()
+    {
+        return $this->belongsToMany('App\Models\ActividadEvento', 'asignacionJornadaActividadEvento', 'idJornada', 'idActividadEvento');
     }
 
 }

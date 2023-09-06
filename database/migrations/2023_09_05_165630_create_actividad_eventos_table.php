@@ -19,16 +19,14 @@ class CreateActividadEventosTable extends Migration
             $table->unsignedInteger('idInfraestructura')->onDelete('cascade')->nullable();
             $table->foreign('idInfraestructura')->references('id')->on('infraestructura')->onDelete('cascade');
 
-            $table->text('observacion');
+            $table->text('observacion')->nullable();
 
             $table->date('fechaInicial');
+            
             $table->date('fechaFinal')->nullable();
 
             $table->unsignedInteger('idParticipante')->nullable();
             $table->foreign('idParticipante')->references('id')->on('asignacionParticipante')->onDelete('cascade');
-
-            $table->unsignedBigInteger('idJornada')->nullable();
-            $table->foreign('idJornada')->references('id')->on('jornada')->onDelete('cascade');
 
             $table->timestamps();
         });

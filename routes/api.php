@@ -59,6 +59,7 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\gestion_grupo\AsignacionJornadaActividadEventoController;
 use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\pruebaController;
 use App\Http\Controllers\TipoCompetenciasController;
@@ -213,6 +214,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
 
+    Route::get('especial_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoEspecial']);
+
+    Route::get('especiales_by_grupos', [GrupoController::class, 'getGruposByEspecial']);
+
+    Route::get('fichas_by_grupos', [GrupoController::class, 'getGruposByFicha']);
+
     Route::resource('tipogrupos', TipoGrupoController::class);
 
     // Route::resource('actividad_eventos', ActividadEventoController::class);
@@ -220,6 +227,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
     Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
+
+    Route::resource('actividad_eventos_jornada', AsignacionJornadaActividadEventoController::class);
+
+    Route::get('jornada_actividad/actividad_evento/{id}', [AsignacionJornadaActividadEventoController::class, 'showByActividadEventos']);
 
     Route::resource('tipo_formaciones', TipoFormacionController::class);
 
@@ -271,7 +282,7 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Route::get('asignacionParticipantes', [AsignacionParticipanteController::class, 'index']);
+Route::get('asignacion_participante', [AsignacionParticipanteController::class, 'index']);
 
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
 
