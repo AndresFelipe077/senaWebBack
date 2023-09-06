@@ -205,6 +205,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
+Route::resource('actividad_eventos', ActividadEventoController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -214,7 +215,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::resource('tipogrupos', TipoGrupoController::class);
 
-    Route::resource('actividad_eventos', ActividadEventoController::class);
+    // Route::resource('actividad_eventos', ActividadEventoController::class);
 
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 

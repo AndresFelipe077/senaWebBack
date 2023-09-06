@@ -16,17 +16,17 @@ class ActividadEvento extends Model
 
     public function infraestructura(): BelongsTo
     {
-        return $this->belongsTo(Infraestructura::class);
+        return $this->belongsTo(Infraestructura::class, 'idInfraestructura');
     }
 
-    public function asignacion(): BelongsTo
+    public function participantes(): BelongsTo
     {
-        return $this->belongsTo(AsignacionParticipante::class);
+        return $this->belongsTo(AsignacionParticipante::class, 'idParticipante');
     }
 
     public function jornada(): BelongsTo
     {
-        return $this->belongsTo(Jornada::class);
+        return $this->belongsTo(Jornada::class, 'idJornada');
     }
 
 }

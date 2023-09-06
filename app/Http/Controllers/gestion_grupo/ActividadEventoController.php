@@ -8,14 +8,27 @@ use Illuminate\Http\Request;
 
 class ActividadEventoController extends Controller
 {
-    /**
+
+
+  private $relations;
+
+  public function __construct()
+  {
+    $this->relations = [
+      'infraestructura',
+      'jornada.diaJornada',
+      'participantes',
+    ];
+  }
+
+  /**
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
    */
   public function index()
   {
-    return response()->json(ActividadEvento::all(), 200);
+    return response()->json(ActividadEvento::with($this->relations)->get(), 200);
   }
 
   /**
@@ -27,11 +40,48 @@ class ActividadEventoController extends Controller
   public function store(Request $request)
   {
     $data = $request->all();
-    $ActividadEvento = new ActividadEvento($data);
-    $ActividadEvento->save();
 
-    return response()->json($ActividadEvento, 201);
+    // Verificar si esta el array pero vacio si es asi retorna not data
+    if(isset($data['participantes']) && is_array($data['participantes']) && empty($data['participantes']))
+    {
+      return response()->json(['message' => 'participantes not have data'], 500);
+    }
+
+    // Verificar si se proporcionó un array de IDs en 'participantes'
+    if (isset($data['participantes']) && is_array($data['participantes'])) {
+      $actividades = [];
+
+      // Obtener datos comunes para todos los registros
+      $idInfraestructura = $data['idInfraestructura'];
+      $observacion = $data['observacion'];
+      $fechaInicial = $data['fechaInicial'];
+      $fechaFinal = $data['fechaFinal'];
+      $idJornada = $data['idJornada'];
+
+      foreach ($data['participantes'] as $idParticipante) {
+        $actividad = new ActividadEvento([
+          'idParticipante'    => $idParticipante,
+          'idInfraestructura' => $idInfraestructura,
+          'observacion'       => $observacion,
+          'fechaInicial'      => $fechaInicial,
+          'fechaFinal'        => $fechaFinal,
+          'idJornada'         => $idJornada
+        ]);
+
+        $actividad->save();
+        $actividades[] = $actividad;
+      }
+
+      return response()->json($actividades, 201);
+    } else {
+      // Si no es un array, crear un solo registro normal
+      $actividad = new ActividadEvento($data);
+      $actividad->save();
+
+      return response()->json($actividad, 201);
+    }
   }
+
 
   /**
    * Display the specified resource.
@@ -62,6 +112,7 @@ class ActividadEventoController extends Controller
 
     return response()->json($ActividadEvento);
   }
+
   /**
    * Remove the specified resource from storage.
    *
@@ -78,4 +129,5 @@ class ActividadEventoController extends Controller
       return ["result" => "delete failed"];
     }
   }
+
 }
