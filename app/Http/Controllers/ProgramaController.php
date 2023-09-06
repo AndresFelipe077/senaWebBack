@@ -12,7 +12,8 @@ class ProgramaController extends Controller {
 
         $estado = $request->input('estado');
         $tipoPrograma = $request->input('tipoPrograma');
-        $programas = Programa::with('estado','tipoPrograma');
+        $area = $request->input('area');
+        $programas = Programa::with('estado','tipoPrograma','area');
 
 
         if($tipoPrograma){
@@ -24,6 +25,12 @@ class ProgramaController extends Controller {
         if($estado){
             $programas->whereHas('estado',function($q) use ($estado){
                 return $q->select('id')->where('id',$estado)->orWhere('estado',$estado);
+            });
+        };
+
+        if($area){
+            $programas->whereHas('area',function($q) use ($area){
+                return $q->select('id')->where('id',$area)->orWhere('area',$area);
             });
         };
 
