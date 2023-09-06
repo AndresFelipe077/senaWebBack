@@ -60,6 +60,7 @@ use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\HistorialDocumentoController;
+use App\Http\Controllers\EstadoProgramaController;
 use App\Http\Controllers\pruebaController;
 use App\Http\Controllers\TipoCompetenciasController;
 use App\Models\asignacionCompetenciaProyecto;
@@ -149,6 +150,8 @@ Route::delete('/planeacion/{id}', [PlaneacionController::class, 'destroy']);
 
 //ruta tipo_programas
 Route::resource('tipo_programas',  TipoProgramasController::class);
+//ruta Estado programa
+Route::resource('estado_programa',  EstadoProgramaController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
 //ruta asignar y guardar competencias raps
@@ -336,17 +339,11 @@ Route::get('criteriosevaluacion/consulta/{id}', [CriteriosEvaluacion::class, 'co
 
 /////////////////////////
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
-
-
 //////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class, 'filtrarCompetenciasAsignadas']);
 
 Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
-
-
 Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController::class, 'eliminarCompetencias']);
-
-
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
 
 

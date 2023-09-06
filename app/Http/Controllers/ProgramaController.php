@@ -11,7 +11,7 @@ class ProgramaController extends Controller {
 
     function __construct()
     {
-        $this->relations = ['estado','tipoPrograma'];
+        $this->relations = ['estado','tipoPrograma','area'];
     }
 
     public function index(Request $request)
@@ -19,6 +19,7 @@ class ProgramaController extends Controller {
 
         $estado = $request->input('estado');
         $tipoPrograma = $request->input('tipoPrograma');
+        $area = $request->input('area');
         $programas = Programa::with($this->relations);
 
 
@@ -31,6 +32,12 @@ class ProgramaController extends Controller {
         if($estado){
             $programas->whereHas('estado',function($q) use ($estado){
                 return $q->select('id')->where('id',$estado)->orWhere('estado',$estado);
+            });
+        };
+
+        if($area){
+            $programas->whereHas('area',function($q) use ($area){
+                return $q->select('id')->where('id',$area)->orWhere('area',$area);
             });
         };
 

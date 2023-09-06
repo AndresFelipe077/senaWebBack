@@ -13,7 +13,6 @@ class Fase extends Model
     protected $table = "fase";
     protected $fillable = [
         "nombreFase",
-        "codigoFase"
     ];
     public $timestamps = false;
 
