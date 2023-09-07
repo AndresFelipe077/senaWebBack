@@ -26,7 +26,7 @@ class AsignacionParticipanteController extends Controller
       'grupo.infraestructuras.sede',
       'grupo.participantes',
       'grupo.jornadas.diaJornada',
-      'usuario',
+      'usuario.persona',
       'tipoParticipacion',
       'estadoParticipantes',
     ];
@@ -34,7 +34,7 @@ class AsignacionParticipanteController extends Controller
 
   public function index()
   {
-    $data = AsignacionParticipante::with(['usuario', 'grupo'])->get();
+    $data = AsignacionParticipante::with(['usuario.persona', 'grupo'])->get();
     return response()->json($data);
   }
 

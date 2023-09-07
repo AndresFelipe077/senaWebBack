@@ -19,7 +19,7 @@ class ActividadEvento extends Model
         return $this->belongsTo(Infraestructura::class, 'idInfraestructura');
     }
 
-    public function participantes(): BelongsTo
+    public function participante(): BelongsTo
     {
         return $this->belongsTo(AsignacionParticipante::class, 'idParticipante');
     }

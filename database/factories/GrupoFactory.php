@@ -37,7 +37,9 @@ class GrupoFactory extends Factory
             'idTipoFormacion'     => $tipoFormacion -> id,
             'idEstado'            => $estado -> id,
             'idTipoOferta'        => $tipoOferta -> id,
+            'imagenIcon'          => $this->faker->randomElement(['imagen']),
 
         ];
+        
     }
 }

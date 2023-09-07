@@ -18,7 +18,7 @@ class ActividadEventoController extends Controller
     $this->relations = [
       'infraestructura',
       'jornadas.diaJornada',
-      'participantes',
+      'participante.usuario.persona',
     ];
   }
 
@@ -53,6 +53,7 @@ class ActividadEventoController extends Controller
    */
   public function store(Request $request)
   {
+
     $data = $request->all();
 
     // Verificar si esta el array pero vacio si es asi, retorna not data
@@ -66,9 +67,10 @@ class ActividadEventoController extends Controller
 
       // Obtener datos comunes para todos los registros
       $idInfraestructura = $data['idInfraestructura'];
-      $observacion = $data['observacion'];
-      $fechaInicial = $data['fechaInicial'];
-      $fechaFinal = $data['fechaFinal'];
+      $observacion       = $data['observacion'];
+      $fechaInicial      = $data['fechaInicial'];
+      $fechaFinal        = $data['fechaFinal'];
+      $jornadas          = $data['jornadas'];
 
       foreach ($data['participantes'] as $idParticipante) {
         $actividad = new ActividadEvento([
@@ -81,36 +83,39 @@ class ActividadEventoController extends Controller
 
         $actividad->save();
 
-        foreach ($request->jornadas as $jornadaItem) {
-          foreach ($jornadaItem as $jItem) {
-            $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jItem];
-            $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
-            $asignacionJornadaactividadEvento->save();
-          }
+        foreach ($jornadas as $jornadaItem) {
+          $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jornadaItem];
+          $asignacionJornadaGrupo = new AsignacionJornadaActividadEvento($info);
+          $asignacionJornadaGrupo->save();
         }
 
         $actividades[] = $actividad;
+
       }
 
       $actividades = ActividadEvento::with($this->relations)->findOrFail($actividad->id);
 
       return response()->json($actividades, 201);
     } else {
+
       // Si no es un array, crear un solo registro normal
-      $actividad = new ActividadEvento($data);
+      $actividad = new ActividadEvento();
+      $actividad->idInfraestructura = $data['idInfraestructura'];
+      $actividad->observacion = $data['observacion'];
+      $actividad->fechaInicial = $data['fechaInicial'];
+      $actividad->fechaFinal = $data['fechaFinal'];
       $actividad->save();
 
-      foreach ($request->jornadas as $jornadaItem) {
-        foreach ($jornadaItem as $jItem) {
-          $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jItem];
-          $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
-          $asignacionJornadaactividadEvento->save();
-        }
+      foreach ($data['jornadas'] as $jornadaItem) {
+        $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jornadaItem];
+        $asignacionJornadaGrupo = new AsignacionJornadaActividadEvento($info);
+        $asignacionJornadaGrupo->save();
       }
 
       $actividad = ActividadEvento::with($this->relations)->findOrFail($actividad->id);
 
       return response()->json($actividad, 201);
+      
     }
   }
 
@@ -138,23 +143,23 @@ class ActividadEventoController extends Controller
   public function update(Request $request, int $id)
   {
     $data = $request->all();
-    $actividadEvento = ActividadEvento::findOrFail($id);
-    $actividadEvento->fill($data);
-    $actividadEvento->save();
 
-    AsignacionJornadaActividadEvento::where('idActividadEvento', $actividadEvento->id)->delete();
+    $actividad = ActividadEvento::findOrFail($id);
+    $actividad->idInfraestructura = $data['idInfraestructura'];
+    $actividad->observacion = $data['observacion'];
+    $actividad->fechaInicial = $data['fechaInicial'];
+    $actividad->fechaFinal = $data['fechaFinal'];
+    $actividad->save();
 
-    if ($request->jornadas) {
-      foreach ($request->jornadas as $jornadaItem) {
-        foreach ($jornadaItem as $jItem) {
-          $info = ['idActividadEvento' => $actividadEvento->id, 'idJornada' => $jItem];
-          $asignacionJornadaactividadEvento = new AsignacionJornadaActividadEvento($info);
-          $asignacionJornadaactividadEvento->save();
-        }
-      }
+    AsignacionJornadaActividadEvento::where('idJornada', $actividad->id)->delete();
+
+    foreach ($data['jornadas'] as $jornadaItem) {
+      $info = ['idActividadEvento' => $actividad->id, 'idJornada' => $jornadaItem];
+      $asignacionJornadaGrupo = new AsignacionJornadaActividadEvento($info);
+      $asignacionJornadaGrupo->save();
     }
 
-    return response()->json($actividadEvento);
+    return response()->json($actividad);
   }
 
   /**

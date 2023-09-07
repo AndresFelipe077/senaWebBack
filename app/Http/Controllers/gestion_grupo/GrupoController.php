@@ -7,6 +7,8 @@ use App\Models\AsignacionJornadaGrupo;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class GrupoController extends Controller
 {
@@ -92,7 +94,6 @@ class GrupoController extends Controller
     });
 
     return response()->json($newGrupos);
-
   }
 
   public function getGruposByFicha()
@@ -153,6 +154,18 @@ class GrupoController extends Controller
       'idEstado'            => $data['idEstado'],
       'idTipoOferta'        => $data['idTipoOferta']
     ]);
+
+    if ($request->hasFile('imagenIcon')) {
+
+      $cadena = $request->file('imagenIcon')->getClientOriginalName();
+      $cadenaConvert = str_replace(" ", "_", $cadena);
+      $nombre = Str::random(10) . '_' . $cadenaConvert;
+      $rutaAlmacenamiento = 'imagenes/especial' . $nombre;
+      $request->file('imagenIcon')->storeAs('public', $rutaAlmacenamiento);
+
+      $grupo->imagenIcon = $rutaAlmacenamiento;
+
+    }
 
     $grupo->save();
 
