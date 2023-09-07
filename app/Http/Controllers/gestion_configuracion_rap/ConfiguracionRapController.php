@@ -10,6 +10,22 @@ use Illuminate\Http\JsonResponse;
 
 class ConfiguracionRapController extends Controller
 {
+
+	private $relations;
+
+	public function __construct()
+	{
+		$this->relations = [
+			'resultados',
+			'usuarios',
+			'estados',
+			'jornadas',
+			'infraestructuras',
+			'grupos',
+			'asistencias'
+		];
+	}
+
 	/** 
 	 * Get information about configuracionRap
 	 */
@@ -21,7 +37,7 @@ class ConfiguracionRapController extends Controller
 		$jornada = $request->input('jornadas');
 		$grupo = $request->input('grupos');
 		$infraestructura = $request->input('infraestructuras');
-		$configuracionRap = ConfiguracionRap::with('resultados', 'usuarios', 'estados', 'jornadas', 'grupos', 'infraestructuras');
+		$configuracionRap = ConfiguracionRap::with($this->relations);
 
 		if ($resultado) {
 			$configuracionRap->whereHas('resultados', function ($q) use ($resultado) {
@@ -74,17 +90,9 @@ class ConfiguracionRapController extends Controller
 
 		$configuracionRap = new ConfiguracionRap($data);
 		$configuracionRap->save();
+
 		return response()->json($configuracionRap, 201);
-
 	}
-
-	/**
-	 * 
-	 */
-	public function changeInstructor(){
-
-	}
-
 
 	public function show($id)
 	{
@@ -144,22 +152,47 @@ class ConfiguracionRapController extends Controller
 		return response()->json($result);
 	}
 
+	/**
+	 * Update register of configuracion and create a new
+	 */
 	public function update(Request $request, $id)
 	{
 		$data = $request->all();
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
-		$configuracionRap->fill($data);
-		$configuracionRap->save();
 
-		return response()->json($configuracionRap, 203);
+		// Actualiza solo el estado del registro existente
+		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
+
+		// Crea un nuevo registro con los mismos datos, excepto el nuevo idInstructor
+		// $newConfiguracionRap = new ConfiguracionRap($data);
+		// $newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		// Guarda el nuevo registro
+		// $newConfiguracionRap->save();
+		$this->changeInstructor($data);
+
+		return response()->json(['message' => 'Estado del registro actualizado y nuevo registro creado'], 203);
+	}
+
+	/**
+	 * 
+	 */
+	public function changeInstructor(array $data)
+	{
+		$newConfiguracionRap = new ConfiguracionRap($data);
+		$newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		$newConfiguracionRap->save();
 	}
 
 	public function destroy($id)
 	{
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
-		$configuracionRap->delete();
-
-		return response()->json([]);
+		$result = $configuracionRap->delete();
+		if ($result) {
+			return response()->json(["message" => "delete success"]);
+		} else {
+			return response()->json(["message" => "delete failed"]);
+		}
 	}
-
 }
