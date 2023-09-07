@@ -30,7 +30,7 @@ use App\Http\Controllers\ProyectoFormativoController;
 use App\Http\Controllers\TipoProgramasController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
-use App\Http\Controllers\configuracionRapController;
+use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
 use App\Http\Controllers\AsignacionCompetenciaProyectoController;
 use App\Http\Controllers\PlaneacionController;
 
@@ -165,11 +165,11 @@ Route::get('fases/proyecto/{id}', [FaseController::class, 'showByIdProyecto']);
 Route::resource('actividad_proyecto', ActividadProyectoController::class);
 Route::get('actividad_proyecto/fase/{id}', [ActividadProyectoController::class, 'showByIdFase']);
 //ruta para configuracion de rap
-Route::resource('configuracion_rap', configuracionRapController::class);
+Route::resource('configuracion_rap', ConfiguracionRapController::class);
 //ruta para transferir participantes de fichas
-Route::post('transferir-ficha', [configuracionRapController::class, 'transferirFicha']);
+Route::post('transferir-ficha', [ConfiguracionRapController::class, 'transferirFicha']);
 //ruta para optener los resultados de un participante
-Route::get('participantes/{participante_id}/resultados', [configuracionRapController::class, 'obtenerResultados']);
+Route::get('participantes/{participante_id}/resultados', [ConfiguracionRapController::class, 'obtenerResultados']);
 
 
 //rutas para ciudad y departamento
@@ -370,7 +370,7 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
 // Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
-Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
 Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 

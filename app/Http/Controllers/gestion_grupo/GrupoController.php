@@ -8,7 +8,6 @@ use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class GrupoController extends Controller
 {

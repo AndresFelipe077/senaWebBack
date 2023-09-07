@@ -23,7 +23,8 @@ class CreateConfiguracionRapTable extends Migration
             $table->unsignedInteger('idEstado');
             $table->integer('horas');
             $table->date('fechaInicial');
-            $table->date('fechaFinal');
+            $table->date('fechaFinal')->nullable();
+            $table->text('observacion')->nullable();
 
             $table->foreign('idRap')->references('id')->on('resultadoAprendizaje');
             $table->foreign('idInstructor')->references('id')->on('usuario');
