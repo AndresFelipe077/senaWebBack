@@ -373,3 +373,5 @@ Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::clas
 Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
 
 Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
+
+Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);

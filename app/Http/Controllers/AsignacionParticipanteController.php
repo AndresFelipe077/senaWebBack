@@ -236,4 +236,16 @@ class AsignacionParticipanteController extends Controller
 
   }
 
+
+  public function getFichasById($idFicha): JsonResponse
+  {
+
+    $fichasByInstructor = AsignacionParticipante::where('idGrupo', $idFicha)
+      // ->where('idTipoParticipacion', 3)
+      ->with($this->relations)->get();
+
+    return response()->json($fichasByInstructor);
+
+  }
+
 }
