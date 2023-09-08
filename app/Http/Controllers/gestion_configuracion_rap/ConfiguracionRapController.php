@@ -82,6 +82,8 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Store information about configuracionRap
 	 * @return JsonResponse
+	 * @author Andres Felipe Pizo Luligo
+	 * 
 	 */
 	public function store(Request $request): JsonResponse
 	{
@@ -154,31 +156,47 @@ class ConfiguracionRapController extends Controller
 
 	/**
 	 * Update register of configuracion and create a new
+	 * @author Andres Felipe Pizo Luligo
+	 * 
 	 */
-	public function update(Request $request, $id)
+	public function update(Request $request, $id): JsonResponse
 	{
 		$data = $request->all();
+
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 
 		// Actualiza solo el estado del registro existente
 		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
 
-		$this->changeInstructor($data);
+		$this->changeInstructor($data, $configuracionRap->fechaInicio, $configuracionRap->fechaFinal);
 
-		return response()->json(['message' => 'Estado del registro actualizado y nuevo registro creado'], 203);
+		return response()->json(['message' => 'Instructor nuevo creado']);
 	}
 
 	/**
-	 * Change instructor in configuracion rap
+	 * Change instructor to new in configuracion rap
 	 * @param array $data
 	 * @return void
+	 * @author Andres Felipe Pizo Luligo
 	 */
-	public function changeInstructor(array $data)
+	public function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null)
 	{
+
+		// Validar instructor con nuevas fechas, si entran nuevas fechas se asignan tambien
 		$newConfiguracionRap = new ConfiguracionRap($data);
+
 		$newConfiguracionRap->idInstructor = $data['idInstructor'];
 
+		// Verificar nuevas fechas distintas a las anteriores, si es asi que se guarden tambien
+		if ($fechaInicial != $data['fechaInicial'] || $fechaFinal != $data['fechaFinal']) {
+
+			$newConfiguracionRap->fechaInicial = $data['fechaInicial'];
+			$newConfiguracionRap->fechaFinal = $data['fechaFinal'];
+			
+		}
+
 		$newConfiguracionRap->save();
+
 	}
 
 	public function destroy($id)
