@@ -189,4 +189,5 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
+	
 }
