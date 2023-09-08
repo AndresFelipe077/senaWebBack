@@ -90,11 +90,63 @@ class ConfiguracionRapController extends Controller
 
 		$data = $request->all();
 
+		$rapInSameDate = $this->validateConfiguracionRapByDate($data['idInfraestructura'], $data['idJornada'], $data['idGrupo'], $data['fechaInicial'], $data['fechaFinal']);
+
+		if (!$rapInSameDate) {
+			return response()->json(['error' => 'Las fechas se superponen con otro registro existente'], 400);
+		}
+
 		$configuracionRap = new ConfiguracionRap($data);
 		$configuracionRap->save();
 
 		return response()->json($configuracionRap, 201);
 	}
+
+	/**
+	 * Validate assign new configuracion by date
+	 * @return bool
+	 * @author Andres Felipe Pizo Luligo
+	 */
+	/*private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	{
+		// Consulta registros existentes que coincidan con las condiciones dadas
+		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
+			->where('idJornada', $jornada)
+			->where('idGrupo', $ficha)
+			->where('fechaInicial', $fechaInicio)
+			->where('fechaFinal', $fechaFin)
+			->count();
+
+		// Si se encuentra al menos un registro que coincide, la validación pasa
+		return $matchingRecords > 0;
+	}*/
+
+	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	{
+		// Consulta registros existentes que se superponen o están dentro del rango dado
+		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
+			->where('idJornada', $jornada)
+			->where('idGrupo', $ficha)
+			->where(function ($query) use ($fechaInicio, $fechaFin) {
+				$query->where(function ($query) use ($fechaInicio, $fechaFin) {
+					$query->where('fechaInicial', '>=', $fechaInicio)
+						->where('fechaInicial', '<=', $fechaFin);
+				})->orWhere(function ($query) use ($fechaInicio, $fechaFin) {
+					$query->where('fechaFinal', '>=', $fechaInicio)
+						->where('fechaFinal', '<=', $fechaFin);
+				})->orWhere(function ($query) use ($fechaInicio, $fechaFin) {
+					$query->where('fechaInicial', '<=', $fechaInicio)
+						->where('fechaFinal', '>=', $fechaFin);
+				});
+			})
+			->count();
+
+		// Si se encuentra al menos un registro que coincide, la validación falla
+		return $matchingRecords === 0;
+	}
+
+
+
 
 	public function show($id)
 	{
@@ -179,7 +231,7 @@ class ConfiguracionRapController extends Controller
 	 * @return void
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	public function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null)
+	private function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null)
 	{
 
 		// Validar instructor con nuevas fechas, si entran nuevas fechas se asignan tambien
@@ -192,11 +244,9 @@ class ConfiguracionRapController extends Controller
 
 			$newConfiguracionRap->fechaInicial = $data['fechaInicial'];
 			$newConfiguracionRap->fechaFinal = $data['fechaFinal'];
-			
 		}
 
 		$newConfiguracionRap->save();
-
 	}
 
 	public function destroy($id)
@@ -209,5 +259,4 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
-
 }

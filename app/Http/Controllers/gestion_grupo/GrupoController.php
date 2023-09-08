@@ -190,6 +190,8 @@ class GrupoController extends Controller
       }
     }
 
+    
+
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
 
