@@ -11,17 +11,7 @@ class configuracionRap extends Model
 
     public static $snakeAttributes = false;
     protected $table = "configuracionRap";
-    protected $fillable = [
-        'id',
-        'idRap',
-        'idInstructor',
-        'idEstado',
-        'idJornada',
-        'idInfraestructura',
-        'idGrupo',
-        'fechaInicial',
-        'fechaFinal'
-    ];
+    protected $guarded = [];
     public $timestamps =false;
 
     //relaciones

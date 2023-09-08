@@ -117,6 +117,9 @@ class GrupoController extends Controller
       }
     }
 
+    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+
+
     return response()->json($grupo, 201);
   }
 
@@ -206,7 +209,7 @@ class GrupoController extends Controller
   public function update(Request $request, $id)
   {
     $data = $request->all();
-    $grupo = Grupo::findOrFail($id);
+    $grupo = Grupo::with($this->relations) ->findOrFail($id);
 
     // Validar infraestructuras y jornadas
     $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
