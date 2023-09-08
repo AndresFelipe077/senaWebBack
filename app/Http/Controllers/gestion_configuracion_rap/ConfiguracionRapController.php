@@ -169,7 +169,9 @@ class ConfiguracionRapController extends Controller
 	}
 
 	/**
-	 * 
+	 * Change instructor in configuracion rap
+	 * @param array $data
+	 * @return void
 	 */
 	public function changeInstructor(array $data)
 	{
@@ -189,5 +191,5 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
-	
+
 }
