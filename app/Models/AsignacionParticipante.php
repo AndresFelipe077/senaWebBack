@@ -33,4 +33,9 @@ class AsignacionParticipante extends Model
         return $this->belongsTo(estadoParticipante::class, 'idEstadoParticipantes');
     }
 
+    public function eventos()
+    {
+        return $this->hasMany(ActividadEvento::class);
+    }
+
 }

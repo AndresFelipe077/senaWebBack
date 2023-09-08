@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
-use App\Models\TipoGrupo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class GrupoController extends Controller
 {
@@ -25,7 +25,6 @@ class GrupoController extends Controller
       'participantes',
       'infraestructuras',
       'infraestructuras.sede'
-
     ];
   }
   /**
@@ -65,6 +64,68 @@ class GrupoController extends Controller
     return response()->json($newGrupos);
   }
 
+  public function getGruposByEspecial()
+  {
+    $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '2')->get();
+
+    $newGrupos = $grupos->map(function ($grupo) {
+      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+        $pivot = $infr['pivot'];
+        unset($infr['pivot']);
+        $infr['horario_infraestructura'] = $pivot;
+        return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
+      });
+
+      $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
+        $pivot = $jornada['pivot'];
+        unset($jornada['pivot']);
+        $jornada['jornada_grupo'] = $pivot;
+        return $jornada;
+      });
+      return $grupo;
+    });
+
+    return response()->json($newGrupos);
+  }
+
+  public function getGruposByFicha()
+  {
+    $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '1')->get();
+
+    $newGrupos = $grupos->map(function ($grupo) {
+      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+        $pivot = $infr['pivot'];
+        unset($infr['pivot']);
+        $infr['horario_infraestructura'] = $pivot;
+        return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
+      });
+
+      $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
+        $pivot = $jornada['pivot'];
+        unset($jornada['pivot']);
+        $jornada['jornada_grupo'] = $pivot;
+        return $jornada;
+      });
+      return $grupo;
+    });
+
+    return response()->json($newGrupos);
+  }
+
   /**
    * Crear grupo con sus relaciones
    *
@@ -92,6 +153,18 @@ class GrupoController extends Controller
       'idEstado'            => $data['idEstado'],
       'idTipoOferta'        => $data['idTipoOferta']
     ]);
+
+    if ($request->hasFile('imagenIcon')) {
+
+      $cadena = $request->file('imagenIcon')->getClientOriginalName();
+      $cadenaConvert = str_replace(" ", "_", $cadena);
+      $nombre = Str::random(10) . '_' . $cadenaConvert;
+      $rutaAlmacenamiento = 'imagenes/especial' . $nombre;
+      $request->file('imagenIcon')->storeAs('public', $rutaAlmacenamiento);
+
+      $grupo->imagenIcon = $rutaAlmacenamiento;
+
+    }
 
     $grupo->save();
 
@@ -209,7 +282,7 @@ class GrupoController extends Controller
   public function update(Request $request, $id)
   {
     $data = $request->all();
-    $grupo = Grupo::with($this->relations) ->findOrFail($id);
+    $grupo = Grupo::with($this->relations)->findOrFail($id);
 
     // Validar infraestructuras y jornadas
     $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
@@ -442,6 +515,4 @@ class GrupoController extends Controller
 
     return $grupo;
   }
-
-
 }

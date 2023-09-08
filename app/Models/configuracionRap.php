@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class configuracionRap extends Model
+class ConfiguracionRap extends Model
 {
     use HasFactory;
 
@@ -32,11 +32,11 @@ class configuracionRap extends Model
     }
 
     public function infraestructuras(){
-        return $this->belongsTo(infraestructura::class, 'idInfraestructura');
+        return $this->belongsTo(Infraestructura::class, 'idInfraestructura');
     }
     
     public function grupos(){
-        return $this->belongsTo(grupo::class, 'idGrupo');
+        return $this->belongsTo(Grupo::class, 'idGrupo');
     }
 
     public function asistencias()

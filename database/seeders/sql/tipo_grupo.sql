@@ -3,6 +3,7 @@
 --
 
 INSERT INTO `tipoGrupo` (`id`, `nombreTipoGrupo`) VALUES
-(1, 'FICHA')
+(1, 'FICHA'),
+(2, 'ESPECIAL');
 
 -- --------------------------------------------------------

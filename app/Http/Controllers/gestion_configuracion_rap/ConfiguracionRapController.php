@@ -1,19 +1,34 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\gestion_configuracion_rap;
 
 use App\Http\Controllers\Controller;
-use App\Models\AsignacionParticipante;
-use App\Models\Competencias;
 use Illuminate\Http\Request;
-use App\Models\configuracionRap;
-use App\Models\resultadoAprendizaje;
+use App\Models\ConfiguracionRap;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
-class configuracionRapController extends Controller
+class ConfiguracionRapController extends Controller
 {
 
+	private $relations;
+
+	public function __construct()
+	{
+		$this->relations = [
+			'resultados',
+			'usuarios',
+			'estados',
+			'jornadas',
+			'infraestructuras',
+			'grupos',
+			'asistencias'
+		];
+	}
+
+	/** 
+	 * Get information about configuracionRap
+	 */
 	public function index(Request $request)
 	{
 		$resultado = $request->input('resultados');
@@ -22,7 +37,7 @@ class configuracionRapController extends Controller
 		$jornada = $request->input('jornadas');
 		$grupo = $request->input('grupos');
 		$infraestructura = $request->input('infraestructuras');
-		$configuracionRap = configuracionRap::with('resultados', 'usuarios', 'estados', 'jornadas', 'grupos', 'infraestructuras');
+		$configuracionRap = ConfiguracionRap::with($this->relations);
 
 		if ($resultado) {
 			$configuracionRap->whereHas('resultados', function ($q) use ($resultado) {
@@ -64,20 +79,24 @@ class configuracionRapController extends Controller
 		return response()->json($configuracionRap->get());
 	}
 
-
-	public function store(Request $request)
+	/**
+	 * Store information about configuracionRap
+	 * @return JsonResponse
+	 */
+	public function store(Request $request): JsonResponse
 	{
+
 		$data = $request->all();
 
-		$configuracionRap = new configuracionRap($data);
+		$configuracionRap = new ConfiguracionRap($data);
 		$configuracionRap->save();
+
 		return response()->json($configuracionRap, 201);
 	}
 
-
 	public function show($id)
 	{
-		$configuracionRap = configuracionRap::find($id);
+		$configuracionRap = ConfiguracionRap::find($id);
 		return response()->json($configuracionRap, 200);
 	}
 
@@ -133,21 +152,44 @@ class configuracionRapController extends Controller
 		return response()->json($result);
 	}
 
+	/**
+	 * Update register of configuracion and create a new
+	 */
 	public function update(Request $request, $id)
 	{
 		$data = $request->all();
-		$configuracionRap = configuracionRap::findOrFail($id);
-		$configuracionRap->fill($data);
-		$configuracionRap->save();
+		$configuracionRap = ConfiguracionRap::findOrFail($id);
 
-		return response()->json($configuracionRap, 203);
+		// Actualiza solo el estado del registro existente
+		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
+
+		$this->changeInstructor($data);
+
+		return response()->json(['message' => 'Estado del registro actualizado y nuevo registro creado'], 203);
+	}
+
+	/**
+	 * Change instructor in configuracion rap
+	 * @param array $data
+	 * @return void
+	 */
+	public function changeInstructor(array $data)
+	{
+		$newConfiguracionRap = new ConfiguracionRap($data);
+		$newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		$newConfiguracionRap->save();
 	}
 
 	public function destroy($id)
 	{
-		$configuracionRap = configuracionRap::findOrFail($id);
-		$configuracionRap->delete();
-
-		return response()->json([]);
+		$configuracionRap = ConfiguracionRap::findOrFail($id);
+		$result = $configuracionRap->delete();
+		if ($result) {
+			return response()->json(["message" => "delete success"]);
+		} else {
+			return response()->json(["message" => "delete failed"]);
+		}
 	}
+
 }

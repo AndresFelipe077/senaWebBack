@@ -26,7 +26,7 @@ class AsignacionParticipanteController extends Controller
       'grupo.infraestructuras.sede',
       'grupo.participantes',
       'grupo.jornadas.diaJornada',
-      'usuario',
+      'usuario.persona',
       'tipoParticipacion',
       'estadoParticipantes',
     ];
@@ -34,7 +34,7 @@ class AsignacionParticipanteController extends Controller
 
   public function index()
   {
-    $data = AsignacionParticipante::with(['usuario', 'grupo'])->get();
+    $data = AsignacionParticipante::with(['usuario.persona', 'grupo'])->get();
     return response()->json($data);
   }
 
@@ -233,7 +233,24 @@ class AsignacionParticipanteController extends Controller
       ->with($this->relations)->get();
 
     return response()->json($fichasByInstructor);
+  }
 
+
+  public function getFichasById($idFicha): JsonResponse
+  {
+
+    $fichasByInstructor = AsignacionParticipante::where('idGrupo', $idFicha)
+      ->with($this->relations)->get();
+
+    return response()->json($fichasByInstructor);
+  }
+
+  public function getLastFichaById($idLastFicha): JsonResponse
+  {
+    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idLastFicha)
+      ->orderBy('created_at', 'desc')
+      ->first();
+    return response()->json($ultimaFicha);
   }
 
 }

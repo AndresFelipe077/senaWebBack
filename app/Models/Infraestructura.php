@@ -28,4 +28,9 @@ class Infraestructura extends Model
         )->withPivot('id','fechaInicial','fechaFinal');
     }
 
+    public function eventos()
+    {
+        return $this->hasMany(ActividadEvento::class);
+    }
+
 }

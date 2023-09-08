@@ -23,6 +23,11 @@ class TipoGrupoController extends Controller
     return TipoGrupo::where('nombreTipoGrupo', 'FICHA')->get();
   }
 
+  public function getTipoGrupoEspecial()
+  {
+    return TipoGrupo::where('nombreTipoGrupo', 'ESPECIAL')->get();
+  }
+
   /**
    * Store a newly created resource in storage.
    *
