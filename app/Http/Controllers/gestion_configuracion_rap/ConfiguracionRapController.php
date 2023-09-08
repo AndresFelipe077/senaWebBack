@@ -93,7 +93,7 @@ class ConfiguracionRapController extends Controller
 		$rapInSameDate = $this->validateConfiguracionRapByDate($data['idInfraestructura'], $data['idJornada'], $data['idGrupo'], $data['fechaInicial'], $data['fechaFinal']);
 
 		if (!$rapInSameDate) {
-			return response()->json(['error' => 'Las fechas se superponen con otro registro existente'], 400);
+			return response()->json(['error' => 'No puedes asignar esta configuracion porque ya esta ocupada'], 400);
 		}
 
 		$configuracionRap = new ConfiguracionRap($data);
@@ -107,48 +107,53 @@ class ConfiguracionRapController extends Controller
 	 * @return bool
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	/*private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
-	{
-		// Consulta registros existentes que coincidan con las condiciones dadas
-		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
-			->where('idJornada', $jornada)
-			->where('idGrupo', $ficha)
-			->where('fechaInicial', $fechaInicio)
-			->where('fechaFinal', $fechaFin)
-			->count();
-
-		// Si se encuentra al menos un registro que coincide, la validación pasa
-		return $matchingRecords > 0;
-	}*/
-
-	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	/*private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicial, $fechaFinal)
 	{
 		// Consulta registros existentes que se superponen o están dentro del rango dado
 		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
 			->where('idJornada', $jornada)
 			->where('idGrupo', $ficha)
-			->where(function ($query) use ($fechaInicio, $fechaFin) {
-				$query->where(function ($query) use ($fechaInicio, $fechaFin) {
-					$query->where('fechaInicial', '>=', $fechaInicio)
-						->where('fechaInicial', '<=', $fechaFin);
-				})->orWhere(function ($query) use ($fechaInicio, $fechaFin) {
-					$query->where('fechaFinal', '>=', $fechaInicio)
-						->where('fechaFinal', '<=', $fechaFin);
-				})->orWhere(function ($query) use ($fechaInicio, $fechaFin) {
-					$query->where('fechaInicial', '<=', $fechaInicio)
-						->where('fechaFinal', '>=', $fechaFin);
+			->where(function ($query) use ($fechaInicial, $fechaFinal) {
+				$query->where(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '>=', $fechaInicial)
+						->where('fechaInicial', '<=', $fechaFinal);
+				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaFinal', '>=', $fechaInicial)
+						->where('fechaFinal', '<=', $fechaFinal);
+				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '<=', $fechaInicial)
+						->where('fechaFinal', '>=', $fechaFinal);
 				});
 			})
 			->count();
 
-		// Si se encuentra al menos un registro que coincide, la validación falla
+		// Si se encuentra al menos un registro que coincide o no se encuentra
+		// ningún registro para la misma infraestructura y jornada, la validación falla
+		return $matchingRecords === 0;
+	}*/
+	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	{
+		// Consulta registros existentes que se superponen o están dentro del rango dado
+		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
+			->where('idJornada', $jornada)
+			->where('fechaInicial', '<=', $fechaFin)
+			->where('fechaFinal', '>=', $fechaInicio)
+			->where(function ($query) use ($ficha) {
+				$query->where('idGrupo', $ficha);
+			})
+			->count();
+
+		// Si se encuentra al menos un registro que coincide o no se encuentra
+		// ningún registro para la misma infraestructura, jornada y ficha, la validación falla
 		return $matchingRecords === 0;
 	}
 
 
 
-
-	public function show($id)
+	/**
+	 * Show configuracionRap by id
+	 */
+	public function show($id): JsonResponse
 	{
 		$configuracionRap = ConfiguracionRap::find($id);
 		return response()->json($configuracionRap, 200);
@@ -220,7 +225,7 @@ class ConfiguracionRapController extends Controller
 		// Actualiza solo el estado del registro existente
 		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
 
-		$this->changeInstructor($data, $configuracionRap->fechaInicio, $configuracionRap->fechaFinal);
+		$this->changeInstructor($data, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
 
 		return response()->json(['message' => 'Instructor nuevo creado']);
 	}
@@ -249,7 +254,7 @@ class ConfiguracionRapController extends Controller
 		$newConfiguracionRap->save();
 	}
 
-	public function destroy($id)
+	public function destroy($id): JsonResponse
 	{
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 		$result = $configuracionRap->delete();
