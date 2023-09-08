@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\asignacionFaseProyFormativo;
-use GuzzleHttp\Promise\Create;
+use App\Models\AsignacionFaseProyFormativo;
 use Illuminate\Http\Request;
 
 class AsignacionFaseProyFormativoController extends Controller
@@ -11,7 +10,7 @@ class AsignacionFaseProyFormativoController extends Controller
 
     private $relations;
 
-    public function _construct(){
+    public function __construct(){
         $this->relations = [
             'fase',
             'proyectoFormativo'
@@ -36,7 +35,9 @@ class AsignacionFaseProyFormativoController extends Controller
     public function store(Request $request)
     {
         $data=$request->all();
-        $asignacionFaseProyFormativo=asignacionFaseProyFormativo::create($data);
+        $asignacionFaseProyFormativo=new asignacionFaseProyFormativo($data);
+        $asignacionFaseProyFormativo -> save();
+        $asignacionFaseProyFormativo = asignacionFaseProyFormativo::with($this->relations) ->findOrFail($asignacionFaseProyFormativo->id);
 
         return response()->json($asignacionFaseProyFormativo);
     }
@@ -54,7 +55,7 @@ class AsignacionFaseProyFormativoController extends Controller
 
     public function showByIdProyecto(int $id)
     {
-        $fases = AsignacionFaseProyFormativo::with(['fase','proyectoFormativo'])
+        $fases = AsignacionFaseProyFormativo::with($this->relations)
         ->where('idProyectoFormativo',$id) -> get();
 
         return response() -> json($fases);
@@ -67,9 +68,15 @@ class AsignacionFaseProyFormativoController extends Controller
      * @param  \App\Models\asignacionFaseProyFormativo  $asignacionFaseProyFormativo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, asignacionFaseProyFormativo $asignacionFaseProyFormativo)
+    public function update(Request $request,int $id)
     {
-        //
+        $data = $request -> all();
+        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations) 
+        -> findOrFail($id);
+        $asignacion_fase -> fill($data);
+        $asignacion_fase -> save();
+
+        return response()->json($asignacion_fase,204);
     }
 
     /**

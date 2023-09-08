@@ -187,10 +187,12 @@ Route::get('sedes/ciudad/{id}', [SedeController::class, 'showByCiudad']);
 Route::resource('areas', AreaController::class);
 
 //rutas de infraestructura -> revisar y optimizar (crear un grupo de rutas como en ciudades)
-Route::resource('infraestructuras', InfraestructuraController::class);
-Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
-Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
-Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+Route::resource('infraestructuras', InfraestructuraController::class)->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
+    Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
+    Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+});
 
 
 //jornadas
@@ -234,8 +236,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Querys searchs
     Route::get('tipo_grupos_by_parameter/{nombreTipoGrupo}', [GrupoController::class, 'getTipoGrupoByParameter']);
-
-
 });
 
 Route::resource('estados', EstadoController::class);
