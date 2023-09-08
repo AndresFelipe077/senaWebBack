@@ -163,12 +163,6 @@ class ConfiguracionRapController extends Controller
 		// Actualiza solo el estado del registro existente
 		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
 
-		// Crea un nuevo registro con los mismos datos, excepto el nuevo idInstructor
-		// $newConfiguracionRap = new ConfiguracionRap($data);
-		// $newConfiguracionRap->idInstructor = $data['idInstructor'];
-
-		// Guarda el nuevo registro
-		// $newConfiguracionRap->save();
 		$this->changeInstructor($data);
 
 		return response()->json(['message' => 'Estado del registro actualizado y nuevo registro creado'], 203);

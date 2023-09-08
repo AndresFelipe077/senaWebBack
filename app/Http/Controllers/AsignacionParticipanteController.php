@@ -233,7 +233,6 @@ class AsignacionParticipanteController extends Controller
       ->with($this->relations)->get();
 
     return response()->json($fichasByInstructor);
-
   }
 
 
@@ -241,11 +240,17 @@ class AsignacionParticipanteController extends Controller
   {
 
     $fichasByInstructor = AsignacionParticipante::where('idGrupo', $idFicha)
-      // ->where('idTipoParticipacion', 3)
       ->with($this->relations)->get();
 
     return response()->json($fichasByInstructor);
+  }
 
+  public function getLastFichaById($idLastFicha): JsonResponse
+  {
+    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idLastFicha)
+      ->orderBy('created_at', 'desc')
+      ->first();
+    return response()->json($ultimaFicha);
   }
 
 }
