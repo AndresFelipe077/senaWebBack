@@ -25,12 +25,14 @@ class CreateProgramasTable extends Migration
             $table->integer('creditosProductiva');
             $table->string ('rutaArchivo')->nullable();
             $table->text ('version');
-
             $table->unsignedInteger('idTipoPrograma');
-            $table->foreign('idTipoPrograma')->references('id')->on('tipoPrograma');
-
             $table->unsignedInteger('idEstado');
-            $table->foreign('idEstado')->references('id')->on('estado');
+            $table->unsignedInteger('idArea');
+
+
+            $table->foreign('idTipoPrograma')->references('id')->on('tipoPrograma');
+            $table->foreign('idEstado')->references('id')->on('estadoPrograma');
+            $table->foreign('idArea')->references('id')->on('area');
 
             $table->timestamps();
         });

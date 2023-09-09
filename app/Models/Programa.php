@@ -22,6 +22,7 @@ protected $appends = ['docUrl'];
     "descripcionPrograma",
     "idTipoPrograma",
     "idEstado",
+    "idArea",
     "totalHoras",
     "etapaLectiva",
     "etapaProductiva",
@@ -52,6 +53,12 @@ protected $appends = ['docUrl'];
     //relacion uno a muchos estado
     public function estado()
     {
-        return $this->belongsTo(Status::class, 'idEstado');
+        return $this->belongsTo(EstadoPrograma::class, 'idEstado');
+    }
+
+    //relacion uno a muchos con area
+    public function area()
+    {
+        return $this->belongsTo(area::class, 'idArea');
     }
 }

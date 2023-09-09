@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFasesTable extends Migration
+class CreateEstadoPrograma extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateFasesTable extends Migration
      */
     public function up()
     {
-        Schema::create('fase', function (Blueprint $table) {
+        Schema::create('estadoPrograma', function (Blueprint $table) {
+
             $table->increments('id');
-            $table->text('nombreFase');
+            $table->string('estado');
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ class CreateFasesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fase');
+        Schema::dropIfExists('estadoPrograma');
     }
 }
