@@ -31,10 +31,10 @@ class ProgramaFactory extends Factory
             'etapaProductiva'     => $this->faker->randomElement([5, 10]),
             'creditosLectiva'     => $this->faker->randomElement([5, 2]),
             'creditosProductiva'  => $this->faker->randomElement([15, 5]),
-            'version'             => $this->faker->randomElement(['V1', 'V2']),
+            'version'             => $this->faker->randomElement(['1', '2']),
 
             'idTipoPrograma'      => $tipoPrograma->id,
-            'idEstado'            => 1,
+            'idEstado'            => $estadoPrograma->id,
             'idArea'              => $area->id
         ];
     }
