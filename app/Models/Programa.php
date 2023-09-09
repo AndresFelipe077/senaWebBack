@@ -62,4 +62,8 @@ class Programa extends Model
     {
         return $this->belongsTo(Area::class, 'idArea');
     }
+
+    public function competencias(){
+        return $this->hasMany(Competencias::class, 'idPrograma', 'id');
+    }
 }

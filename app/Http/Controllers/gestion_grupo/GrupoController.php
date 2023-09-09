@@ -5,6 +5,7 @@ namespace App\Http\Controllers\gestion_grupo;
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Competencias;
+use App\Models\ConfiguracionRap;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use App\Models\Programa;
@@ -522,35 +523,11 @@ class GrupoController extends Controller
   }
 
 
-  /*private function createConfiguracionRapByGrupo($idFicha)
-  {
-    $ficha = Grupo::find($idFicha);
-
-    if (!$ficha) {
-      return response()->json(['message' => 'Ficha not found']);
-    }
-
-    // Proyecto Formativo
-    $idProyectoFormativo = $ficha->proyectoFormativo->id;
-    $numeroTotalRaps = $ficha->proyectoFormativo->numeroTotalRaps;
-
-
-    // Programa
-    $programa = proyectoFormativo::find($idProyectoFormativo);
-    $idPrograma = $programa->programas->id;
-
-    // Competencias
-    $competencia = Programa::find($idPrograma);
-    $idCompetencia = $competencia->competencias->id;
-
-    // Resultados de aprendizaje
-    $resultadoAprendizaje = Competencias::find($idCompetencia);
-    $idResultadoAprendizaje = $resultadoAprendizaje->resultadosAprendizaje->id;
-
-    $resultadoAprendizaje = resultadoAprendizaje::findOrFail($idResultadoAprendizaje);
-
-    return response()->json($resultadoAprendizaje);
-  }*/
+  /**
+   * 
+   * 
+   * @author Andres Felipe Pizo Luligo
+   */
   public function createConfiguracionRapByGrupo($idFicha)
   {
     $ficha = Grupo::find($idFicha);
@@ -559,33 +536,48 @@ class GrupoController extends Controller
       return response()->json(['message' => 'Ficha not found']);
     }
 
-    // Proyecto Formativo
-    $idProyectoFormativo = $ficha->proyectoFormativo->id;
-    $numeroTotalRaps = $ficha->proyectoFormativo->numeroTotalRaps;
-
     // Programa
     $idPrograma = $ficha->proyectoFormativo->idPrograma;
 
     // Competencias
     $programa = Programa::find($idPrograma);
-    $idCompetencia = $programa->idCompetencia;
+    $competencias = $programa->competencias;
 
-    // Resultados de aprendizaje
-    $competencia = Competencias::find($idCompetencia);
+    if (!$competencias) {
+      return response()->json(['message' => 'Competencias not found']);
+    }
 
-    /*if (!$competencia) {
-      return response()->json(["message" => "Competencia not found"]);
-    }*/
+    $resultadosAprendizaje = [];
 
-    // $resultadosAprendizaje = $competencia->resultadosAprendizaje;
+    foreach ($competencias as $competencia) {
+        $resultadosAprendizaje[] = $competencia->resultadosAprendizaje;
+    }
+
+
+    foreach ($resultadosAprendizaje as $resultado) {
+      foreach ($resultado as $rap) {
+          ConfiguracionRap::create([
+              'idRap'             => $rap->id,
+              'idInstructor'      => 3,
+              'idJornada'         => 1,
+              'idGrupo'           => $idFicha,
+              'idInfraestructura' => 1,
+              'idEstado'          => 1,
+              'horas'             => 0,
+              'fechaInicial'      => now(),
+              'fechaFinal'        => now(),
+              'observacion'       => '',
+          ]);
+      }
+  }
 
     // Devolver todos los objetos de ResultadoAprendizaje en formato JSON
     return response()->json([
-      'idProyectoFormativo' => $idProyectoFormativo,
-      'numeroTotalRaps' => $numeroTotalRaps,
       'idPrograma' => $idPrograma,
-      'idCompetencia' => $idCompetencia,
-      // 'resultadosAprendizaje' => $resultadosAprendizaje,
+      'idCompetencia' => $competencias,
+      'resultadosAprendizaje' => $resultadosAprendizaje,
     ]);
+
+    // return response()->json(['message' => 'ConfiguracionRaps created successfully with this ficha']);
   }
 }
