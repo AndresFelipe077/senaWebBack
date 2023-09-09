@@ -172,7 +172,7 @@ class GrupoController extends Controller
 
     $grupo->save();
 
-    /*$infraestructuras = $data['infraestructuras'];
+    $infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
 
@@ -192,13 +192,14 @@ class GrupoController extends Controller
         $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
         $asignacionJornadaGrupo->save();
       }
-    }*/
-
-    $resultadoAprendizaje = $this->createConfiguracionRapByGrupo($grupo->id);
-
-    if ($resultadoAprendizaje) {
-      return response()->json($resultadoAprendizaje);
     }
+
+    // $resultadoAprendizaje = $this->createConfiguracionRapByGrupo($grupo->id);
+    $this->createConfiguracionRapByGrupo($grupo->id);
+
+    /*if ($resultadoAprendizaje) {
+      return response()->json($resultadoAprendizaje);
+    }*/
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
@@ -488,16 +489,6 @@ class GrupoController extends Controller
     return false;
   }
 
-
-  //   public function showByIdProyectoFor($programaId)
-  //   {
-  //       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
-  //           $query->where('idPrograma', $programaId);
-  //       })->get();
-
-  //       return response()->json($grupos);
-  //   }
-
   public function showByIdProyectoFor(int $id)
   {
     $grupos = Grupo::with($this->relations)
@@ -524,8 +515,7 @@ class GrupoController extends Controller
 
 
   /**
-   * 
-   * 
+   * Create registers about configuracionRaps by this idGrupo(ficha)
    * @author Andres Felipe Pizo Luligo
    */
   public function createConfiguracionRapByGrupo($idFicha)
@@ -558,25 +548,25 @@ class GrupoController extends Controller
       foreach ($resultado as $rap) {
           ConfiguracionRap::create([
               'idRap'             => $rap->id,
-              'idInstructor'      => 3,
-              'idJornada'         => 1,
+              'idInstructor'      => null,
+              'idJornada'         => null,
               'idGrupo'           => $idFicha,
-              'idInfraestructura' => 1,
+              'idInfraestructura' => null,
               'idEstado'          => 1,
               'horas'             => 0,
-              'fechaInicial'      => now(),
-              'fechaFinal'        => now(),
+              'fechaInicial'      => null,
+              'fechaFinal'        => null,
               'observacion'       => '',
           ]);
       }
   }
 
     // Devolver todos los objetos de ResultadoAprendizaje en formato JSON
-    return response()->json([
+    /*return response()->json([
       'idPrograma' => $idPrograma,
       'idCompetencia' => $competencias,
       'resultadosAprendizaje' => $resultadosAprendizaje,
-    ]);
+    ]);*/
 
     // return response()->json(['message' => 'ConfiguracionRaps created successfully with this ficha']);
   }

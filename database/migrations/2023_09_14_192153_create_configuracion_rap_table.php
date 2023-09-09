@@ -16,13 +16,13 @@ class CreateConfiguracionRapTable extends Migration
         Schema::create('configuracionRap', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('idRap');
-            $table->unsignedInteger('idInstructor');
-            $table->unsignedBigInteger('idJornada');
+            $table->unsignedInteger('idInstructor')->nullable();
+            $table->unsignedBigInteger('idJornada')->nullable();
             $table->unsignedInteger('idGrupo');
-            $table->unsignedInteger('idInfraestructura');
+            $table->unsignedInteger('idInfraestructura')->nullable();
             $table->unsignedInteger('idEstado');
             $table->integer('horas');
-            $table->date('fechaInicial');
+            $table->date('fechaInicial')->nullable();
             $table->date('fechaFinal')->nullable();
             $table->text('observacion')->nullable();
 
