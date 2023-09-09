@@ -12,36 +12,37 @@ class Programa extends Model
     public static $snakeAttributes = false;
     protected $table = "programa";
 
-const RUTA_DOC = "programa";
-const RUTA_DOC_DEFAULT = "default";
-protected $appends = ['docUrl'];
+    const RUTA_DOC = "programa";
+    const RUTA_DOC_DEFAULT = "default";
+    protected $appends = ['docUrl'];
 
     protected $fillable = [
-    "nombrePrograma",
-    "codigoPrograma",
-    "descripcionPrograma",
-    "idTipoPrograma",
-    "idEstado",
-    "idArea",
-    "totalHoras",
-    "etapaLectiva",
-    "etapaProductiva",
-    "creditosLectiva",
-    "creditosProductiva",
-    "rutaArchivo",
-    "version"
+        "nombrePrograma",
+        "codigoPrograma",
+        "descripcionPrograma",
+        "idTipoPrograma",
+        "idEstado",
+        "idArea",
+        "totalHoras",
+        "etapaLectiva",
+        "etapaProductiva",
+        "creditosLectiva",
+        "creditosProductiva",
+        "rutaArchivo",
+        "version"
     ];
     public $timestamps = false;
 
- public function getDocUrlAttribute(){
-    if(
-        isset($this->attributes['rutaArchivo']) &&
-        isset($this->attributes['rutaArchivo'][0])
-    ){
-        return url($this->attributes['rutaArchivo']);
+    public function getDocUrlAttribute()
+    {
+        if (
+            isset($this->attributes['rutaArchivo']) &&
+            isset($this->attributes['rutaArchivo'][0])
+        ) {
+            return url($this->attributes['rutaArchivo']);
+        }
+        return url(self::RUTA_DOC_DEFAULT);
     }
-    return url(self::RUTA_DOC_DEFAULT);
- }
 
 
     //relacion uno a muchos tipo programa
@@ -49,7 +50,7 @@ protected $appends = ['docUrl'];
     {
         return $this->belongsTo(TipoProgramas::class, 'idTipoPrograma');
     }
-    
+
     //relacion uno a muchos estado
     public function estado()
     {
@@ -59,6 +60,6 @@ protected $appends = ['docUrl'];
     //relacion uno a muchos con area
     public function area()
     {
-        return $this->belongsTo(area::class, 'idArea');
+        return $this->belongsTo(Area::class, 'idArea');
     }
 }

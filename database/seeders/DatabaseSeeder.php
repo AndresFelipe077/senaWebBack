@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
 
 
         TipoProgramas::factory(5)->create();
-        Programa::factory(5)->create();
+        // Programa::factory(5)->create();
 
         $this->call(CompanySeeder::class);
         $this->call(PermissionSeeder::class);
@@ -66,6 +66,9 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/infraestructuras.sql';
         DB::unprepared(file_get_contents($path));
+
+        Programa::factory(5)->create();
+
 
         $this->call(DiaSeeder::class);
 
