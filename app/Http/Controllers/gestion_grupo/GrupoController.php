@@ -4,8 +4,12 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Models\AsignacionJornadaGrupo;
+use App\Models\Competencias;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
+use App\Models\Programa;
+use App\Models\proyectoFormativo;
+use App\Models\resultadoAprendizaje;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -163,12 +167,11 @@ class GrupoController extends Controller
       $request->file('imagenIcon')->storeAs('public', $rutaAlmacenamiento);
 
       $grupo->imagenIcon = $rutaAlmacenamiento;
-
     }
 
     $grupo->save();
 
-    $infraestructuras = $data['infraestructuras'];
+    /*$infraestructuras = $data['infraestructuras'];
 
     foreach ($infraestructuras as $infraItem) {
 
@@ -188,9 +191,13 @@ class GrupoController extends Controller
         $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
         $asignacionJornadaGrupo->save();
       }
-    }
+    }*/
 
-    
+    $resultadoAprendizaje = $this->createConfiguracionRapByGrupo($grupo->id);
+
+    if ($resultadoAprendizaje) {
+      return response()->json($resultadoAprendizaje);
+    }
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
@@ -345,10 +352,6 @@ class GrupoController extends Controller
       'eliminada'
     ]);
   }
-
-
-  /** Funciones para validar y guardar las infraestructuras del grupo  */
-
 
   /**
    * Guarda el horario de infraestructura para un grupo.
@@ -516,5 +519,73 @@ class GrupoController extends Controller
     })->get();
 
     return $grupo;
+  }
+
+
+  /*private function createConfiguracionRapByGrupo($idFicha)
+  {
+    $ficha = Grupo::find($idFicha);
+
+    if (!$ficha) {
+      return response()->json(['message' => 'Ficha not found']);
+    }
+
+    // Proyecto Formativo
+    $idProyectoFormativo = $ficha->proyectoFormativo->id;
+    $numeroTotalRaps = $ficha->proyectoFormativo->numeroTotalRaps;
+
+
+    // Programa
+    $programa = proyectoFormativo::find($idProyectoFormativo);
+    $idPrograma = $programa->programas->id;
+
+    // Competencias
+    $competencia = Programa::find($idPrograma);
+    $idCompetencia = $competencia->competencias->id;
+
+    // Resultados de aprendizaje
+    $resultadoAprendizaje = Competencias::find($idCompetencia);
+    $idResultadoAprendizaje = $resultadoAprendizaje->resultadosAprendizaje->id;
+
+    $resultadoAprendizaje = resultadoAprendizaje::findOrFail($idResultadoAprendizaje);
+
+    return response()->json($resultadoAprendizaje);
+  }*/
+  private function createConfiguracionRapByGrupo($idFicha)
+  {
+    $ficha = Grupo::find($idFicha);
+
+    if (!$ficha) {
+      return response()->json(['message' => 'Ficha not found']);
+    }
+
+    // Proyecto Formativo
+    $idProyectoFormativo = $ficha->proyectoFormativo->id;
+    $numeroTotalRaps = $ficha->proyectoFormativo->numeroTotalRaps;
+
+    // Programa
+    $idPrograma = $ficha->proyectoFormativo->idPrograma;
+
+    // Competencias
+    $programa = Programa::find($idPrograma);
+    $idCompetencia = $programa->idCompetencia;
+
+    // Resultados de aprendizaje
+    $competencia = Competencias::find($idCompetencia);
+
+    /*if (!$competencia) {
+      return response()->json(["message" => "Competencia not found"]);
+    }*/
+
+    // $resultadosAprendizaje = $competencia->resultadosAprendizaje;
+
+    // Devolver todos los objetos de ResultadoAprendizaje en formato JSON
+    return response()->json([
+      'idProyectoFormativo' => $idProyectoFormativo,
+      'numeroTotalRaps' => $numeroTotalRaps,
+      'idPrograma' => $idPrograma,
+      'idCompetencia' => $idCompetencia,
+      // 'resultadosAprendizaje' => $resultadosAprendizaje,
+    ]);
   }
 }
