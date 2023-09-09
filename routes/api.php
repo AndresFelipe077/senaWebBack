@@ -378,3 +378,5 @@ Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteControl
 Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
 Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+
+Route::get('get_register_ficha/{idFicha}', [GrupoController::class, 'createConfiguracionRapByGrupo']);

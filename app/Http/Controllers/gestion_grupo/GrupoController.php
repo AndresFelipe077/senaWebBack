@@ -551,7 +551,7 @@ class GrupoController extends Controller
 
     return response()->json($resultadoAprendizaje);
   }*/
-  private function createConfiguracionRapByGrupo($idFicha)
+  public function createConfiguracionRapByGrupo($idFicha)
   {
     $ficha = Grupo::find($idFicha);
 
