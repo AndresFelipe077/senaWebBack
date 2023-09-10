@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Competencias;
 use App\Models\ConfiguracionRap;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use App\Models\Programa;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -33,6 +35,7 @@ class GrupoController extends Controller
       'infraestructuras.sede'
     ];
   }
+  
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -138,7 +141,6 @@ class GrupoController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-
   public function store(Request $request)
   {
 
@@ -159,33 +161,23 @@ class GrupoController extends Controller
       'idTipoFormacion'     => $data['idTipoFormacion'],
       'idEstado'            => $data['idEstado'],
       'idTipoOferta'        => $data['idTipoOferta'],
-      // 'imagenIcon'          => $data['imagenIcon']
     ]);
 
     if ($request->hasFile('imagenIcon')) {
-      // Obtener el archivo de la solicitud
+
       $imagen = $request->file('imagenIcon');
-
-      // Generar un nombre único para el archivo
       $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
-
-      // Ruta de almacenamiento
-      $rutaAlmacenamiento = 'public/imagenes/especial'; // Ajusta la ruta según tu configuración
-
-      // Guardar la imagen original en el sistema de archivos
+      $rutaAlmacenamiento = 'public/imagenes/especial/'; // Ajusta la ruta según tu configuración
       $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
-
-      // También puedes redimensionar la imagen si es necesario
       $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
-      $imagenRedimensionada = Image::make($rutaImagen)
+
+      Image::make($rutaImagen)
         ->resize(300, 200) // Cambia las dimensiones según tus necesidades
-        ->save();
+        ->save(storage_path('app/' . $rutaAlmacenamiento . $nombreArchivo)); // Guardar la imagen redimensionada
 
-      // Ahora, puedes guardar la ruta de la imagen en tu base de datos
-      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . '/' . $nombreArchivo;
+      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . $nombreArchivo;
 
-      // Asigna la ruta de la imagen guardada al campo imagenIcon
-      $grupo->imagenIcon = $rutaImagenGuardada;
+      $grupo->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
     }
 
     $grupo->save();
@@ -580,14 +572,30 @@ class GrupoController extends Controller
         ]);
       }
     }
-
-    // Devolver todos los objetos de ResultadoAprendizaje en formato JSON
-    /*return response()->json([
-      'idPrograma' => $idPrograma,
-      'idCompetencia' => $competencias,
-      'resultadosAprendizaje' => $resultadosAprendizaje,
-    ]);*/
-
-    // return response()->json(['message' => 'ConfiguracionRaps created successfully with this ficha']);
   }
+
+  /**
+   * Get configuracionesRaps by id ficha
+   * @param int $idFicha
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getConfiguracionRapByidFicha($idFicha): JsonResponse
+  {
+
+    //relations of configuracionRap
+    // $configuracionController = new ConfiguracionRapController();
+    // $relations = $configuracionController->__construct();
+
+    $ficha = Grupo::with('configuracionesRaps.usuarios')->find($idFicha);
+
+    if (!$ficha) {
+      return response()->json(['message' => 'Ficha not found'], 404);
+    }
+
+    $configuracionesRaps = $ficha->configuracionesRaps;
+
+    return response()->json($configuracionesRaps);
+
+  }
+
 }

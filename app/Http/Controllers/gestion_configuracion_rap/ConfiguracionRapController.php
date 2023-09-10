@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 class ConfiguracionRapController extends Controller
 {
 
-	private $relations;
+	protected $relations;
 
 	public function __construct()
 	{
@@ -264,4 +264,10 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
+
+
+
+
+
+
 }
