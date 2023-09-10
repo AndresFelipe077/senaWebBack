@@ -71,12 +71,14 @@ class AsignacionFaseProyFormativoController extends Controller
     public function update(Request $request,int $id)
     {
         $data = $request -> all();
-        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations) 
-        -> findOrFail($id);
+        $asignacion_fase = asignacionFaseProyFormativo::findOrFail($id);
         $asignacion_fase -> fill($data);
         $asignacion_fase -> save();
+        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations) ->
+        findOrFail($asignacion_fase->id);
 
-        return response()->json($asignacion_fase,204);
+
+        return response()->json($asignacion_fase);
     }
 
     /**

@@ -12,7 +12,7 @@ class ProgramaController extends Controller
 
     function __construct()
     {
-        $this->relations = ['estado', 'tipoPrograma', 'area'];
+        $this->relations = ['estado', 'tipoPrograma', 'area.infraestructuras'];
     }
 
     public function index(Request $request)
@@ -96,9 +96,10 @@ class ProgramaController extends Controller
     public function update(Request $request, int  $id)
     {
         $data = $request->all();
-        $programa = Programa::with($this->relations)->findOrFail($id);
+        $programa = Programa::findOrFail($id);
         $programa->fill($data);
         $programa->save();
+        $programa = Programa::with($this->relations)->findOrFail($programa->id);
 
         return response()->json($programa, 203);
     }

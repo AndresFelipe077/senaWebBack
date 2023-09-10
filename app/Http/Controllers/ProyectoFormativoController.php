@@ -86,15 +86,14 @@ class ProyectoFormativoController extends Controller
         return response()->json($proyectos);
     }
 
-
-
-
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $proyectoFormativo = proyectoFormativo::with($this->relations)->findOrFail($id);
+        $proyectoFormativo = proyectoFormativo::findOrFail($id);
         $proyectoFormativo->fill($data);
         $proyectoFormativo->save();
+        $proyectoFormativo = proyectoFormativo::with($this->relations)->findOrFail($id);
+
 
         return response()->json($proyectoFormativo, 203);
     }
