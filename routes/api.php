@@ -23,7 +23,7 @@ use App\Http\Controllers\gestion_tipo_documento\TipoDocumentoController;
 use App\Http\Controllers\gestion_tipopago\TipoPagoController;
 use App\Http\Controllers\gestion_tipotransaccion\TipoTransaccionController;
 use App\Http\Controllers\gestion_usuario\UserController as Gestion_usuarioUserController;
-use App\Http\Controllers\gestion_programas\resultadoAprendizajeController;
+use App\Http\Controllers\gestion_programas\ResultadoAprendizajeController;
 use App\Http\Controllers\gestion_programas\actividadAprendizajeController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProyectoFormativoController;
@@ -124,8 +124,8 @@ Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class, 'showByIdActividadP']);
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class, 'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class, 'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -156,7 +156,7 @@ Route::resource('estado_programa',  EstadoProgramaController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
 //ruta asignar y guardar competencias raps
-Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
+Route::post('resultados', [ResultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 Route::get('proyecto_formativo/programa/{id}', [ProyectoFormativoController::class, 'showByIdPrograma']);
