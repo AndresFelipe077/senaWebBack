@@ -9,10 +9,11 @@ use App\Models\ConfiguracionRap;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
 use App\Models\Programa;
-use App\Models\proyectoFormativo;
-use App\Models\resultadoAprendizaje;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class GrupoController extends Controller
 {
@@ -140,6 +141,7 @@ class GrupoController extends Controller
 
   public function store(Request $request)
   {
+
     $data = $request->all();
 
     $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
@@ -156,18 +158,34 @@ class GrupoController extends Controller
       'idProyectoFormativo' => $data['idProyectoFormativo'],
       'idTipoFormacion'     => $data['idTipoFormacion'],
       'idEstado'            => $data['idEstado'],
-      'idTipoOferta'        => $data['idTipoOferta']
+      'idTipoOferta'        => $data['idTipoOferta'],
+      // 'imagenIcon'          => $data['imagenIcon']
     ]);
 
     if ($request->hasFile('imagenIcon')) {
+      // Obtener el archivo de la solicitud
+      $imagen = $request->file('imagenIcon');
 
-      $cadena = $request->file('imagenIcon')->getClientOriginalName();
-      $cadenaConvert = str_replace(" ", "_", $cadena);
-      $nombre = Str::random(10) . '_' . $cadenaConvert;
-      $rutaAlmacenamiento = 'imagenes/especial' . $nombre;
-      $request->file('imagenIcon')->storeAs('public', $rutaAlmacenamiento);
+      // Generar un nombre único para el archivo
+      $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
 
-      $grupo->imagenIcon = $rutaAlmacenamiento;
+      // Ruta de almacenamiento
+      $rutaAlmacenamiento = 'public/imagenes/especial'; // Ajusta la ruta según tu configuración
+
+      // Guardar la imagen original en el sistema de archivos
+      $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
+
+      // También puedes redimensionar la imagen si es necesario
+      $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
+      $imagenRedimensionada = Image::make($rutaImagen)
+        ->resize(300, 200) // Cambia las dimensiones según tus necesidades
+        ->save();
+
+      // Ahora, puedes guardar la ruta de la imagen en tu base de datos
+      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . '/' . $nombreArchivo;
+
+      // Asigna la ruta de la imagen guardada al campo imagenIcon
+      $grupo->imagenIcon = $rutaImagenGuardada;
     }
 
     $grupo->save();
@@ -194,12 +212,14 @@ class GrupoController extends Controller
       }
     }
 
-    // $resultadoAprendizaje = $this->createConfiguracionRapByGrupo($grupo->id);
-    $this->createConfiguracionRapByGrupo($grupo->id);
+    // Validation of ficha for create configuraciones raps
+    $nombreTipoGrupo = DB::table('tipoGrupo')
+      ->where('id', $grupo->idTipoGrupo)
+      ->value('nombreTipoGrupo');
 
-    /*if ($resultadoAprendizaje) {
-      return response()->json($resultadoAprendizaje);
-    }*/
+    if ($nombreTipoGrupo === "FICHA") {
+      $this->createConfiguracionRapByGrupo($grupo->id);
+    }
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
@@ -540,26 +560,26 @@ class GrupoController extends Controller
     $resultadosAprendizaje = [];
 
     foreach ($competencias as $competencia) {
-        $resultadosAprendizaje[] = $competencia->resultadosAprendizaje;
+      $resultadosAprendizaje[] = $competencia->resultadosAprendizaje;
     }
 
 
     foreach ($resultadosAprendizaje as $resultado) {
       foreach ($resultado as $rap) {
-          ConfiguracionRap::create([
-              'idRap'             => $rap->id,
-              'idInstructor'      => null,
-              'idJornada'         => null,
-              'idGrupo'           => $idFicha,
-              'idInfraestructura' => null,
-              'idEstado'          => 1,
-              'horas'             => 0,
-              'fechaInicial'      => null,
-              'fechaFinal'        => null,
-              'observacion'       => '',
-          ]);
+        ConfiguracionRap::create([
+          'idRap'             => $rap->id,
+          'idInstructor'      => null,
+          'idJornada'         => null,
+          'idGrupo'           => $idFicha,
+          'idInfraestructura' => null,
+          'idEstado'          => 1,
+          'horas'             => 0,
+          'fechaInicial'      => null,
+          'fechaFinal'        => null,
+          'observacion'       => '',
+        ]);
       }
-  }
+    }
 
     // Devolver todos los objetos de ResultadoAprendizaje en formato JSON
     /*return response()->json([
