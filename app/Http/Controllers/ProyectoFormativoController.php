@@ -16,7 +16,7 @@ class ProyectoFormativoController extends Controller
         $this->relations = [
             'Programas',
             'fases',
-            'centroFormativos'
+            'centroFormativos.regional'
         ];
     }
 
@@ -29,17 +29,17 @@ class ProyectoFormativoController extends Controller
     {
         $Programa = $request->input('Programas');
         $centroFormacion = $request->input('CentroFormativos');
-        $proyectoFormativo = proyectoFormativo::with($this ->relations)->get();
+        $proyectoFormativo = proyectoFormativo::with($this->relations)->get();
 
-        if($Programa){
-            $proyectoFormativo->whereHas('Programa',function($q) use ($Programa){
-                return $q->select('id')->where('id',$Programa)->orWhere('nombrePrograma',$Programa);
+        if ($Programa) {
+            $proyectoFormativo->whereHas('Programa', function ($q) use ($Programa) {
+                return $q->select('id')->where('id', $Programa)->orWhere('nombrePrograma', $Programa);
             });
         };
 
-        if($centroFormacion){
-            $proyectoFormativo->whereHas('centroFormacion',function($q) use ($centroFormacion){
-                return $q->select('id')->where('id',$centroFormacion)->orWhere('nombreCentro',$centroFormacion);
+        if ($centroFormacion) {
+            $proyectoFormativo->whereHas('centroFormacion', function ($q) use ($centroFormacion) {
+                return $q->select('id')->where('id', $centroFormacion)->orWhere('nombreCentro', $centroFormacion);
             });
         };
 
@@ -53,7 +53,7 @@ class ProyectoFormativoController extends Controller
             });
 
             $Proyecto = asignacionCompetenciaProyecto::with('competencias', 'proyectosFormativos')
-            ->get();
+                ->get();
 
             return $proyecto;
         });
@@ -67,8 +67,8 @@ class ProyectoFormativoController extends Controller
         $data = $request->all();
         $proyectoFormativo = new proyectoFormativo($data);
         $proyectoFormativo->save();
-
-        return response()->json($proyectoFormativo,201);
+        $proyectoFormativo = proyectoFormativo::with($this->relations)->findOrFail($proyectoFormativo->id);
+        return response()->json($proyectoFormativo, 201);
     }
 
 
@@ -76,14 +76,15 @@ class ProyectoFormativoController extends Controller
     {
         $proyectoFormativo = proyectoFormativo::find($id);
 
-        return response()->json($proyectoFormativo,200);
+        return response()->json($proyectoFormativo, 200);
     }
 
-    public function showByIdPrograma(int $id){
-        $proyectos = proyectoFormativo::with($this -> relations)
-        -> where('idPrograma',$id) -> get();
-        return response() -> json($proyectos);
-    }   
+    public function showByIdPrograma(int $id)
+    {
+        $proyectos = proyectoFormativo::with($this->relations)
+            ->where('idPrograma', $id)->get();
+        return response()->json($proyectos);
+    }
 
 
 
@@ -91,11 +92,11 @@ class ProyectoFormativoController extends Controller
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $proyectoFormativo = proyectoFormativo::findOrFail($id);
+        $proyectoFormativo = proyectoFormativo::with($this->relations)->findOrFail($id);
         $proyectoFormativo->fill($data);
         $proyectoFormativo->save();
 
-        return response()->json($proyectoFormativo,203);
+        return response()->json($proyectoFormativo, 203);
     }
 
 
@@ -128,66 +129,62 @@ class ProyectoFormativoController extends Controller
             'proyecto_formativo' => $proyectoFormativo,
             'competencias_no_asignadas' => $unassignedCompetencias->unique()
         ]);
-
-
     }
 
     public function eliminarCompetencias(Request $request, int $id)
-{
-    // Encuentra el proyecto formativo por su ID
-    $proyectoFormativo = ProyectoFormativo::find($id);
+    {
+        // Encuentra el proyecto formativo por su ID
+        $proyectoFormativo = ProyectoFormativo::find($id);
 
-    // Verifica si el proyecto formativo existe
-    if (!$proyectoFormativo) {
-        return response()->json(['error' => 'Proyecto Formativo not found'], 404);
-    }
-
-    // Obtiene el cuerpo de la solicitud como un array
-    $requestData = $request->toArray();
-
-    // Si se proporcionan competencias específicas, elimínalas
-    if (isset($requestData['competencias'])) {
-        $competencesToRemove = $requestData['competencias'];
-        if (!is_array($competencesToRemove)) {
-            $competencesToRemove = [$competencesToRemove];
+        // Verifica si el proyecto formativo existe
+        if (!$proyectoFormativo) {
+            return response()->json(['error' => 'Proyecto Formativo not found'], 404);
         }
-        $proyectoFormativo->asignacionCompetencias()->detach($competencesToRemove);
 
-        return response()->json(['success' => 'Competencias eliminadas correctamente']);
+        // Obtiene el cuerpo de la solicitud como un array
+        $requestData = $request->toArray();
+
+        // Si se proporcionan competencias específicas, elimínalas
+        if (isset($requestData['competencias'])) {
+            $competencesToRemove = $requestData['competencias'];
+            if (!is_array($competencesToRemove)) {
+                $competencesToRemove = [$competencesToRemove];
+            }
+            $proyectoFormativo->asignacionCompetencias()->detach($competencesToRemove);
+
+            return response()->json(['success' => 'Competencias eliminadas correctamente']);
+        }
+        // Si no se proporcionan competencias, no hagas nada
+        return response()->json(['message' => 'No competencias provided to remove'], 400);
     }
-    // Si no se proporcionan competencias, no hagas nada
-    return response()->json(['message' => 'No competencias provided to remove'], 400);
-}
 
 
     public function assignCompetences(Request $request, int $id)
-{
-    // Encuentra el proyecto formativo por su ID
-    $proyectoFormativo = ProyectoFormativo::find($id);
+    {
+        // Encuentra el proyecto formativo por su ID
+        $proyectoFormativo = ProyectoFormativo::find($id);
 
-    // Verifica si el proyecto formativo existe
-    if (!$proyectoFormativo) {
-        return response()->json(['error' => 'Proyecto Formativo not found'], 404);
+        // Verifica si el proyecto formativo existe
+        if (!$proyectoFormativo) {
+            return response()->json(['error' => 'Proyecto Formativo not found'], 404);
+        }
+
+        // Obtiene las IDs de las competencias a asignar
+        $competencesToAssign = $request->input('competencias');
+
+        // Si no se proporcionan competencias para asignar, devuelve un error
+        if (!$competencesToAssign) {
+            return response()->json(['error' => 'No competencias provided to assign'], 400);
+        }
+
+        // Si competencesToAssign no es un array, conviértelo en un array
+        if (!is_array($competencesToAssign)) {
+            $competencesToAssign = [$competencesToAssign];
+        }
+
+        // Asocia las competencias al proyecto formativo
+        $proyectoFormativo->asignacionCompetencias()->attach($competencesToAssign);
+
+        return response()->json(['success' => 'Competencias assigned successfully']);
     }
-
-    // Obtiene las IDs de las competencias a asignar
-    $competencesToAssign = $request->input('competencias');
-
-    // Si no se proporcionan competencias para asignar, devuelve un error
-    if (!$competencesToAssign) {
-        return response()->json(['error' => 'No competencias provided to assign'], 400);
-    }
-
-    // Si competencesToAssign no es un array, conviértelo en un array
-    if (!is_array($competencesToAssign)) {
-        $competencesToAssign = [$competencesToAssign];
-    }
-
-    // Asocia las competencias al proyecto formativo
-    $proyectoFormativo->asignacionCompetencias()->attach($competencesToAssign);
-
-    return response()->json(['success' => 'Competencias assigned successfully']);
-}
-
-
 }

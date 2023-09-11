@@ -8,7 +8,7 @@ use App\Models\proyectoFormativo;
 use App\Models\TipoProgramas;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
- 
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -50,7 +50,9 @@ class DatabaseSeeder extends Seeder
         // DB::unprepared(file_get_contents($path));
 
 
-        TipoProgramas::factory(5)->create();
+        // TipoProgramas::factory(5)->create();
+        $path = 'database/seeders/sql/tipo_programa.sql';
+        DB::unprepared(file_get_contents($path));
         // Programa::factory(5)->create();
 
         $this->call(CompanySeeder::class);
@@ -76,8 +78,8 @@ class DatabaseSeeder extends Seeder
 
         // $path = 'database/seeders/sql/tipo_programa.sql';
         // DB::unprepared(file_get_contents($path));
-        $path = 'database/seeders/sql/fases.sql';
-        DB::unprepared(file_get_contents($path));
+        // $path = 'database/seeders/sql/fases.sql';
+        // DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/persona.sql';
         DB::unprepared(file_get_contents($path));
@@ -99,11 +101,9 @@ class DatabaseSeeder extends Seeder
 
         proyectoFormativo::factory(1)->create();
 
-        Grupo::factory(5)->create();
+        Grupo::factory(1)->create();
 
-        $path = 'database/seeders/sql/asignacion_participante.sql';
-        DB::unprepared(file_get_contents($path));
-
+        // $path = 'database/seeders/sql/asignacion_participante.sql';
+        // DB::unprepared(file_get_contents($path));
     }
-
 }
