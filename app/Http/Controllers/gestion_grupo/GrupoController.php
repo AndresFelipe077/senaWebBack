@@ -583,10 +583,10 @@ class GrupoController extends Controller
   {
 
     //relations of configuracionRap
-    // $configuracionController = new ConfiguracionRapController();
-    // $relations = $configuracionController->__construct();
+    $configuracionController = new ConfiguracionRapController();
+    $relations = $configuracionController->relations(false, 'configuracionesRaps', true, ['usuarios','resultados']);
 
-    $ficha = Grupo::with('configuracionesRaps.usuarios')->find($idFicha);
+    $ficha = Grupo::with($relations)->find($idFicha);
 
     if (!$ficha) {
       return response()->json(['message' => 'Ficha not found'], 404);
