@@ -585,7 +585,7 @@ class GrupoController extends Controller
 
     //relations of configuracionRap
     $configuracionController = new ConfiguracionRapController();
-    $relations = $configuracionController->relations(false, 'configuracionesRaps');
+    $relations = $configuracionController->relations('configuracionesRaps', ['usuarios', 'resultados']); // Traeme solo estas relaciones
 
     $ficha = Grupo::with($relations)->find($idFicha);
 

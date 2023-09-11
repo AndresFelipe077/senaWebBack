@@ -32,7 +32,7 @@ class HelperService extends Controller
    *
    * @author Andres Felipe Pizo Luligo
    */
-  public static function relations($returnRelationsHere = false, $mainRelation = null, $includeSelected = true, ?array $relationsNames = null, ?array $selectedRelations = null)
+  public static function relations($mainRelation = null, $includeSelected = true, ?array $relationsNames = null, ?array $selectedRelations = null)
   {
     // Inicializar un array vacío para $allRelations
     $allRelations = [];
@@ -42,47 +42,96 @@ class HelperService extends Controller
       $allRelations = $relationsNames;
     }
 
-    // Si $mainRelation está presente y es válida, agrégala a $allRelations
-    if (!is_null($mainRelation) && $mainRelation == '') {
+    /**
+     * relations('', ['usuarios', 'infraestructuras']); => ['usuarios', 'infraestructuras'] => retorna relaciones del mismo controlador pero solo las que se quieran
+     */
+    if (!is_null($mainRelation) && $selectedRelations && $mainRelation == '') { // Retornar relaciones que se quieran para el mismo controlador
+
+      // Si $mainRelation está presente y es válida, agrégala a las relaciones seleccionadas
+      if ($mainRelation && in_array($mainRelation, $allRelations)) {
+        // Concatena $mainRelation a las relaciones seleccionadas
+        $selectedRelations[] = $mainRelation;
+      }
+
+      // Si $includeSelected es true, incluye las relaciones seleccionadas
+      $relationsToReturn = $includeSelected ? $selectedRelations : [];
+
+      // Agrega un punto (.) para anidar las relaciones
+      $nestedRelations = array_map(function ($relation) use ($mainRelation) {
+        return $mainRelation . $relation;
+      }, $relationsToReturn);
+
+      return $nestedRelations;
+    }
+
+    /**
+     * relations('configuracionesRaps'); => Retorna todas las relaciones que esten en el otro controlador tomando como indice este parametro
+     */
+    if ($selectedRelations && $mainRelation != '') { // Retornar relaciones que se quieran desde otro controlador
+
+      // Si $mainRelation está presente y es válida, agrégala a las relaciones seleccionadas
+      if ($mainRelation && in_array($mainRelation, $allRelations)) {
+        // Concatena $mainRelation a las relaciones seleccionadas
+        $selectedRelations[] = $mainRelation;
+      }
+
+      // Si $includeSelected es true, incluye las relaciones seleccionadas
+      $relationsToReturn = $includeSelected ? $selectedRelations : [];
+
+      // Agrega un punto (.) para anidar las relaciones
+      $nestedRelations = array_map(function ($relation) use ($mainRelation) {
+        return $mainRelation . '.' . $relation;
+      }, $relationsToReturn);
+
+      return $nestedRelations;
+    }
+
+    /**
+    * $this->relations() esto te retorna todo lo que tengas dentro de la function
+    * @example Ejemplo
+    * ```
+    * public static function relations($nameMainRelation = '', ?array $selectedRelations = null)
+    * {
+    *                                        // 1					2													3			4
+    *  $relations = HelperService::relations('' | $nameMainRelation, true, [
+    *    'resultados',
+    *    'usuarios',
+    *    'estados',
+    *    'jornadas',
+    *    'infraestructuras',
+    *    'grupos',
+    *    'asistencias',
+    *  ], $selectedRelations);
+    *
+    *  return $relations;
+    *  
+    * }
+    * 
+    * ``` => Te devuelve exactemente todas
+    */
+    if (!is_null($mainRelation) && $mainRelation == '') { // Retornar todas las relaciones en el mismo controlador
       // Agregar $mainRelation como prefijo a todas las relaciones en $allRelations
       $allRelations = array_map(function ($relation) use ($mainRelation) {
         return $mainRelation . $relation;
       }, $allRelations);
 
-      if ($returnRelationsHere) { // Retornar relations con su prefijo de mainRelation
-        return $allRelations;
-      }
-
+      return $allRelations;
     }
 
-    if (!is_null($mainRelation) && $mainRelation != '') {
+    /**
+     * relations('configuracionesRaps'); si en el controlador estan las relaciones del modelo principal => [configuracionesRaps.'relacionDelmodelo', etc...]
+     */
+    if (!is_null($mainRelation) && $mainRelation != '') { // Retornar todas las relaciones desde otro controlador
       // Agregar $mainRelation como prefijo a todas las relaciones en $allRelations
       $allRelations = array_map(function ($relation) use ($mainRelation) {
         return $mainRelation . '.' . $relation;
       }, $allRelations);
 
-      if ($returnRelationsHere) { // Retornar relations con su prefijo de mainRelation
-        return $allRelations;
-      }
-
+      return $allRelations;
     }
 
-    
-
-    // Si $mainRelation está presente y es válida, agrégala a las relaciones seleccionadas
-    if ($mainRelation && in_array($mainRelation, $allRelations)) {
-      // Concatena $mainRelation a las relaciones seleccionadas
-      $selectedRelations[] = $mainRelation;
-    }
-
-    // Si $includeSelected es true, incluye las relaciones seleccionadas
-    $relationsToReturn = $includeSelected ? $selectedRelations : [];
-
-    // Agrega un punto (.) para anidar las relaciones
-    $nestedRelations = array_map(function ($relation) use ($mainRelation) {
-      return $mainRelation . '.' . $relation;
-    }, $relationsToReturn);
-
-    return $nestedRelations;
   }
+
+
+
 }
