@@ -32,61 +32,42 @@ class HelperService extends Controller
    *
    * @author Andres Felipe Pizo Luligo
    */
-  /*public function relations($returnRelationsHere = false, $mainRelation = null, $includeSelected = true | null, ?array $selectedRelations = null, ?array $relationsNames = null) // relations(false, 'configuracionesRaps', true, ['jornadas', 'usuarios', 'resultados']); => 'configuracionesRaps.jornadas'
-	{
-		// Definir un array de todas las relaciones disponibles
-		$allRelations = [
-			'resultados',
-			'usuarios',
-			'estados',
-			'jornadas',
-			'infraestructuras',
-			'grupos',
-			'asistencias',
-		];
-
-		if ($returnRelationsHere) {
-			return $allRelations;
-		}
-
-		// Si $mainRelation está presente y es válida, agrégala a las relaciones seleccionadas
-		if ($mainRelation && in_array($mainRelation, $allRelations)) {
-			// Concatena $mainRelation a las relaciones seleccionadas
-			$selectedRelations[] = $mainRelation;
-		}
-
-		// Si $includeSelected es true, incluye las relaciones seleccionadas
-		$relationsToReturn = $includeSelected ? $selectedRelations : [];
-
-		// Agrega un punto (.) para anidar las relaciones
-		$nestedRelations = array_map(function ($relation) use ($mainRelation) {
-			return $mainRelation . '.' . $relation;
-		}, $relationsToReturn);
-
-		return $nestedRelations;
-	}*/
   public static function relations($returnRelationsHere = false, $mainRelation = null, $includeSelected = true, ?array $relationsNames = null, ?array $selectedRelations = null)
   {
     // Inicializar un array vacío para $allRelations
     $allRelations = [];
 
     // Si $relationsNames no es nulo, agrégalo a $allRelations
-
     if (!is_null($relationsNames)) { // LLenando el array de relations
       $allRelations = $relationsNames;
     }
 
     // Si $mainRelation está presente y es válida, agrégala a $allRelations
-    if (!is_null($mainRelation && $mainRelation != '')) {
+    if (!is_null($mainRelation) && $mainRelation == '') {
+      // Agregar $mainRelation como prefijo a todas las relaciones en $allRelations
+      $allRelations = array_map(function ($relation) use ($mainRelation) {
+        return $mainRelation . $relation;
+      }, $allRelations);
+
+      if ($returnRelationsHere) { // Retornar relations con su prefijo de mainRelation
+        return $allRelations;
+      }
+
+    }
+
+    if (!is_null($mainRelation) && $mainRelation != '') {
       // Agregar $mainRelation como prefijo a todas las relaciones en $allRelations
       $allRelations = array_map(function ($relation) use ($mainRelation) {
         return $mainRelation . '.' . $relation;
       }, $allRelations);
+
+      if ($returnRelationsHere) { // Retornar relations con su prefijo de mainRelation
+        return $allRelations;
+      }
+
     }
 
-    if ($returnRelationsHere) { // Retornar relations con su prefijo de mainRelation
-      return $allRelations;
-    }
+    
 
     // Si $mainRelation está presente y es válida, agrégala a las relaciones seleccionadas
     if ($mainRelation && in_array($mainRelation, $allRelations)) {
