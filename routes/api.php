@@ -377,4 +377,4 @@ Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteControlle
 
 Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
 
-Route::get('get_register_ficha/{idFicha}', [GrupoController::class, 'createConfiguracionRapByGrupo']);
+Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);

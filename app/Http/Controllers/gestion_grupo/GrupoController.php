@@ -4,6 +4,7 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
+use App\Http\Controllers\helper_service\HelperService;
 use App\Models\AsignacionJornadaGrupo;
 use App\Models\Competencias;
 use App\Models\ConfiguracionRap;
@@ -584,7 +585,7 @@ class GrupoController extends Controller
 
     //relations of configuracionRap
     $configuracionController = new ConfiguracionRapController();
-    $relations = $configuracionController->relations(false, 'configuracionesRaps', true, ['usuarios','resultados']);
+    $relations = $configuracionController->relations(false, 'configuracionesRaps');
 
     $ficha = Grupo::with($relations)->find($idFicha);
 
