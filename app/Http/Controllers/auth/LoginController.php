@@ -4,7 +4,9 @@ namespace App\Http\Controllers\auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivationCompanyUser;
+use App\Models\Person;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -33,6 +35,17 @@ class LoginController extends Controller
                 ->byUser(auth()->id())
                 ->get();
 
+            /*$user = User::where('email', $request['email'])->firstOrFail();
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()
+                ->json([
+                    'activationCompanyUsers' => $activationCompanyUsers,
+                    'message'  => 'Hi ' . $user->persona->nombre1,
+                    'access_token' => $token,
+                    'token_type'   => 'Bearer',
+                ]);*/
 
             return response()->json($activationCompanyUsers);
         }

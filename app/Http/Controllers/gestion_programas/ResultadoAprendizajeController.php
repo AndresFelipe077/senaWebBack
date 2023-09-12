@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\resultadoAprendizaje;
 use Illuminate\Http\Request;
 
-class resultadoAprendizajeController extends Controller{
+class ResultadoAprendizajeController extends Controller{
 
     private $relations;
 

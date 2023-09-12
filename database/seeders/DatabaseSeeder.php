@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $path = 'database/seeders/sql/tipo_competencia.sql';
+        DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/jornada.sql';
         DB::unprepared(file_get_contents($path));
@@ -68,6 +70,9 @@ class DatabaseSeeder extends Seeder
         DB::unprepared(file_get_contents($path));
         $path = 'database/seeders/sql/infraestructuras.sql';
         DB::unprepared(file_get_contents($path));
+
+        Programa::factory(5)->create();
+
 
         $this->call(DiaSeeder::class);
 

@@ -32,6 +32,8 @@ class CreateGrupoTable extends Migration
 
             $table->foreignId('idTipoOferta')->references('id')->on('tipoOferta');
 
+            $table->string('imagenIcon')->nullable();
+        
             $table->timestamps();
         });
     }

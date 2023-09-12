@@ -33,6 +33,11 @@ class RoleSeeder extends Seeder
         $vt->save();
 
         $vt = new Role();
+        $vt->name = "LIDER AREA";
+        $vt->idCompany = 1;
+        $vt->save();
+
+        $vt = new Role();
         $vt->name = "APRENDIZ";
         $vt->idCompany = 1;
         $vt->save();

@@ -23,14 +23,14 @@ use App\Http\Controllers\gestion_tipo_documento\TipoDocumentoController;
 use App\Http\Controllers\gestion_tipopago\TipoPagoController;
 use App\Http\Controllers\gestion_tipotransaccion\TipoTransaccionController;
 use App\Http\Controllers\gestion_usuario\UserController as Gestion_usuarioUserController;
-use App\Http\Controllers\gestion_programas\resultadoAprendizajeController;
+use App\Http\Controllers\gestion_programas\ResultadoAprendizajeController;
 use App\Http\Controllers\gestion_programas\actividadAprendizajeController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProyectoFormativoController;
 use App\Http\Controllers\TipoProgramasController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\RegionalController;
-use App\Http\Controllers\configuracionRapController;
+use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
 use App\Http\Controllers\AsignacionCompetenciaProyectoController;
 use App\Http\Controllers\PlaneacionController;
 
@@ -45,7 +45,7 @@ use App\Http\Controllers\gestion_grupo\TipoFormacionController;
 use App\Http\Controllers\gestion_grupo\TipoGrupoController;
 use App\Http\Controllers\gestion_grupo\TipoOfertaController;
 use App\Http\Controllers\gestion_grupo\HorarioInfraestructuraGrupoController;
-use App\Http\Controllers\gestion_grupo\EstadoGrupoInfraestructuraController;
+use App\Http\Controllers\gestion_grupo\ActividadEventoController;
 use App\Models\AsignacionParticipante;
 
 use App\Http\Controllers\gestion_infraestructuras\AreaController;
@@ -123,8 +123,8 @@ Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class, 'showByIdActividadP']);
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class, 'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class, 'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -155,7 +155,7 @@ Route::resource('estado_programa',  EstadoProgramaController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
 //ruta asignar y guardar competencias raps
-Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
+Route::post('resultados', [ResultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 Route::get('proyecto_formativo/programa/{id}', [ProyectoFormativoController::class, 'showByIdPrograma']);
@@ -167,11 +167,11 @@ Route::get('fases/proyecto/{id}', [FaseController::class, 'showByIdProyecto']);
 Route::resource('actividad_proyecto', ActividadProyectoController::class);
 Route::get('actividad_proyecto/fase/{id}', [ActividadProyectoController::class, 'showByIdFase']);
 //ruta para configuracion de rap
-Route::resource('configuracion_rap', configuracionRapController::class);
+Route::resource('configuracion_rap', ConfiguracionRapController::class);
 //ruta para transferir participantes de fichas
-Route::post('transferir-ficha', [configuracionRapController::class, 'transferirFicha']);
+Route::post('transferir-ficha', [ConfiguracionRapController::class, 'transferirFicha']);
 //ruta para optener los resultados de un participante
-Route::get('participantes/{participante_id}/resultados', [configuracionRapController::class, 'obtenerResultados']);
+Route::get('participantes/{participante_id}/resultados', [ConfiguracionRapController::class, 'obtenerResultados']);
 
 
 //rutas para ciudad y departamento
@@ -203,7 +203,6 @@ Route::resource('dias', DiaController::class);
 Route::get('diajornada/jornada/{id}', [DiaJornadaController::class, 'showByJornada']);
 
 //grupos
-Route::resource('grupos', GrupoController::class);
 // Get infraestructura and sede
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('grupos/infraestructura/{id}', [GrupoController::class, 'showByIdInfra']);
@@ -211,18 +210,32 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
-Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
+Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
 
 
-//tipo de grupos
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::resource('tipogrupos', TipoGrupoController::class)->middleware('auth:sanctum');
+    Route::resource('grupos', GrupoController::class);
 
+    Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
+
+    Route::get('especial_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoEspecial']);
+
+    Route::get('especiales_by_grupos', [GrupoController::class, 'getGruposByEspecial']);
+
+    Route::get('fichas_by_grupos', [GrupoController::class, 'getGruposByFicha']);
+
+    Route::resource('tipogrupos', TipoGrupoController::class);
+
+    Route::resource('actividad_eventos', ActividadEventoController::class);
 
     Route::resource('gruposjornada', AsignacionJornadaGrupoController::class);
 
     Route::get('jornadagrupo/grupo/{id}', [AsignacionJornadaGrupoController::class, 'showByGrupo']);
+
+    Route::resource('actividad_eventos_jornada', AsignacionJornadaActividadEventoController::class);
+
+    Route::get('jornada_actividad/actividad_evento/{id}', [AsignacionJornadaActividadEventoController::class, 'showByActividadEventos']);
 
     Route::resource('tipo_formaciones', TipoFormacionController::class);
 
@@ -274,7 +287,7 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Route::get('asignacionParticipantes', [AsignacionParticipanteController::class, 'index']);
+Route::get('asignacion_participante', [AsignacionParticipanteController::class, 'index']);
 
 Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
 
@@ -341,7 +354,6 @@ Route::get('criteriosevaluacion/consulta/{id}', [CriteriosEvaluacion::class, 'co
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 //////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class, 'filtrarCompetenciasAsignadas']);
-
 Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
 Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController::class, 'eliminarCompetencias']);
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
@@ -354,10 +366,16 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 
 Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
 // Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
-Route::get('horas_raps_perdidos/{idInstructor}', [configuracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
 Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 
 Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::class, 'assignAprendicesToFicha']);
 
 Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
+
+Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
+
+Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+
+Route::get('get_register_ficha/{idFicha}', [GrupoController::class, 'createConfiguracionRapByGrupo']);

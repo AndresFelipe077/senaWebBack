@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jornada extends Model
 {
@@ -23,4 +24,15 @@ class Jornada extends Model
     {
         return $this->belongsToMany('App\Models\Dia', 'asignacionDiaJornada', 'idJornada', 'idDia');
     }
+
+    public function grupo()
+    {
+        return $this->belongsToMany('App\Models\Grupo', 'asignacionJornadaGrupo', 'idJornada', 'idGrupo');
+    }
+
+    public function actividadEvento()
+    {
+        return $this->belongsToMany('App\Models\ActividadEvento', 'asignacionJornadaActividadEvento', 'idJornada', 'idActividadEvento');
+    }
+
 }
