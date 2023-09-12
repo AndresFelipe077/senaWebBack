@@ -14,7 +14,7 @@ class ProyectoFormativoController extends Controller
     public function __construct()
     {
         $this->relations = [
-            'Programas',
+            'programas',
             'fases',
             'centroFormativos.regional'
         ];
