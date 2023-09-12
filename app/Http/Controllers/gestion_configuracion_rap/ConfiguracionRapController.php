@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\gestion_configuracion_rap;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\helper_service\HelperService;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionRap;
 use App\Models\User;
@@ -11,19 +12,21 @@ use Illuminate\Http\JsonResponse;
 class ConfiguracionRapController extends Controller
 {
 
-	protected $relations;
-
-	public function __construct()
+	public static function relations($nameMainRelation = '', ?array $selectedRelations = null)
 	{
-		$this->relations = [
+																					// 1										2			3			4
+		$relations = HelperService::relations('' | $nameMainRelation, true, [
 			'resultados',
 			'usuarios',
 			'estados',
 			'jornadas',
 			'infraestructuras',
 			'grupos',
-			'asistencias'
-		];
+			'asistencias',
+		], $selectedRelations);
+
+		return $relations;
+
 	}
 
 	/** 
@@ -31,13 +34,14 @@ class ConfiguracionRapController extends Controller
 	 */
 	public function index(Request $request)
 	{
+
 		$resultado = $request->input('resultados');
 		$instructor = $request->input('usuarios');
 		$estado = $request->input('estados');
 		$jornada = $request->input('jornadas');
 		$grupo = $request->input('grupos');
 		$infraestructura = $request->input('infraestructuras');
-		$configuracionRap = ConfiguracionRap::with($this->relations);
+		$configuracionRap = ConfiguracionRap::with($this->relations()); // Traeme todas las relaciones
 
 		if ($resultado) {
 			$configuracionRap->whereHas('resultados', function ($q) use ($resultado) {
@@ -75,8 +79,8 @@ class ConfiguracionRapController extends Controller
 			});
 		};
 
-
 		return response()->json($configuracionRap->get());
+
 	}
 
 	/**
@@ -107,30 +111,7 @@ class ConfiguracionRapController extends Controller
 	 * @return bool
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	/*private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicial, $fechaFinal)
-	{
-		// Consulta registros existentes que se superponen o están dentro del rango dado
-		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
-			->where('idJornada', $jornada)
-			->where('idGrupo', $ficha)
-			->where(function ($query) use ($fechaInicial, $fechaFinal) {
-				$query->where(function ($query) use ($fechaInicial, $fechaFinal) {
-					$query->where('fechaInicial', '>=', $fechaInicial)
-						->where('fechaInicial', '<=', $fechaFinal);
-				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
-					$query->where('fechaFinal', '>=', $fechaInicial)
-						->where('fechaFinal', '<=', $fechaFinal);
-				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
-					$query->where('fechaInicial', '<=', $fechaInicial)
-						->where('fechaFinal', '>=', $fechaFinal);
-				});
-			})
-			->count();
 
-		// Si se encuentra al menos un registro que coincide o no se encuentra
-		// ningún registro para la misma infraestructura y jornada, la validación falla
-		return $matchingRecords === 0;
-	}*/
 	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
 	{
 		// Consulta registros existentes que se superponen o están dentro del rango dado
@@ -155,7 +136,7 @@ class ConfiguracionRapController extends Controller
 	 */
 	public function show($id): JsonResponse
 	{
-		$configuracionRap = ConfiguracionRap::find($id);
+		$configuracionRap = ConfiguracionRap::with($this->relations())->find($id);
 		return response()->json($configuracionRap, 200);
 	}
 
@@ -218,6 +199,7 @@ class ConfiguracionRapController extends Controller
 	 */
 	public function update(Request $request, $id): JsonResponse
 	{
+		
 		$data = $request->all();
 
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
@@ -264,10 +246,5 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
-
-
-
-
-
 
 }
