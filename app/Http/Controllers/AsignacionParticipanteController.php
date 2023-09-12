@@ -175,6 +175,51 @@ class AsignacionParticipanteController extends Controller
     return response()->json($instructorAssign);
   }
 
+
+
+  /**
+   * Assign an aprendiz to a participant ficha.
+   *
+   * This function receives the data needed to create multi-trainee assignments
+   * to a group with a specific participation type, status and dates.
+   * 
+   * @author vansss 'Vanesa Galindez'
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\JsonResponse
+   */
+
+  // Controlador de asignación de aprendices a fichas o grupos
+public function assignAprendizzToFicha(Request $request): JsonResponse
+{
+    try {
+        // Obtener los datos de la solicitud
+        $data = $request->all();
+
+      
+        // Crear una nueva asignación de participante
+        $asignacion = new AsignacionParticipante();
+        $asignacion->idParticipante = $data['idParticipante'];
+        $asignacion->idGrupo = $data['idGrupo'];
+        $asignacion->idTipoParticipacion = 4; // 4 para participacion aprendiz
+        $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
+        $asignacion->fechaInicial = null; // aun no establecida
+        $asignacion->fechaFinal = null; // aun no establecida
+        $asignacion->observacion = $data['observacion'];
+
+        // Guardar la asignación en la base de datos
+        $asignacion->save();
+
+        // Puedes devolver una respuesta JSON con la asignación creada
+        return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
+    } catch (\Exception $e) {
+        // Manejo de errores, puedes personalizar esto según tus necesidades
+        return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
+    }
+}
+
+
+
+
   /**
    * Assign multiple learners to a participant card.
    *
