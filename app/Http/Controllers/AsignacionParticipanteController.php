@@ -176,6 +176,25 @@ class AsignacionParticipanteController extends Controller
   }
 
   /**
+   * Update info of instructor in a ficha
+   */
+  public function updateInstructor($idAsignacionFicha)
+  {
+    // Buscar el registro por su ID
+    $data = AsignacionParticipante::findOrFail($idAsignacionFicha);
+
+    if ($data) {
+      $data->fechaFinal = now();
+      $data->idEstadoParticipantes = 3; // Trasladado
+      $data->save();
+    }
+
+    return response()->json($data);
+
+  }
+
+
+  /**
    * Assign multiple learners to a participant card.
    *
    * This function receives the data needed to create multi-trainee assignments
@@ -236,6 +255,11 @@ class AsignacionParticipanteController extends Controller
   }
 
 
+  /**
+   * Get fichas by instructor
+   * @param int $idFicha
+   * @author Andres Felipe Pizo Luligo
+   */
   public function getFichasById($idFicha): JsonResponse
   {
 
@@ -245,6 +269,11 @@ class AsignacionParticipanteController extends Controller
     return response()->json($fichasByInstructor);
   }
 
+  /**
+   * Get last ficha by id
+   * @param int $idLastFicha
+   * @author Andres Felipe Pizo Luligo
+   */
   public function getLastFichaById($idLastFicha): JsonResponse
   {
     $ultimaFicha = AsignacionParticipante::where('idGrupo', $idLastFicha)
@@ -252,5 +281,4 @@ class AsignacionParticipanteController extends Controller
       ->first();
     return response()->json($ultimaFicha);
   }
-
 }

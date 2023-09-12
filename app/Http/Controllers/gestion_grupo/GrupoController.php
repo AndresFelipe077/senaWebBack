@@ -3,11 +3,20 @@
 namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
+use App\Http\Controllers\helper_service\HelperService;
 use App\Models\AsignacionJornadaGrupo;
+use App\Models\Competencias;
+use App\Models\ConfiguracionRap;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
+use App\Models\Programa;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class GrupoController extends Controller
 {
@@ -27,6 +36,7 @@ class GrupoController extends Controller
       'infraestructuras.sede'
     ];
   }
+  
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -132,9 +142,9 @@ class GrupoController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-
   public function store(Request $request)
   {
+
     $data = $request->all();
 
     $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
@@ -151,19 +161,24 @@ class GrupoController extends Controller
       'idProyectoFormativo' => $data['idProyectoFormativo'],
       'idTipoFormacion'     => $data['idTipoFormacion'],
       'idEstado'            => $data['idEstado'],
-      'idTipoOferta'        => $data['idTipoOferta']
+      'idTipoOferta'        => $data['idTipoOferta'],
     ]);
 
     if ($request->hasFile('imagenIcon')) {
 
-      $cadena = $request->file('imagenIcon')->getClientOriginalName();
-      $cadenaConvert = str_replace(" ", "_", $cadena);
-      $nombre = Str::random(10) . '_' . $cadenaConvert;
-      $rutaAlmacenamiento = 'imagenes/especial' . $nombre;
-      $request->file('imagenIcon')->storeAs('public', $rutaAlmacenamiento);
+      $imagen = $request->file('imagenIcon');
+      $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
+      $rutaAlmacenamiento = 'public/imagenes/especial/'; // Ajusta la ruta según tu configuración
+      $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
+      $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
 
-      $grupo->imagenIcon = $rutaAlmacenamiento;
+      Image::make($rutaImagen)
+        ->resize(300, 200) // Cambia las dimensiones según tus necesidades
+        ->save(storage_path('app/' . $rutaAlmacenamiento . $nombreArchivo)); // Guardar la imagen redimensionada
 
+      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . $nombreArchivo;
+
+      $grupo->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
     }
 
     $grupo->save();
@@ -188,6 +203,15 @@ class GrupoController extends Controller
         $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
         $asignacionJornadaGrupo->save();
       }
+    }
+
+    // Validation of ficha for create configuraciones raps
+    $nombreTipoGrupo = DB::table('tipoGrupo')
+      ->where('id', $grupo->idTipoGrupo)
+      ->value('nombreTipoGrupo');
+
+    if ($nombreTipoGrupo === "FICHA") {
+      $this->createConfiguracionRapByGrupo($grupo->id);
     }
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
@@ -344,10 +368,6 @@ class GrupoController extends Controller
     ]);
   }
 
-
-  /** Funciones para validar y guardar las infraestructuras del grupo  */
-
-
   /**
    * Guarda el horario de infraestructura para un grupo.
    *
@@ -482,16 +502,6 @@ class GrupoController extends Controller
     return false;
   }
 
-
-  //   public function showByIdProyectoFor($programaId)
-  //   {
-  //       $grupos = Grupo::whereHas('proyectoFormativo', function ($query) use ($programaId) {
-  //           $query->where('idPrograma', $programaId);
-  //       })->get();
-
-  //       return response()->json($grupos);
-  //   }
-
   public function showByIdProyectoFor(int $id)
   {
     $grupos = Grupo::with($this->relations)
@@ -515,4 +525,78 @@ class GrupoController extends Controller
 
     return $grupo;
   }
+
+
+  /**
+   * Create registers about configuracionRaps by this idGrupo(ficha)
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function createConfiguracionRapByGrupo($idFicha)
+  {
+    $ficha = Grupo::find($idFicha);
+
+    if (!$ficha) {
+      return response()->json(['message' => 'Ficha not found']);
+    }
+
+    // Programa
+    $idPrograma = $ficha->proyectoFormativo->idPrograma;
+
+    // Competencias
+    $programa = Programa::find($idPrograma);
+    $competencias = $programa->competencias;
+
+    if (!$competencias) {
+      return response()->json(['message' => 'Competencias not found']);
+    }
+
+    $resultadosAprendizaje = [];
+
+    foreach ($competencias as $competencia) {
+      $resultadosAprendizaje[] = $competencia->resultadosAprendizaje;
+    }
+
+
+    foreach ($resultadosAprendizaje as $resultado) {
+      foreach ($resultado as $rap) {
+        ConfiguracionRap::create([
+          'idRap'             => $rap->id,
+          'idInstructor'      => null,
+          'idJornada'         => null,
+          'idGrupo'           => $idFicha,
+          'idInfraestructura' => null,
+          'idEstado'          => 1,
+          'horas'             => 0,
+          'fechaInicial'      => null,
+          'fechaFinal'        => null,
+          'observacion'       => '',
+        ]);
+      }
+    }
+  }
+
+  /**
+   * Get configuracionesRaps by id ficha
+   * @param int $idFicha
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getConfiguracionRapByidFicha($idFicha): JsonResponse
+  {
+
+    //relations of configuracionRap
+    $configuracionController = new ConfiguracionRapController();
+    $relations = $configuracionController->relations(false, 'configuracionesRaps');
+
+    $ficha = Grupo::with($relations)->find($idFicha);
+
+    if (!$ficha) {
+      return response()->json(['message' => 'Ficha not found'], 404);
+    }
+
+    $configuracionesRaps = $ficha->configuracionesRaps;
+
+    return response()->json($configuracionesRaps);
+
+  }
+
 }

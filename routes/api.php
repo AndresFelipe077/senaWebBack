@@ -23,7 +23,7 @@ use App\Http\Controllers\gestion_tipo_documento\TipoDocumentoController;
 use App\Http\Controllers\gestion_tipopago\TipoPagoController;
 use App\Http\Controllers\gestion_tipotransaccion\TipoTransaccionController;
 use App\Http\Controllers\gestion_usuario\UserController as Gestion_usuarioUserController;
-use App\Http\Controllers\gestion_programas\resultadoAprendizajeController;
+use App\Http\Controllers\gestion_programas\ResultadoAprendizajeController;
 use App\Http\Controllers\gestion_programas\actividadAprendizajeController;
 use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProyectoFormativoController;
@@ -124,8 +124,8 @@ Route::resource('competencias', CompetenciasController::class);
 Route::get('competencias/actividad_proyecto/{id}', [CompetenciasController::class, 'showByIdActividadP']);
 
 //rutas para resultado aprendizaje 2 vanesa
-Route::resource('resultadoAprendizaje', resultadoAprendizajeController::class);
-Route::get('resultadoAprendizaje/competencia/{id}', [resultadoAprendizajeController::class, 'showByIdCompetencia']);
+Route::resource('resultadoAprendizaje', ResultadoAprendizajeController::class);
+Route::get('resultadoAprendizaje/competencia/{id}', [ResultadoAprendizajeController::class, 'showByIdCompetencia']);
 
 //asignacion competencias raps
 Route::resource('competenciaRap', asignacionCompetenciaRapController::class);
@@ -156,7 +156,7 @@ Route::resource('estado_programa',  EstadoProgramaController::class);
 //ruta para programas
 Route::resource('programas',  ProgramaController::class);
 //ruta asignar y guardar competencias raps
-Route::post('resultados', [resultadoAprendizajeController::class, 'store'])->name('resultados.store');
+Route::post('resultados', [ResultadoAprendizajeController::class, 'store'])->name('resultados.store');
 //ruta para proyecto formativo
 Route::resource('proyecto_formativo', ProyectoFormativoController::class);
 Route::get('proyecto_formativo/programa/{id}', [ProyectoFormativoController::class, 'showByIdPrograma']);
@@ -210,6 +210,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('grupos/sede/{id}', [GrupoController::class, 'showByIdSede']);
 });
 Route::get('usuarios_instructores', [UserController::class, 'instructores']);
+
+Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -352,7 +355,6 @@ Route::get('criteriosevaluacion/consulta/{id}', [CriteriosEvaluacion::class, 'co
 Route::post('/guardar-registros', [AsignacionCompetenciaProyectoController::class, 'guardarRegistros']);
 //////////////////////////////////competencias checks
 Route::get('proyectos/{id}/Competencias', [ProyectoFormativoController::class, 'filtrarCompetenciasAsignadas']);
-
 Route::post('/proyecto-formativo/{id}/competencias', [ProyectoFormativoController::class, 'assignCompetences']);
 Route::post('/proyectos/{id}/eliminarCompetencias', [ProyectoFormativoController::class, 'eliminarCompetencias']);
 Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [ProyectoFormativoController::class, 'eliminarMultipleCompetences']);
@@ -376,3 +378,5 @@ Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteControl
 Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
 Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+
+Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);

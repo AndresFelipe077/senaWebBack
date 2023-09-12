@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asistencia;
 use Illuminate\Http\Request;
 
-class SesionesController extends Controller
+class AsistenciaController extends Controller
  {
         /**
          * Display a listing of the resource.

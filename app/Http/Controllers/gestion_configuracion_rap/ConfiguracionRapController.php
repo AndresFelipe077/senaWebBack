@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\gestion_configuracion_rap;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\helper_service\HelperService;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionRap;
 use App\Models\User;
@@ -11,19 +12,20 @@ use Illuminate\Http\JsonResponse;
 class ConfiguracionRapController extends Controller
 {
 
-	private $relations;
-
-	public function __construct()
+	public static function relations($true = true, $nameMainRelation = '')
 	{
-		$this->relations = [
+
+		$relations = HelperService::relations(true | $true, '' | $nameMainRelation, true, [
 			'resultados',
 			'usuarios',
 			'estados',
 			'jornadas',
 			'infraestructuras',
 			'grupos',
-			'asistencias'
-		];
+			'asistencias',
+		]);
+
+		return $relations;
 	}
 
 	/** 
@@ -31,13 +33,15 @@ class ConfiguracionRapController extends Controller
 	 */
 	public function index(Request $request)
 	{
+
+
 		$resultado = $request->input('resultados');
 		$instructor = $request->input('usuarios');
 		$estado = $request->input('estados');
 		$jornada = $request->input('jornadas');
 		$grupo = $request->input('grupos');
 		$infraestructura = $request->input('infraestructuras');
-		$configuracionRap = ConfiguracionRap::with($this->relations);
+		$configuracionRap = ConfiguracionRap::with($this->relations(true, ''));
 
 		if ($resultado) {
 			$configuracionRap->whereHas('resultados', function ($q) use ($resultado) {
@@ -82,11 +86,19 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Store information about configuracionRap
 	 * @return JsonResponse
+	 * @author Andres Felipe Pizo Luligo
+	 * 
 	 */
 	public function store(Request $request): JsonResponse
 	{
 
 		$data = $request->all();
+
+		$rapInSameDate = $this->validateConfiguracionRapByDate($data['idInfraestructura'], $data['idJornada'], $data['idGrupo'], $data['fechaInicial'], $data['fechaFinal']);
+
+		if (!$rapInSameDate) {
+			return response()->json(['error' => 'No puedes asignar esta configuracion porque ya esta ocupada'], 400);
+		}
 
 		$configuracionRap = new ConfiguracionRap($data);
 		$configuracionRap->save();
@@ -94,9 +106,60 @@ class ConfiguracionRapController extends Controller
 		return response()->json($configuracionRap, 201);
 	}
 
-	public function show($id)
+	/**
+	 * Validate assign new configuracion by date
+	 * @return bool
+	 * @author Andres Felipe Pizo Luligo
+	 */
+	/*private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicial, $fechaFinal)
 	{
-		$configuracionRap = ConfiguracionRap::find($id);
+		// Consulta registros existentes que se superponen o están dentro del rango dado
+		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
+			->where('idJornada', $jornada)
+			->where('idGrupo', $ficha)
+			->where(function ($query) use ($fechaInicial, $fechaFinal) {
+				$query->where(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '>=', $fechaInicial)
+						->where('fechaInicial', '<=', $fechaFinal);
+				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaFinal', '>=', $fechaInicial)
+						->where('fechaFinal', '<=', $fechaFinal);
+				})->orWhere(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '<=', $fechaInicial)
+						->where('fechaFinal', '>=', $fechaFinal);
+				});
+			})
+			->count();
+
+		// Si se encuentra al menos un registro que coincide o no se encuentra
+		// ningún registro para la misma infraestructura y jornada, la validación falla
+		return $matchingRecords === 0;
+	}*/
+	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	{
+		// Consulta registros existentes que se superponen o están dentro del rango dado
+		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
+			->where('idJornada', $jornada)
+			->where('fechaInicial', '<=', $fechaFin)
+			->where('fechaFinal', '>=', $fechaInicio)
+			->where(function ($query) use ($ficha) {
+				$query->where('idGrupo', $ficha);
+			})
+			->count();
+
+		// Si se encuentra al menos un registro que coincide o no se encuentra
+		// ningún registro para la misma infraestructura, jornada y ficha, la validación falla
+		return $matchingRecords === 0;
+	}
+
+
+
+	/**
+	 * Show configuracionRap by id
+	 */
+	public function show($id): JsonResponse
+	{
+		$configuracionRap = ConfiguracionRap::with($this->relations(true))->find($id);
 		return response()->json($configuracionRap, 200);
 	}
 
@@ -154,34 +217,48 @@ class ConfiguracionRapController extends Controller
 
 	/**
 	 * Update register of configuracion and create a new
+	 * @author Andres Felipe Pizo Luligo
+	 * 
 	 */
-	public function update(Request $request, $id)
+	public function update(Request $request, $id): JsonResponse
 	{
 		$data = $request->all();
+
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 
 		// Actualiza solo el estado del registro existente
 		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
 
-		$this->changeInstructor($data);
+		$this->changeInstructor($data, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
 
-		return response()->json(['message' => 'Estado del registro actualizado y nuevo registro creado'], 203);
+		return response()->json(['message' => 'Instructor nuevo creado']);
 	}
 
 	/**
-	 * Change instructor in configuracion rap
+	 * Change instructor to new in configuracion rap
 	 * @param array $data
 	 * @return void
+	 * @author Andres Felipe Pizo Luligo
 	 */
-	public function changeInstructor(array $data)
+	private function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null)
 	{
+
+		// Validar instructor con nuevas fechas, si entran nuevas fechas se asignan tambien
 		$newConfiguracionRap = new ConfiguracionRap($data);
+
 		$newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		// Verificar nuevas fechas distintas a las anteriores, si es asi que se guarden tambien
+		if ($fechaInicial != $data['fechaInicial'] || $fechaFinal != $data['fechaFinal']) {
+
+			$newConfiguracionRap->fechaInicial = $data['fechaInicial'];
+			$newConfiguracionRap->fechaFinal = $data['fechaFinal'];
+		}
 
 		$newConfiguracionRap->save();
 	}
 
-	public function destroy($id)
+	public function destroy($id): JsonResponse
 	{
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 		$result = $configuracionRap->delete();
@@ -191,5 +268,4 @@ class ConfiguracionRapController extends Controller
 			return response()->json(["message" => "delete failed"]);
 		}
 	}
-
 }
