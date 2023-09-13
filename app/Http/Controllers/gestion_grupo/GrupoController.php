@@ -38,7 +38,7 @@ class GrupoController extends Controller
   }
 
   /**
-   * Listar todos los grupos con sus relaciones
+   * Get all data of table grupo
    *
    * @return \Illuminate\Http\Response
    */
@@ -74,6 +74,9 @@ class GrupoController extends Controller
     return response()->json($newGrupos);
   }
 
+  /**
+   * Get grupos by idTipoGrupo equal especial
+   */
   public function getGruposByEspecial()
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '2')->get();
@@ -105,6 +108,9 @@ class GrupoController extends Controller
     return response()->json($newGrupos);
   }
 
+  /**
+   * Get grupos by idTipoGrupo equal ficha
+   */
   public function getGruposByFicha()
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '1')->get();
@@ -147,16 +153,9 @@ class GrupoController extends Controller
 
     $data = $request->all();
 
-    // Validation of ficha for create configuraciones raps
-    $nombreTipoGrupo = DB::table('tipoGrupo')
-      ->where('id', $data['idTipoGrupo'])
-      ->value('nombreTipoGrupo');
-
-    if ($nombreTipoGrupo === "FICHA") {
-      $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
-      if ($existingGrupo) {
-        return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
-      }
+    $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
+    if ($existingGrupo) {
+      return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
     }
 
     $grupo = new Grupo([
@@ -173,19 +172,11 @@ class GrupoController extends Controller
 
     $grupo->save();
 
-    // Verifica y asegura que la propiedad 'infraestructuras' sea un arreglo o un arreglo vacío
-    if (!isset($data['infraestructuras']) || !is_array($data['infraestructuras'])) {
-      $data['infraestructuras'] = [];
-    }
+    $infraestructuras = $data['infraestructuras'];
 
-    // Verifica y asegura que la propiedad 'jornadas' sea un arreglo o un arreglo vacío
-    if (!isset($data['jornadas']) || !is_array($data['jornadas'])) {
-      $data['jornadas'] = [];
-    }
+    foreach ($infraestructuras as $infraItem) {
 
-    foreach ($data['infraestructuras'] as $infraItem) {
-
-      $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
+      $existeAsignacion = $this->verificarAsignacionInfraestructura($infraestructuras, $data['jornadas']);
 
       if ($existeAsignacion) {
         return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
@@ -194,13 +185,19 @@ class GrupoController extends Controller
       }
     }
 
-    foreach ($data['jornadas'] as $jornadaItem) {
+
+    foreach ($request->jornadas as $jornadaItem) {
       foreach ($jornadaItem as $jItem) {
         $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
         $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
         $asignacionJornadaGrupo->save();
       }
     }
+
+    // Validation of ficha for create configuraciones raps
+    $nombreTipoGrupo = DB::table('tipoGrupo')
+      ->where('id', $grupo->idTipoGrupo)
+      ->value('nombreTipoGrupo');
 
     if ($nombreTipoGrupo === "FICHA") {
       $this->createConfiguracionRapByGrupo($grupo->id);
@@ -239,7 +236,7 @@ class GrupoController extends Controller
 
       $imagen = $request->file('imagenIcon');
       $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
-      $rutaAlmacenamiento = 'public/imagenes/especial/'; // Ajusta la ruta según tu configuración
+      $rutaAlmacenamiento = 'public/imagenes/especial/';
       $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
       $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
 
@@ -247,7 +244,7 @@ class GrupoController extends Controller
         ->resize(300, 200) // Cambia las dimensiones según tus necesidades
         ->save(storage_path('app/' . $rutaAlmacenamiento . $nombreArchivo)); // Guardar la imagen redimensionada
 
-      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . $nombreArchivo;
+      $rutaImagenGuardada = 'storage/imagenes/especial/' . $nombreArchivo;
 
       $grupo->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
     }
@@ -283,9 +280,9 @@ class GrupoController extends Controller
       }
     }
 
-    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+    $especial = Grupo::with($this->relations)->findOrFail($grupo->id);
 
-    return response()->json($grupo, 201);
+    return response()->json($especial, 201);
   }
 
 
@@ -320,6 +317,10 @@ class GrupoController extends Controller
     return response()->json($dato);
   }
 
+  /**
+   * Show infraestructura by id
+   * @param int $id
+   */
   public function showByIdInfra(int $id)
   {
 
@@ -341,6 +342,10 @@ class GrupoController extends Controller
     return response()->json($newGrupos);
   }
 
+  /**
+   * Show sede by id
+   * @param int $id
+   */
   public function showByIdSede(int $id)
   {
 
@@ -419,6 +424,9 @@ class GrupoController extends Controller
     return response()->json($grupo, 200);
   }
 
+  /**
+   * Update register of especial
+   */
   public function updateEspecial(Request $request, $idEspecial)
   {
     $data = $request->all();
@@ -483,7 +491,6 @@ class GrupoController extends Controller
 
     return response()->json($especial, 200);
   }
-
 
   /**
    * Eliminar el grupo con sus relaciones
@@ -730,4 +737,5 @@ class GrupoController extends Controller
 
     return response()->json($configuracionesRaps);
   }
+  
 }

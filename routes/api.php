@@ -216,6 +216,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::resource('grupos', GrupoController::class);
 
+    Route::post('create_especial/{idEspecial}', [GrupoController::class, 'storeEspecial']);
+
     Route::put('update_especial/{idEspecial}', [GrupoController::class, 'updateEspecial']);
 
     Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
