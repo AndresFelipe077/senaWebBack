@@ -252,11 +252,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::resource('estados', EstadoController::class);
 
-
-
-
-
-
 Route::resource('personas', PersonController::class);
 
 //regional
@@ -270,16 +265,7 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
-
-
-
-
-
-
 Route::resource('tipoPar', TipoParticipacionController::class);
-
-
-
 
 
 
@@ -307,10 +293,10 @@ Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtene
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
-Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']);
+Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']); ///no se esta utilizando 
 
 
-
+Route::post ('aprendiz-ficha-asignar',[AsignacionParticipanteController::class,'assignAprendizzToFicha']);
 
 
 ///////////////////////////////////////////////////////////
@@ -320,13 +306,10 @@ Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asi
 Route::get('search/{table}/{query}', [QueryController::class, 'show']);
 
 
-
-
+//  para el excel de aprendiz 
 
 Route::post('aprendis', [AprendicesTmpController::class, 'importar']);
 Route::post('prueba', [pruebaController::class, 'import']);
-
-
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
