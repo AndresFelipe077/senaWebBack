@@ -137,7 +137,7 @@ class GrupoController extends Controller
   }
 
   /**
-   * Crear grupo con sus relaciones
+   * Crear Ficha con sus relaciones
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
@@ -147,10 +147,81 @@ class GrupoController extends Controller
 
     $data = $request->all();
 
-    $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
-    if ($existingGrupo) {
-      return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+    // Validation of ficha for create configuraciones raps
+    $nombreTipoGrupo = DB::table('tipoGrupo')
+      ->where('id', $data['idTipoGrupo'])
+      ->value('nombreTipoGrupo');
+
+    if ($nombreTipoGrupo === "FICHA") {
+      $existingGrupo = Grupo::where('nombre', $data['nombre'])->first();
+      if ($existingGrupo) {
+        return response()->json(['error' => 'Número de grupo existente!!!.'], 422);
+      }
     }
+
+    $grupo = new Grupo([
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta'],
+    ]);
+
+    $grupo->save();
+
+    // Verifica y asegura que la propiedad 'infraestructuras' sea un arreglo o un arreglo vacío
+    if (!isset($data['infraestructuras']) || !is_array($data['infraestructuras'])) {
+      $data['infraestructuras'] = [];
+    }
+
+    // Verifica y asegura que la propiedad 'jornadas' sea un arreglo o un arreglo vacío
+    if (!isset($data['jornadas']) || !is_array($data['jornadas'])) {
+      $data['jornadas'] = [];
+    }
+
+    foreach ($data['infraestructuras'] as $infraItem) {
+
+      $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
+
+      if ($existeAsignacion) {
+        return response()->json(['error' => 'Infraestructura ocupada en la misma jornada.'], 422);
+      } else {
+        $this->guardarHorarioInfra($infraItem, $grupo->id);
+      }
+    }
+
+    foreach ($data['jornadas'] as $jornadaItem) {
+      foreach ($jornadaItem as $jItem) {
+        $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
+        $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+        $asignacionJornadaGrupo->save();
+      }
+    }
+
+    if ($nombreTipoGrupo === "FICHA") {
+      $this->createConfiguracionRapByGrupo($grupo->id);
+    }
+
+    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+
+
+    return response()->json($grupo, 201);
+  }
+
+  /**
+   * Crear Especial con sus relaciones
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function storeEspecial(Request $request)
+  {
+
+    $data = $request->all();
 
     $grupo = new Grupo([
       'nombre'              => $data['nombre'],
@@ -183,18 +254,6 @@ class GrupoController extends Controller
 
     $grupo->save();
 
-    // $infraestructuras = $data['infraestructuras'];
-
-    // if (is_string($infraestructuras) && empty($infraestructuras)) {
-    //   $infraestructuras = [];
-    // }
-
-    // $jornadas = $data['jornadas'];
-
-    // if (is_string($jornadas) && empty($jornadas)) {
-    //   $jornadas = [];
-    // }
-
     // Verifica y asegura que la propiedad 'infraestructuras' sea un arreglo o un arreglo vacío
     if (!isset($data['infraestructuras']) || !is_array($data['infraestructuras'])) {
       $data['infraestructuras'] = [];
@@ -224,17 +283,7 @@ class GrupoController extends Controller
       }
     }
 
-    // Validation of ficha for create configuraciones raps
-    $nombreTipoGrupo = DB::table('tipoGrupo')
-      ->where('id', $grupo->idTipoGrupo)
-      ->value('nombreTipoGrupo');
-
-    if ($nombreTipoGrupo === "FICHA") {
-      $this->createConfiguracionRapByGrupo($grupo->id);
-    }
-
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
-
 
     return response()->json($grupo, 201);
   }
@@ -368,6 +417,71 @@ class GrupoController extends Controller
     $grupo->save(); // Guardar el grupo actualizado
 
     return response()->json($grupo, 200);
+  }
+
+  public function updateEspecial(Request $request, $idEspecial)
+  {
+    $data = $request->all();
+    $especial = Grupo::with($this->relations)->findOrFail($idEspecial);
+
+    $especial->update([
+      'nombre' => $data['nombre'],
+      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
+      'observacion' => $data['observacion'],
+      'idTipoGrupo' => $data['idTipoGrupo'],
+      'idProyectoFormativo' => $data['idProyectoFormativo'],
+      'idTipoFormacion' => $data['idTipoFormacion'],
+      'idEstado' => $data['idEstado'],
+      'idTipoOferta' => $data['idTipoOferta'],
+    ]);
+
+    if ($request->hasFile('imagenIcon')) {
+
+      $imagen = $request->file('imagenIcon');
+      $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
+      $rutaAlmacenamiento = 'public/imagenes/especial/'; // Ajusta la ruta según tu configuración
+      $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
+      $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
+
+      Image::make($rutaImagen)
+        ->resize(300, 200) // Cambia las dimensiones según tus necesidades
+        ->save(storage_path('app/' . $rutaAlmacenamiento . $nombreArchivo)); // Guardar la imagen redimensionada
+
+      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . $nombreArchivo;
+
+      $especial->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
+    }
+
+    $currentInfraestructuras = $especial->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
+    $especial->infraestructuras()->detach($currentInfraestructuras); // No poder eliminar grupos que ya pasaron su fecha final
+
+    if (!isset($data['infraestructuras']) || !is_array($data['infraestructuras'])) {
+      $data['infraestructuras'] = [];
+    }
+
+    // Verifica y asegura que la propiedad 'jornadas' sea un arreglo o un arreglo vacío
+    if (!isset($data['jornadas']) || !is_array($data['jornadas'])) {
+      $data['jornadas'] = [];
+    }
+
+    foreach ($data['infraestructuras'] as $infraItem) { // Guardar infraestructura actualizada
+      $this->guardarHorarioInfra($infraItem, $especial->id);
+    }
+
+    AsignacionJornadaGrupo::where('idGrupo', $especial->id)->delete();
+
+    foreach ($data['jornadas'] as $jornaItem) {
+      foreach ($jornaItem as $jItem) {
+        $info = ['idGrupo' => $especial->id, 'idJornada' => $jItem];
+        $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
+        $asignacionJornadaGrupo->save();
+      }
+    }
+
+    $especial->save(); // Guardar el grupo actualizado
+
+    return response()->json($especial, 200);
   }
 
 
