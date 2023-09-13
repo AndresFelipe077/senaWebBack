@@ -36,7 +36,7 @@ class GrupoController extends Controller
       'infraestructuras.sede'
     ];
   }
-  
+
   /**
    * Listar todos los grupos con sus relaciones
    *
@@ -183,9 +183,29 @@ class GrupoController extends Controller
 
     $grupo->save();
 
-    $infraestructuras = $data['infraestructuras'];
+    // $infraestructuras = $data['infraestructuras'];
 
-    foreach ($infraestructuras as $infraItem) {
+    // if (is_string($infraestructuras) && empty($infraestructuras)) {
+    //   $infraestructuras = [];
+    // }
+
+    // $jornadas = $data['jornadas'];
+
+    // if (is_string($jornadas) && empty($jornadas)) {
+    //   $jornadas = [];
+    // }
+
+    // Verifica y asegura que la propiedad 'infraestructuras' sea un arreglo o un arreglo vacío
+    if (!isset($data['infraestructuras']) || !is_array($data['infraestructuras'])) {
+      $data['infraestructuras'] = [];
+    }
+
+    // Verifica y asegura que la propiedad 'jornadas' sea un arreglo o un arreglo vacío
+    if (!isset($data['jornadas']) || !is_array($data['jornadas'])) {
+      $data['jornadas'] = [];
+    }
+
+    foreach ($data['infraestructuras'] as $infraItem) {
 
       $existeAsignacion = $this->verificarAsignacionInfraestructura($data['infraestructuras'], $data['jornadas']);
 
@@ -196,8 +216,7 @@ class GrupoController extends Controller
       }
     }
 
-
-    foreach ($request->jornadas as $jornadaItem) {
+    foreach ($data['jornadas'] as $jornadaItem) {
       foreach ($jornadaItem as $jItem) {
         $info = ['idGrupo' => $grupo->id, 'idJornada' => $jItem];
         $asignacionJornadaGrupo = new AsignacionJornadaGrupo($info);
@@ -596,7 +615,5 @@ class GrupoController extends Controller
     $configuracionesRaps = $ficha->configuracionesRaps;
 
     return response()->json($configuracionesRaps);
-
   }
-
 }
