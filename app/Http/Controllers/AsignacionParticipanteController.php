@@ -192,27 +192,18 @@ class AsignacionParticipanteController extends Controller
 public function assignAprendizzToFicha(Request $request): JsonResponse
 {
     try {
-        // Obtener los datos de la solicitud
         $data = $request->all();
-
-      
-        // Crear una nueva asignación de participante
         $asignacion = new AsignacionParticipante();
         $asignacion->idParticipante = $data['idParticipante'];
-        $asignacion->idGrupo = $data['idGrupo'];
+        $asignacion->idGrupo = $data['idGrupo'] ?? null;
         $asignacion->idTipoParticipacion = 4; // 4 para participacion aprendiz
         $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
         $asignacion->fechaInicial = null; // aun no establecida
         $asignacion->fechaFinal = null; // aun no establecida
         $asignacion->observacion = $data['observacion'];
-
-        // Guardar la asignación en la base de datos
         $asignacion->save();
-
-        // Puedes devolver una respuesta JSON con la asignación creada
         return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
     } catch (\Exception $e) {
-        // Manejo de errores, puedes personalizar esto según tus necesidades
         return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
     }
 }
