@@ -281,4 +281,20 @@ class AsignacionParticipanteController extends Controller
       ->first();
     return response()->json($ultimaFicha);
   }
+
+  /**
+   * Get last register by idParticipante
+   * @param int $idParticipante
+   * @author Andres Felipe Pizo Luligo
+   */
+  public function getLastRegisterByIdParticipante($idParticipante): JsonResponse
+  {
+
+    $lastRegister = AsignacionParticipante::where('idParticipante', $idParticipante)
+        ->latest('created_at')
+        ->first();
+
+    return response()->json($lastRegister);
+  }
+
 }

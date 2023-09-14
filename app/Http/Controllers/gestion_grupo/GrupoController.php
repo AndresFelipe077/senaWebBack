@@ -4,9 +4,7 @@ namespace App\Http\Controllers\gestion_grupo;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\gestion_configuracion_rap\ConfiguracionRapController;
-use App\Http\Controllers\helper_service\HelperService;
 use App\Models\AsignacionJornadaGrupo;
-use App\Models\Competencias;
 use App\Models\ConfiguracionRap;
 use App\Models\Grupo;
 use App\Models\HorarioInfraestructuraGrupo;
@@ -14,7 +12,6 @@ use App\Models\Programa;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
@@ -499,14 +496,43 @@ class GrupoController extends Controller
    * @return \Illuminate\Http\Response
    */
 
-  public function destroy(int $id)
+  /*public function destroy(int $id)
   {
     $newjornada = Grupo::findOrFail($id);
     $newjornada->delete();
     return response()->json([
       'eliminada'
     ]);
+  }*/
+
+  public function destroy($id)
+  {
+    $ficha_especial = Grupo::findOrFail($id);
+
+    if (!$ficha_especial) {
+      return response()->json(['message' => 'Registro no encontrado'], 404);
+    }
+
+    $this->deleteImage($ficha_especial);
+
+    // Eliminar el registro
+    $ficha_especial->delete();
+
+    return response()->json(['message' => 'Registro eliminado exitosamente'], 200);
   }
+
+  private function deleteImage($ficha_especial): void {
+
+    $rutaImagen = $ficha_especial->imagenIcon;
+
+    $imageUrl = str_replace('storage/', 'public/', $rutaImagen); // Reemplazar ruta de storage por public
+
+    if ($ficha_especial->imagenIcon != '') {
+      Storage::delete($imageUrl);
+    }
+
+  }
+
 
   /**
    * Guarda el horario de infraestructura para un grupo.
@@ -737,5 +763,4 @@ class GrupoController extends Controller
 
     return response()->json($configuracionesRaps);
   }
-  
 }
