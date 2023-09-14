@@ -376,7 +376,7 @@ class GrupoController extends Controller
   public function update(Request $request, $id): JsonResponse
   {
     $data = $request->all();
-    $grupo = Grupo::with($this->relations)->findOrFail($id);
+    $grupo = Grupo::findOrFail($id);
 
     // Validar infraestructuras y jornadas
     $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
@@ -386,15 +386,15 @@ class GrupoController extends Controller
     }
 
     $grupo->update([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta'],
     ]);
 
     $currentInfraestructuras = $grupo->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
@@ -418,7 +418,10 @@ class GrupoController extends Controller
 
     $grupo->save(); // Guardar el grupo actualizado
 
+    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+
     return response()->json($grupo, 200);
+    
   }
 
   /**
@@ -428,7 +431,7 @@ class GrupoController extends Controller
   public function updateEspecial(Request $request, $idEspecial): JsonResponse
   {
     $data = $request->all();
-    $especial = Grupo::with($this->relations)->findOrFail($idEspecial);
+    $especial = Grupo::findOrFail($idEspecial);
 
     $especial->update([
       'nombre' => $data['nombre'],
@@ -489,7 +492,10 @@ class GrupoController extends Controller
 
     $especial->save(); // Guardar el grupo actualizado
 
+    $especial = Grupo::with($this->relations)->findOrFail($especial->id);
+
     return response()->json($especial, 200);
+    
   }
 
   /**
@@ -515,8 +521,10 @@ class GrupoController extends Controller
   }
 
   /**
-   * Delete image
-   * @params $ficha_especial
+   * Delete image of ficha or especial
+   *
+   * @param $ficha_especial
+   * @return void
    */
   private function deleteImage($ficha_especial): void {
 
@@ -760,4 +768,5 @@ class GrupoController extends Controller
 
     return response()->json($configuracionesRaps);
   }
+
 }

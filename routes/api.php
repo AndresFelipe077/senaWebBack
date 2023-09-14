@@ -369,8 +369,6 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 //////////////
 
 Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
-// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
-Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
 Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 
@@ -385,3 +383,10 @@ Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::cl
 Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 
 Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);
+
+
+// Configuracion Rap
+// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+
+Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::class, 'countSessions']);
