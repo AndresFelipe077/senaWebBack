@@ -197,10 +197,10 @@ class AsignacionParticipanteController extends Controller
       $asignacion = new AsignacionParticipante();
       $asignacion->idParticipante = $data['idParticipante'];
       $asignacion->idGrupo = $data['idGrupo'] ?? null;
-      $asignacion->idTipoParticipacion = 4; // 4 para participacion aprendiz
+      $asignacion->idTipoParticipacion = $data['idTipoParticipacion'];
       $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
-      $asignacion->fechaInicial = $data['fechaInicial']; // aun no establecida
-      $asignacion->fechaFinal = $data['fechaFinal']; // aun no establecida
+      $asignacion->fechaInicial = $data['fechaInicial']; 
+      $asignacion->fechaFinal = $data['fechaFinal']; 
       $asignacion->observacion = $data['observacion'];
       $asignacion->save();
       return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
@@ -208,10 +208,6 @@ class AsignacionParticipanteController extends Controller
       return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
     }
   }
-
-
-
-
   /**
    * Update info of instructor in a ficha
    */
