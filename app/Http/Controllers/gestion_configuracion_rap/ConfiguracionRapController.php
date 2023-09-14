@@ -112,7 +112,7 @@ class ConfiguracionRapController extends Controller
 	 * @author Andres Felipe Pizo Luligo
 	 */
 
-	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin)
+	private function validateConfiguracionRapByDate($infraestructura, $jornada, $ficha, $fechaInicio, $fechaFin): bool
 	{
 		// Consulta registros existentes que se superponen o están dentro del rango dado
 		$matchingRecords = ConfiguracionRap::where('idInfraestructura', $infraestructura)
@@ -128,7 +128,6 @@ class ConfiguracionRapController extends Controller
 		// ningún registro para la misma infraestructura, jornada y ficha, la validación falla
 		return $matchingRecords === 0;
 	}
-
 
 
 	/**

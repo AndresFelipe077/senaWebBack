@@ -16,7 +16,7 @@ class CreateGrupoTable extends Migration
         Schema::create('grupo', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->string('nombre')->unique();
+            $table->string('nombre');
             $table->date('fechaInicialGrupo');
             $table->date('fechaFinalGrupo');
             $table->text('observacion')->nullable();

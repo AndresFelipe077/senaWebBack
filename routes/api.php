@@ -59,7 +59,6 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
-use App\Http\Controllers\gestion_grupo\AsignacionJornadaActividadEventoController;
 use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\EstadoProgramaController;
 use App\Http\Controllers\pruebaController;
@@ -188,10 +187,12 @@ Route::get('sedes/ciudad/{id}', [SedeController::class, 'showByCiudad']);
 Route::resource('areas', AreaController::class);
 
 //rutas de infraestructura -> revisar y optimizar (crear un grupo de rutas como en ciudades)
-Route::resource('infraestructuras', InfraestructuraController::class);
-Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
-Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
-Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+Route::resource('infraestructuras', InfraestructuraController::class)->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
+    Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
+    Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+});
 
 
 //jornadas
@@ -211,10 +212,15 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
 
+Route::resource('grupos', GrupoController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::resource('grupos', GrupoController::class);
+    // Route::resource('grupos', GrupoController::class);
+
+    Route::post('create_especial/{idEspecial}', [GrupoController::class, 'storeEspecial']);
+
+    Route::put('update_especial/{idEspecial}', [GrupoController::class, 'updateEspecial']);
 
     Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
 
@@ -360,4 +366,8 @@ Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteControlle
 
 Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
 
+Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
+
 Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);
+
+Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
