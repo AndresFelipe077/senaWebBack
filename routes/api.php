@@ -212,10 +212,15 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
 
+Route::resource('grupos', GrupoController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::resource('grupos', GrupoController::class);
+    // Route::resource('grupos', GrupoController::class);
+
+    Route::post('create_especial/{idEspecial}', [GrupoController::class, 'storeEspecial']);
+
+    Route::put('update_especial/{idEspecial}', [GrupoController::class, 'updateEspecial']);
 
     Route::get('ficha_tipo_grupo', [TipoGrupoController::class, 'getTipoGrupoFicha']);
 
@@ -360,5 +365,7 @@ Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteControl
 Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
 Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+
+Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 
 Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);
