@@ -81,19 +81,20 @@ class AsignacionParticipanteController extends Controller
 
   public function obtenerAprendicesPorGrupo($idGrupo)
   {
-
-    // $usuariosActivados = ActivationCompanyUser::role('APRENDIZ')->active()->get();
-
-    $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
-      ->whereIn('idEstadoParticipantes', function ($query) {
-        $query->select('id')
-          ->from('estadoParticipantes')
-          ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
-      })
-      ->with(['usuario.persona'])
+      $lastRegisters = AsignacionParticipante::groupBy('idParticipante')
+      ->selectRaw('MAX(created_at) as latest_created_at')
       ->get();
-
-    return response()->json($asignaciones);
+      $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
+          ->whereIn('created_at', $lastRegisters->pluck('latest_created_at'))
+          ->whereIn('idEstadoParticipantes', function ($query) {
+              $query->select('id')
+                  ->from('estadoParticipantes')
+                  ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
+          })
+          ->with(['usuario.persona'])
+          ->get();
+  
+      return response()->json($asignaciones);
   }
 
   public function crearHistorialDesdeRegistros()
@@ -189,24 +190,24 @@ class AsignacionParticipanteController extends Controller
    */
 
   // Controlador de asignación de aprendices a fichas o grupos
-public function assignAprendizzToFicha(Request $request): JsonResponse
-{
+  public function assignAprendizzToFicha(Request $request): JsonResponse
+  {
     try {
-        $data = $request->all();
-        $asignacion = new AsignacionParticipante();
-        $asignacion->idParticipante = $data['idParticipante'];
-        $asignacion->idGrupo = $data['idGrupo'] ?? null;
-        $asignacion->idTipoParticipacion = 4; // 4 para participacion aprendiz
-        $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
-        $asignacion->fechaInicial = null; // aun no establecida
-        $asignacion->fechaFinal = null; // aun no establecida
-        $asignacion->observacion = $data['observacion'];
-        $asignacion->save();
-        return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
+      $data = $request->all();
+      $asignacion = new AsignacionParticipante();
+      $asignacion->idParticipante = $data['idParticipante'];
+      $asignacion->idGrupo = $data['idGrupo'] ?? null;
+      $asignacion->idTipoParticipacion = 4; // 4 para participacion aprendiz
+      $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
+      $asignacion->fechaInicial = $data['fechaInicial']; // aun no establecida
+      $asignacion->fechaFinal = $data['fechaFinal']; // aun no establecida
+      $asignacion->observacion = $data['observacion'];
+      $asignacion->save();
+      return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
     } catch (\Exception $e) {
-        return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
+      return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
     }
-}
+  }
 
 
 
@@ -226,7 +227,6 @@ public function assignAprendizzToFicha(Request $request): JsonResponse
     }
 
     return response()->json($data);
-
   }
 
 
@@ -325,12 +325,21 @@ public function assignAprendizzToFicha(Request $request): JsonResponse
    */
   public function getLastRegisterByIdParticipante($idParticipante): JsonResponse
   {
-
     $lastRegister = AsignacionParticipante::where('idParticipante', $idParticipante)
-        ->latest('created_at')
-        ->first();
-
+      ->latest('created_at')
+      ->first();
     return response()->json($lastRegister);
   }
 
+  public function getLastRegisterOfAllParticipants(): JsonResponse
+  {
+    $lastRegisters = AsignacionParticipante::groupBy('idParticipante')
+      ->selectRaw('MAX(created_at) as latest_created_at')
+      ->get();
+
+    $lastRegistersData = AsignacionParticipante::whereIn('created_at', $lastRegisters->pluck('latest_created_at'))
+      ->get();
+
+    return response()->json($lastRegistersData);
+  }
 }

@@ -369,3 +369,5 @@ Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::cl
 Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 
 Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);
+
+Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
