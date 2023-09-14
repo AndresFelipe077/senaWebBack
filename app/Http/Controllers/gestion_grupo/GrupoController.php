@@ -39,7 +39,7 @@ class GrupoController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function index()
+  public function index(): JsonResponse
   {
 
     $grupos = Grupo::with($this->relations)->get();
@@ -74,7 +74,7 @@ class GrupoController extends Controller
   /**
    * Get grupos by idTipoGrupo equal especial
    */
-  public function getGruposByEspecial()
+  public function getGruposByEspecial(): JsonResponse
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '2')->get();
 
@@ -108,7 +108,7 @@ class GrupoController extends Controller
   /**
    * Get grupos by idTipoGrupo equal ficha
    */
-  public function getGruposByFicha()
+  public function getGruposByFicha(): JsonResponse
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '1')->get();
 
@@ -145,7 +145,7 @@ class GrupoController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(Request $request): JsonResponse
   {
 
     $data = $request->all();
@@ -212,7 +212,7 @@ class GrupoController extends Controller
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function storeEspecial(Request $request)
+  public function storeEspecial(Request $request): JsonResponse
   {
 
     $data = $request->all();
@@ -373,7 +373,7 @@ class GrupoController extends Controller
    * @return \Illuminate\Http\Response
    */
 
-  public function update(Request $request, $id)
+  public function update(Request $request, $id): JsonResponse
   {
     $data = $request->all();
     $grupo = Grupo::with($this->relations)->findOrFail($id);
@@ -423,8 +423,9 @@ class GrupoController extends Controller
 
   /**
    * Update register of especial
+   * @param int $idEspecial
    */
-  public function updateEspecial(Request $request, $idEspecial)
+  public function updateEspecial(Request $request, $idEspecial): JsonResponse
   {
     $data = $request->all();
     $especial = Grupo::with($this->relations)->findOrFail($idEspecial);
@@ -441,19 +442,21 @@ class GrupoController extends Controller
       'idTipoOferta' => $data['idTipoOferta'],
     ]);
 
+    $this->deleteImage($especial);
+
     if ($request->hasFile('imagenIcon')) {
 
       $imagen = $request->file('imagenIcon');
       $nombreArchivo = uniqid() . '_' . $imagen->getClientOriginalName();
-      $rutaAlmacenamiento = 'public/imagenes/especial/'; // Ajusta la ruta según tu configuración
+      $rutaAlmacenamiento = 'public/imagenes/especial/';
       $imagen->storeAs($rutaAlmacenamiento, $nombreArchivo);
       $rutaImagen = storage_path('app/' . $rutaAlmacenamiento . '/' . $nombreArchivo);
 
       Image::make($rutaImagen)
-        ->resize(300, 200) // Cambia las dimensiones según tus necesidades
+        ->resize(300, 200)
         ->save(storage_path('app/' . $rutaAlmacenamiento . $nombreArchivo)); // Guardar la imagen redimensionada
 
-      $rutaImagenGuardada = 'storage/' . $rutaAlmacenamiento . $nombreArchivo;
+      $rutaImagenGuardada = 'storage/imagenes/especial/' . $nombreArchivo;
 
       $especial->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
     }
@@ -495,16 +498,6 @@ class GrupoController extends Controller
    * @param  \App\Models$grupo  $grupo
    * @return \Illuminate\Http\Response
    */
-
-  /*public function destroy(int $id)
-  {
-    $newjornada = Grupo::findOrFail($id);
-    $newjornada->delete();
-    return response()->json([
-      'eliminada'
-    ]);
-  }*/
-
   public function destroy($id)
   {
     $ficha_especial = Grupo::findOrFail($id);
@@ -521,6 +514,10 @@ class GrupoController extends Controller
     return response()->json(['message' => 'Registro eliminado exitosamente'], 200);
   }
 
+  /**
+   * Delete image
+   * @params $ficha_especial
+   */
   private function deleteImage($ficha_especial): void {
 
     $rutaImagen = $ficha_especial->imagenIcon;
