@@ -769,4 +769,24 @@ class GrupoController extends Controller
     return response()->json($configuracionesRaps);
   }
 
+  /**
+   * Get configuraciones raps by id ficha
+   *
+   * @return void
+   */
+  public function getConfiguracionRapById($idFicha)
+  {
+
+    $configuracionController = new ConfiguracionRapController();
+
+    $relations = $configuracionController->relations(''); // Traeme todas las relactions
+
+    $confRaps = ConfiguracionRap::with($relations)->where('idGrupo', $idFicha)->get();
+
+    // $confsRaps = $this->mapRelations($confRaps);
+
+    return response()->json($confRaps);
+    
+  }
+
 }

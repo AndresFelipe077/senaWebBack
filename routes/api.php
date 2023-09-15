@@ -390,3 +390,5 @@ Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteContr
 Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
 Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::class, 'countSessions']);
+
+Route::get('conf_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapById']);
