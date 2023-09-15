@@ -280,8 +280,9 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 Route::get('asignacion_participante', [AsignacionParticipanteController::class, 'index']);
 
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
-
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']); 
+   //usuarios que son aprendices
+Route::get('usuarios_instructores', [UserController::class, 'instructoresActives']); 
 
 
 Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']); // SE BUSCA PROGRAMA
@@ -362,9 +363,9 @@ Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::clas
 
 Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
 
-Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
+Route::get('historial_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
-Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaByGroupIdAndType']);
 
 Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 

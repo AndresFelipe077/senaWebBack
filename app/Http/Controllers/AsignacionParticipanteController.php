@@ -45,21 +45,15 @@ class AsignacionParticipanteController extends Controller
     $data = [];
     foreach ($asignaciones as $asignacion) {
       $grupo = $asignacion->grupo;
-
-      // Verificar si el grupo es válido antes de acceder a la propiedad idPrograma
       if ($grupo) {
         $idPrograma = $grupo->idPrograma;
-
-        // Obtener todos los detalles del programa
         $programa = Programa::find($idPrograma);
-
-        // Agregar los datos necesarios al arreglo
         $data[] = [
           'asignacionParticipantes' => $asignacion,
           'nombreGrupo' => $grupo->nombre,
-          'nombrePrograma' => $programa ? $programa->nombrePrograma : null, // Verificar si $programa es válido
+          'nombrePrograma' => $programa ? $programa->nombrePrograma : null, 
           'idPrograma' => $idPrograma,
-          'programa' => $programa, // Agregar el programa completo
+          'programa' => $programa,
         ];
       }
     }
@@ -294,8 +288,8 @@ class AsignacionParticipanteController extends Controller
    */
   public function getFichasById($idFicha): JsonResponse
   {
-
     $fichasByInstructor = AsignacionParticipante::where('idGrupo', $idFicha)
+      ->where('idTipoParticipacion', 3)
       ->with($this->relations)->get();
 
     return response()->json($fichasByInstructor);
@@ -306,12 +300,14 @@ class AsignacionParticipanteController extends Controller
    * @param int $idLastFicha
    * @author Andres Felipe Pizo Luligo
    */
-  public function getLastFichaById($idLastFicha): JsonResponse
+  public function getLastFichaByGroupIdAndType($idGrupo): JsonResponse
   {
-    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idLastFicha)
-      ->orderBy('created_at', 'desc')
-      ->first();
-    return response()->json($ultimaFicha);
+      $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
+          ->where('idTipoParticipacion', 3)
+          ->latest('created_at')
+          ->first();
+  
+      return response()->json($ultimaFicha);
   }
 
   /**
