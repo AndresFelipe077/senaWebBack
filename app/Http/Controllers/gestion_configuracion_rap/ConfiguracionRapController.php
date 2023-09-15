@@ -7,14 +7,16 @@ use App\Http\Controllers\helper_service\HelperService;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionRap;
 use App\Models\User;
+use DateTime;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 
 class ConfiguracionRapController extends Controller
 {
 
 	public static function relations($nameMainRelation = '', ?array $selectedRelations = null)
 	{
-																					// 1										2			3			4
+		// 1										2			3			4
 		$relations = HelperService::relations('' | $nameMainRelation, true, [
 			'resultados',
 			'usuarios',
@@ -26,7 +28,6 @@ class ConfiguracionRapController extends Controller
 		], $selectedRelations);
 
 		return $relations;
-
 	}
 
 	/** 
@@ -80,7 +81,6 @@ class ConfiguracionRapController extends Controller
 		};
 
 		return response()->json($configuracionRap->get());
-
 	}
 
 	/**
@@ -94,6 +94,12 @@ class ConfiguracionRapController extends Controller
 
 		$data = $request->all();
 
+		$validateInstructor = $this->isAvailableInstructor($data['idInstructor'], $data['fechaInicial'], $data['fechaFinal'], $data['idJornada']);
+
+		if (!$validateInstructor) {
+			return response()->json(['message' => 'The instructor is not available'], 400);
+		}
+
 		$rapInSameDate = $this->validateConfiguracionRapByDate($data['idInfraestructura'], $data['idJornada'], $data['idGrupo'], $data['fechaInicial'], $data['fechaFinal']);
 
 		if (!$rapInSameDate) {
@@ -105,6 +111,34 @@ class ConfiguracionRapController extends Controller
 
 		return response()->json($configuracionRap, 201);
 	}
+
+	/**
+	 * Validate of instructor available of configuracion
+	 *
+	 * @return void
+	 */
+	private function isAvailableInstructor($idInstructor, $fechaInicial, $fechaFinal, $idJornada)
+	{
+		// Verificar disponibilidad general del instructor para el rango de fechas especificado
+		$instructorAvailable = ConfiguracionRap::where('idInstructor', $idInstructor)
+			->where('fechaInicial', '>=', $fechaInicial)
+			->where('fechaFinal', '<=', $fechaFinal)
+			->count();
+
+		// Verificar si existe una configuración en la misma jornada que se superpone con las fechas
+		$instructorOccupiedInSameJornada = ConfiguracionRap::where('idInstructor', $idInstructor)
+			->where('idJornada', $idJornada)
+			->where(function ($query) use ($fechaInicial, $fechaFinal) {
+				$query->where(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '<=', $fechaFinal)
+						->where('fechaFinal', '>=', $fechaInicial);
+				});
+			})
+			->count();
+
+		return $instructorAvailable === 0 && $instructorOccupiedInSameJornada === 0;
+	}
+
 
 	/**
 	 * Validate assign new configuracion by date
@@ -194,19 +228,20 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Update register of configuracion and create a new
 	 * @author Andres Felipe Pizo Luligo
-	 * 
 	 */
 	public function update(Request $request, $id): JsonResponse
 	{
-		
+
 		$data = $request->all();
 
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 
-		// Actualiza solo el estado del registro existente
-		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
+		if ($data['idInstructor'] != $configuracionRap->idInstructor) {
 
-		$this->changeInstructor($data, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
+			$newInstructorToConfigurationRap = $this->changeInstructor($data, $configuracionRap, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
+
+			return response()->json($newInstructorToConfigurationRap);
+		}
 
 		return response()->json(['message' => 'Instructor nuevo creado']);
 	}
@@ -214,16 +249,21 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Change instructor to new in configuracion rap
 	 * @param array $data
-	 * @return void
+	 * @return
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	private function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null)
+	private function changeInstructor(array $data, $configuracionRap, $fechaInicial = null, $fechaFinal = null)
 	{
+
+		// Actualiza solo el estado del registro existente
+		$configuracionRap->update(['idEstado' => 4]); // TRASLADO
 
 		// Validar instructor con nuevas fechas, si entran nuevas fechas se asignan tambien
 		$newConfiguracionRap = new ConfiguracionRap($data);
 
 		$newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		$newConfiguracionRap->idEstado = 1;
 
 		// Verificar nuevas fechas distintas a las anteriores, si es asi que se guarden tambien
 		if ($fechaInicial != $data['fechaInicial'] || $fechaFinal != $data['fechaFinal']) {
@@ -233,8 +273,16 @@ class ConfiguracionRapController extends Controller
 		}
 
 		$newConfiguracionRap->save();
+
+		return $newConfiguracionRap;
 	}
 
+	/**
+	 * This function delete register of configuracionRap
+	 *
+	 * @param int $id
+	 * @return JsonResponse
+	 */
 	public function destroy($id): JsonResponse
 	{
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
@@ -246,4 +294,87 @@ class ConfiguracionRapController extends Controller
 		}
 	}
 
+
+	// Validations news
+	/**
+	 * Count sessions depending of fechaInicial, numbers of days and hours of the day(Jornada)
+	 * @return void
+	 */
+	public function countSessions($idConfiguracionRap): JsonResponse // Get all object of configuracion by Id
+	{
+
+		$data = ConfiguracionRap::findOrFail($idConfiguracionRap);
+
+		// get fechaInicial
+		$fechaInicial = new DateTime($data->fechaInicial);
+		$fechaFinal = new DateTime($data->fechaFinal);
+
+		// Calcula la diferencia en días
+		$diferencia = $fechaInicial->diff($fechaFinal);
+		$numeroDeDias = $diferencia->days;
+
+		$cantDays = $this->validateCantWeeksOfDates($fechaInicial, $fechaFinal, $numeroDeDias);
+
+		// Calcula la cantidad de semanas
+		$numeroDeSemanas = ceil($cantDays / 7);
+
+		// get cant days of jornada
+		$cantDiasByWeek = $data->jornadas->diaJornada->count();
+
+		// Cantidad de clases
+		$sessions = $numeroDeSemanas * $cantDiasByWeek;
+
+		// get hours total of configuracionRap
+		$cantHoursTotal = $sessions * $data->horas;
+
+		return response()->json([
+			'cantWeeks' 		 => $numeroDeSemanas,
+			'cantDaysByWeek' => $cantDiasByWeek,
+			'sessions'  		 => $sessions,
+			'cantHoursByDay' => $data->horas,
+			'cantHoursTotal' => $cantHoursTotal,
+		]);
+	}
+
+	/**
+	 * This function validate cant of weeks
+	 *
+	 * @param DateTime $fechaInicial
+	 * @param DateTime $fechaFinal
+	 * @return integer
+	 */
+	private function validateCantWeeksOfDates($fechaInicial = null, $fechaFinal = null, $numeroDeDias = null): int
+	{
+
+		// // Ajuste para contar semanas completas si la fecha inicial es un viernes o la fecha final es un lunes
+		// if (
+		// 	$fechaInicial->format('N') == 5 ||
+		// 	$fechaInicial->format('N') == 4 ||
+		// 	$fechaInicial->format('N') == 3 ||
+		// 	$fechaInicial->format('N') == 2 ||
+		// 	$fechaInicial->format('N') == 1
+		// 	) {  // Si la fecha inicial es un viernes (5)
+		// 	$numeroDeDias += 7;
+		// }
+
+		// if (
+		// 	$fechaFinal->format('N') == 1 ||
+		// 	$fechaFinal->format('N') == 2 ||
+		// 	$fechaFinal->format('N') == 3 ||
+		// 	$fechaFinal->format('N') == 4 ||
+		// 	$fechaFinal->format('N') == 5
+		// 	) {  // Si la fecha final es un lunes (1)
+		// 	$numeroDeDias += 7;
+		// }
+
+		if ($fechaInicial->format('N') <= 5) {  // Si la fecha inicial es de lunes a viernes (1-5)
+			$numeroDeDias += (5 - $fechaInicial->format('N')); // Agrega días para llegar al viernes
+		}
+
+		if ($fechaFinal->format('N') >= 1) {  // Si la fecha final es de lunes a domingo (1-7)
+			$numeroDeDias += (1 - $fechaFinal->format('N')); // Agrega días para llegar al lunes
+		}
+
+		return $numeroDeDias;
+	}
 }

@@ -381,15 +381,15 @@ class GrupoController extends Controller
     }
 
     $grupo->update([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta'],
     ]);
 
     $currentInfraestructuras = $grupo->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
@@ -417,8 +417,9 @@ class GrupoController extends Controller
 
     $grupo = $this->mapRelation($grupo);
 
-    return response()->json($grupo, 200);
+    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
+    return response()->json($grupo, 200);
   }
 
   /**
@@ -428,7 +429,7 @@ class GrupoController extends Controller
   public function updateEspecial(Request $request, $idEspecial): JsonResponse
   {
     $data = $request->all();
-    $especial = Grupo::with($this->relations)->findOrFail($idEspecial);
+    $especial = Grupo::findOrFail($idEspecial);
 
     $especial->update([
       'nombre' => $data['nombre'],
@@ -493,8 +494,9 @@ class GrupoController extends Controller
 
     $especial = $this->mapRelation($especial);
 
-    return response()->json($especial, 200);
+    $especial = Grupo::with($this->relations)->findOrFail($especial->id);
 
+    return response()->json($especial, 200);
   }
 
   /**
@@ -520,8 +522,10 @@ class GrupoController extends Controller
   }
 
   /**
-   * Delete image
-   * @params $ficha_especial
+   * Delete image of ficha or especial
+   *
+   * @param $ficha_especial
+   * @return void
    */
   private function deleteImage($ficha_especial): void {
 
@@ -733,7 +737,7 @@ class GrupoController extends Controller
           'idJornada'         => null,
           'idGrupo'           => $idFicha,
           'idInfraestructura' => null,
-          'idEstado'          => 1,
+          'idEstado'          => 2, // PENDIENTE
           'horas'             => 0,
           'fechaInicial'      => null,
           'fechaFinal'        => null,
@@ -765,4 +769,25 @@ class GrupoController extends Controller
 
     return response()->json($configuracionesRaps);
   }
+
+  /**
+   * Get configuraciones raps by id ficha
+   *
+   * @return void
+   */
+  public function getConfiguracionRapById($idFicha)
+  {
+
+    $configuracionController = new ConfiguracionRapController();
+
+    $relations = $configuracionController->relations(''); // Traeme todas las relactions
+
+    $confRaps = ConfiguracionRap::with($relations)->where('idGrupo', $idFicha)->get();
+
+    // $confsRaps = $this->mapRelations($confRaps);
+
+    return response()->json($confRaps);
+    
+  }
+
 }
