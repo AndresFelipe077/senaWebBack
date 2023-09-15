@@ -736,7 +736,7 @@ class GrupoController extends Controller
           'idJornada'         => null,
           'idGrupo'           => $idFicha,
           'idInfraestructura' => null,
-          'idEstado'          => 1,
+          'idEstado'          => 2, // PENDIENTE
           'horas'             => 0,
           'fechaInicial'      => null,
           'fechaFinal'        => null,

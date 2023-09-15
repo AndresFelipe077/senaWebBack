@@ -94,6 +94,12 @@ class ConfiguracionRapController extends Controller
 
 		$data = $request->all();
 
+		$validateInstructor = $this->isAvailableInstructor($data['idInstructor'], $data['fechaInicial'], $data['fechaFinal'], $data['idJornada']);
+
+		if (!$validateInstructor) {
+			return response()->json(['message' => 'The instructor is not available'], 400);
+		}
+
 		$rapInSameDate = $this->validateConfiguracionRapByDate($data['idInfraestructura'], $data['idJornada'], $data['idGrupo'], $data['fechaInicial'], $data['fechaFinal']);
 
 		if (!$rapInSameDate) {
@@ -105,6 +111,34 @@ class ConfiguracionRapController extends Controller
 
 		return response()->json($configuracionRap, 201);
 	}
+
+	/**
+	 * Validate of instructor available of configuracion
+	 *
+	 * @return void
+	 */
+	private function isAvailableInstructor($idInstructor, $fechaInicial, $fechaFinal, $idJornada)
+	{
+		// Verificar disponibilidad general del instructor para el rango de fechas especificado
+		$instructorAvailable = ConfiguracionRap::where('idInstructor', $idInstructor)
+			->where('fechaInicial', '>=', $fechaInicial)
+			->where('fechaFinal', '<=', $fechaFinal)
+			->count();
+
+		// Verificar si existe una configuración en la misma jornada que se superpone con las fechas
+		$instructorOccupiedInSameJornada = ConfiguracionRap::where('idInstructor', $idInstructor)
+			->where('idJornada', $idJornada)
+			->where(function ($query) use ($fechaInicial, $fechaFinal) {
+				$query->where(function ($query) use ($fechaInicial, $fechaFinal) {
+					$query->where('fechaInicial', '<=', $fechaFinal)
+						->where('fechaFinal', '>=', $fechaInicial);
+				});
+			})
+			->count();
+
+		return $instructorAvailable === 0 && $instructorOccupiedInSameJornada === 0;
+	}
+
 
 	/**
 	 * Validate assign new configuracion by date
@@ -194,7 +228,6 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Update register of configuracion and create a new
 	 * @author Andres Felipe Pizo Luligo
-	 * 
 	 */
 	public function update(Request $request, $id): JsonResponse
 	{
@@ -203,10 +236,12 @@ class ConfiguracionRapController extends Controller
 
 		$configuracionRap = ConfiguracionRap::findOrFail($id);
 
-		// Actualiza solo el estado del registro existente
-		$configuracionRap->update(['idEstado' => 3]); // TRASLADO
+		if ($data['idInstructor'] != $configuracionRap->idInstructor) {
 
-		$this->changeInstructor($data, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
+			$newInstructorToConfigurationRap = $this->changeInstructor($data, $configuracionRap, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
+
+			return response()->json($newInstructorToConfigurationRap);
+		}
 
 		return response()->json(['message' => 'Instructor nuevo creado']);
 	}
@@ -214,16 +249,21 @@ class ConfiguracionRapController extends Controller
 	/**
 	 * Change instructor to new in configuracion rap
 	 * @param array $data
-	 * @return void
+	 * @return
 	 * @author Andres Felipe Pizo Luligo
 	 */
-	private function changeInstructor(array $data, $fechaInicial = null, $fechaFinal = null): void
+	private function changeInstructor(array $data, $configuracionRap, $fechaInicial = null, $fechaFinal = null)
 	{
+
+		// Actualiza solo el estado del registro existente
+		$configuracionRap->update(['idEstado' => 4]); // TRASLADO
 
 		// Validar instructor con nuevas fechas, si entran nuevas fechas se asignan tambien
 		$newConfiguracionRap = new ConfiguracionRap($data);
 
 		$newConfiguracionRap->idInstructor = $data['idInstructor'];
+
+		$newConfiguracionRap->idEstado = 1;
 
 		// Verificar nuevas fechas distintas a las anteriores, si es asi que se guarden tambien
 		if ($fechaInicial != $data['fechaInicial'] || $fechaFinal != $data['fechaFinal']) {
@@ -233,6 +273,8 @@ class ConfiguracionRapController extends Controller
 		}
 
 		$newConfiguracionRap->save();
+
+		return $newConfiguracionRap;
 	}
 
 	/**
@@ -277,21 +319,21 @@ class ConfiguracionRapController extends Controller
 		$numeroDeSemanas = ceil($cantDays / 7);
 
 		// get cant days of jornada
-		$cantDiasByJornada = $data->jornadas->diaJornada->count();
+		$cantDiasByWeek = $data->jornadas->diaJornada->count();
 
-		$sessions = $numeroDeSemanas * $cantDiasByJornada;
+		// Cantidad de clases
+		$sessions = $numeroDeSemanas * $cantDiasByWeek;
 
 		// get hours total of configuracionRap
 		$cantHoursTotal = $sessions * $data->horas;
 
 		return response()->json([
-			'cantWeeks' 				=> $numeroDeSemanas,
-			'cantDaysByJornada' => $cantDiasByJornada,
-			'sessions'  				=> $sessions,
-			'cantHorasByDay'		=> $data->horas,
-			'cantHorasTotal'		=> $cantHoursTotal,
+			'cantWeeks' 		 => $numeroDeSemanas,
+			'cantDaysByWeek' => $cantDiasByWeek,
+			'sessions'  		 => $sessions,
+			'cantHoursByDay' => $data->horas,
+			'cantHoursTotal' => $cantHoursTotal,
 		]);
-
 	}
 
 	/**
@@ -334,7 +376,5 @@ class ConfiguracionRapController extends Controller
 		}
 
 		return $numeroDeDias;
-		
 	}
-
 }
