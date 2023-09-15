@@ -211,11 +211,9 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
 
-Route::resource('grupos', GrupoController::class);
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    // Route::resource('grupos', GrupoController::class);
+    Route::resource('grupos', GrupoController::class);
 
     Route::post('create_especial/{idEspecial}', [GrupoController::class, 'storeEspecial']);
 
