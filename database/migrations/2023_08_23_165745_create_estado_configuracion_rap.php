@@ -24,7 +24,8 @@ class CreateEstadoConfiguracionRap extends Migration
             ['estado' => 'EN EJECUCION'],
             ['estado' => 'PENDIENTE'],
             ['estado' => 'FINALIZADO'],
-            ['estado' => 'TRASLADO'],
+            ['estado' => 'CAMBIO DE INSTRUCTOR'],
+            ['estado' => 'PAUSADO']
         ]);
 
     }
