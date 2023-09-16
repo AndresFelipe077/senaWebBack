@@ -415,11 +415,10 @@ class GrupoController extends Controller
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
-    $grupo = $this->mapRelation($grupo);
+    $grupo1 = $this->mapRelation($grupo);
 
-    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+    return response()->json($grupo1, 200);
 
-    return response()->json($grupo, 200);
   }
 
   /**
@@ -493,8 +492,6 @@ class GrupoController extends Controller
     $especial = Grupo::with($this->relations)->findOrFail($especial->id);
 
     $especial = $this->mapRelation($especial);
-
-    $especial = Grupo::with($this->relations)->findOrFail($especial->id);
 
     return response()->json($especial, 200);
   }
@@ -784,9 +781,9 @@ class GrupoController extends Controller
 
     $confRaps = ConfiguracionRap::with($relations)->where('idGrupo', $idFicha)->get();
 
-    // $confsRaps = $this->mapRelations($confRaps);
+    $confsRaps = $this->mapRelations($confRaps);
 
-    return response()->json($confRaps);
+    return response()->json($confsRaps);
     
   }
 
