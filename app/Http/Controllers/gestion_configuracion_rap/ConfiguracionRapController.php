@@ -307,33 +307,57 @@ class ConfiguracionRapController extends Controller
 
 		// get fechaInicial
 		$fechaInicial = new DateTime($data->fechaInicial);
-		$fechaFinal = new DateTime($data->fechaFinal);
 
-		// Calcula la diferencia en días
-		$diferencia = $fechaInicial->diff($fechaFinal);
-		$numeroDeDias = $diferencia->days;
+		$cantHours = $data->horas;
 
-		$cantDays = $this->validateCantWeeksOfDates($fechaInicial, $fechaFinal, $numeroDeDias);
+		// $fechaFinalByHoursConfRap = new DateTime($data->fechaFinal);
+
+		// // Calcula la diferencia en días
+		// $diferencia = $fechaInicial->diff($fechaFinalByHoursConfRap);
+		// $numeroDeDias = $diferencia->days;
+
+		// $cantDays = $this->validateCantWeeksOfDates($fechaInicial, $fechaFinalByHoursConfRap, $numeroDeDias);
 
 		// Calcula la cantidad de semanas
-		$numeroDeSemanas = ceil($cantDays / 7);
+		// $numeroDeSemanas = ceil($cantDays / 7);
 
 		// get cant days of jornada
 		$cantDiasByWeek = $data->jornadas->diaJornada->count();
 
+		$cantHoursByJornada = $data->jornadas->numeroHoras;
+
 		// Cantidad de clases
-		$sessions = $numeroDeSemanas * $cantDiasByWeek;
+		// $sessions = $numeroDeSemanas * $cantDiasByWeek;
 
 		// get hours total of configuracionRap
-		$cantHoursTotal = $sessions * $data->horas;
+		// $cantHoursTotal = $sessions * $data->horas;
+
+		$this->calcularFechaFinal($data->fechaInicial, $cantHoursByJornada, $cantDiasByWeek);
 
 		return response()->json([
-			'cantWeeks' 		 => $numeroDeSemanas,
+			// 'cantWeeks'      => $numeroDeSemanas,
 			'cantDaysByWeek' => $cantDiasByWeek,
-			'sessions'  		 => $sessions,
+			// 'sessions'       => $sessions,
 			'cantHoursByDay' => $data->horas,
-			'cantHoursTotal' => $cantHoursTotal,
+			// 'cantHoursTotal' => $cantHoursTotal,
 		]);
+	}
+
+	private function calcularFechaFinal($fechaInicial, $horasPorJornada, $diasPorSemana) {
+		$fecha = new DateTime($fechaInicial);
+
+		// Calcular cuántas semanas necesitamos para alcanzar las 30 horas
+		$semanasNecesarias = floor(30 / ($horasPorJornada * $diasPorSemana)); // 30 / 12 => 
+	
+		// Agregar las semanas necesarias a la fecha inicial
+		$fecha->modify("+$semanasNecesarias weeks");
+
+		// Formatear la fecha final como una cadena
+		$fechaFinal = $fecha->format('Y-m-d');
+
+		var_dump($fechaFinal);
+	
+		return $fechaFinal;
 	}
 
 	/**
