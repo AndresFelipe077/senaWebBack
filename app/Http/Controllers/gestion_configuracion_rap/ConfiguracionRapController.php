@@ -298,7 +298,9 @@ class ConfiguracionRapController extends Controller
   // Validations news
   /**
    * Count sessions depending of fechaInicial, numbers of days and hours of the day(Jornada)
+   * @param int $idConfiguracionRap
    * @return void
+   * @author Andres Felipe Pizo Luligo
    */
   public function countSessions($idConfiguracionRap): JsonResponse // Get all object of configuracion by Id
   {
@@ -310,12 +312,12 @@ class ConfiguracionRapController extends Controller
 
     $cantHours = $data->horas;
 
-    // get cant days of jornada
+    // get cant days of jornada in week
     $cantDiasByWeek = $data->jornadas->diaJornada->count();
 
     $cantHoursByJornada = $data->jornadas->numeroHoras;
 
-    $fechaFinalCalculated = $this->calcularFechaFinal($data->fechaInicial, $cantHoursByJornada, $cantDiasByWeek, $cantHours);
+    $fechaFinalCalculated = $this->calculateEndDate($data->fechaInicial, $cantHoursByJornada, $cantDiasByWeek, $cantHours);
 
     $fechaFinal = new DateTime($fechaFinalCalculated);
 
@@ -326,32 +328,39 @@ class ConfiguracionRapController extends Controller
     $cantDays = $this->validateCantWeeksOfDates($fechaInicial, $fechaFinal, $numeroDeDias);
 
     // Calcula la cantidad de semanas
-    // $numeroDeSemanas = ceil($cantDays / 7);
-    $numeroDeSemanas = $cantDays / 7;
-
-    $cantWeeks = round($numeroDeSemanas, 1);
+    $cantWeeks = floor($cantDays / 7);
 
     // Cantidad de clases
-    $sessions = $numeroDeSemanas * $cantDiasByWeek;
+    $sessions = $cantWeeks * $cantDiasByWeek;
 
-    $cantSesions = round($sessions, 0);
+    $cantSessions = round($sessions, 0);
 
     return response()->json([
       'cantWeeks'      => $cantWeeks,
       'cantDaysByWeek' => $cantDiasByWeek,
-      'sessions'       => $cantSesions,
+      'sessions'       => $cantSessions,
       'cantHoursByDay' => $cantHoursByJornada,
       'cantHoursTotal' => $cantHours,
     ]);
     
   }
 
-  private function calcularFechaFinal($fechaInicial, $horasPorJornada, $diasPorSemana, $horasTotales)
+  /**
+   * Calculate end date about fechaInicial, hoursByJornada, daysByWeeks and totalHours
+   *
+   * @param string $fechaInicial
+   * @param int $hoursByJornada
+   * @param int $daysByWeeks
+   * @param int $totalHours
+   * @return string
+   * @author Andres Felipe Pizo Luligo
+   */
+  private function calculateEndDate($fechaInicial, $hoursByJornada, $daysByWeeks, $totalHours): String
   {
     $fecha = new DateTime($fechaInicial);
 
     // Calcular cuántas semanas necesitamos para alcanzar las 30 horas
-    $semanasNecesarias = floor($horasTotales / ($horasPorJornada * $diasPorSemana)); // 30 / 12 => 
+    $semanasNecesarias = floor($totalHours / ($hoursByJornada * $daysByWeeks)); // 30 / 12 => 
 
     // Agregar las semanas necesarias a la fecha inicial
     $fecha->modify("+$semanasNecesarias weeks");
@@ -368,30 +377,10 @@ class ConfiguracionRapController extends Controller
    * @param DateTime $fechaInicial
    * @param DateTime $fechaFinal
    * @return integer
+   * @author Andres Felipe Pizo Luligo
    */
   private function validateCantWeeksOfDates($fechaInicial = null, $fechaFinal = null, $numeroDeDias = null): int
   {
-
-    // // Ajuste para contar semanas completas si la fecha inicial es un viernes o la fecha final es un lunes
-    // if (
-    // 	$fechaInicial->format('N') == 5 ||
-    // 	$fechaInicial->format('N') == 4 ||
-    // 	$fechaInicial->format('N') == 3 ||
-    // 	$fechaInicial->format('N') == 2 ||
-    // 	$fechaInicial->format('N') == 1
-    // 	) {  // Si la fecha inicial es un viernes (5)
-    // 	$numeroDeDias += 7;
-    // }
-
-    // if (
-    // 	$fechaFinal->format('N') == 1 ||
-    // 	$fechaFinal->format('N') == 2 ||
-    // 	$fechaFinal->format('N') == 3 ||
-    // 	$fechaFinal->format('N') == 4 ||
-    // 	$fechaFinal->format('N') == 5
-    // 	) {  // Si la fecha final es un lunes (1)
-    // 	$numeroDeDias += 7;
-    // }
 
     if ($fechaInicial->format('N') <= 5) {  // Si la fecha inicial es de lunes a viernes (1-5)
       $numeroDeDias += (5 - $fechaInicial->format('N')); // Agrega días para llegar al viernes
@@ -403,4 +392,5 @@ class ConfiguracionRapController extends Controller
 
     return $numeroDeDias;
   }
+  
 }
