@@ -192,7 +192,7 @@ class AsignacionParticipanteController extends Controller
       $idGrupo = $data['idGrupo'];
       if ($data['idTipoParticipacion'] == 1 || $data['idTipoParticipacion'] == 2) {
         $ultimoRegistro = AsignacionParticipante::selectRaw('MAX(id) as latest_id')->groupBy('idParticipante');
-        $ultimoRegistro = AsignacionParticipante::whereIn('id', function ($query) use ($ultimoRegistro, $idTipoParticipacion,$idGrupo) {
+        $ultimoRegistro = AsignacionParticipante::whereIn('id', function ($query) use ($ultimoRegistro, $idTipoParticipacion, $idGrupo) {
           $query->select('latest_id')
             ->fromSub($ultimoRegistro, 'subquery')
             ->where('idTipoParticipacion', '=', $idTipoParticipacion)
@@ -350,13 +350,30 @@ class AsignacionParticipanteController extends Controller
 
   public function getLastRegisterOfAllParticipants(): JsonResponse
   {
-    $lastRegisters = AsignacionParticipante::groupBy('idParticipante')
-      ->selectRaw('MAX(created_at) as latest_created_at')
+    $asignaciones = AsignacionParticipante::selectRaw('MAX(id) as latest_id')
+      ->groupBy('idParticipante');
+
+    $asignaciones = AsignacionParticipante::whereIn('id', function ($query) use ($asignaciones) {
+      $query->select('latest_id')
+        ->fromSub($asignaciones, 'subquery');
+    })
+      ->whereIn('idEstadoParticipantes', function ($query) {
+        $query->select('id')
+          ->from('estadoParticipantes');
+      })
+      ->whereNotIn('idTipoParticipacion', [3])
+      ->with(['usuario.persona'])
       ->get();
 
-    $lastRegistersData = AsignacionParticipante::whereIn('created_at', $lastRegisters->pluck('latest_created_at'))
-      ->get();
-
-    return response()->json($lastRegistersData);
+    return response()->json($asignaciones);
   }
+  public function getEstadosParticipantes(): JsonResponse
+{
+    $estadosExcluidos = ['ACTIVO', 'PENDIENTE'];
+    
+    $estadosParticipantes = EstadoParticipante::whereNotIn('detalleEstado', $estadosExcluidos)
+        ->get();
+
+    return response()->json($estadosParticipantes);
+}
 }
