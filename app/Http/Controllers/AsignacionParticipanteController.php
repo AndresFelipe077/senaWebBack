@@ -51,7 +51,7 @@ class AsignacionParticipanteController extends Controller
         $data[] = [
           'asignacionParticipantes' => $asignacion,
           'nombreGrupo' => $grupo->nombre,
-          'nombrePrograma' => $programa ? $programa->nombrePrograma : null, 
+          'nombrePrograma' => $programa ? $programa->nombrePrograma : null,
           'idPrograma' => $idPrograma,
           'programa' => $programa,
         ];
@@ -75,22 +75,22 @@ class AsignacionParticipanteController extends Controller
 
   public function obtenerAprendicesPorGrupo($idGrupo)
   {
-      $lastRegisters = AsignacionParticipante::groupBy('idParticipante')
-      ->selectRaw('MAX(created_at) as latest_created_at')
+    $asignaciones = AsignacionParticipante::selectRaw('MAX(id) as latest_id')
+      ->groupBy('idParticipante');
+    $asignaciones = AsignacionParticipante::whereIn('id', function ($query) use ($asignaciones, $idGrupo) {
+      $query->select('latest_id')
+        ->fromSub($asignaciones, 'subquery')
+        ->where('idGrupo', '=', $idGrupo);
+    })
+      ->whereIn('idEstadoParticipantes', function ($query) {
+        $query->select('id')
+          ->from('estadoParticipantes')
+          ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
+      })
+      ->with(['usuario.persona'])
       ->get();
-      $asignaciones = AsignacionParticipante::where('idGrupo', $idGrupo)
-          ->whereIn('created_at', $lastRegisters->pluck('latest_created_at'))
-          ->whereIn('idEstadoParticipantes', function ($query) {
-              $query->select('id')
-                  ->from('estadoParticipantes')
-                  ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
-          })
-          ->with(['usuario.persona'])
-          ->get();
-  
-      return response()->json($asignaciones);
+    return response()->json($asignaciones);
   }
-
   public function crearHistorialDesdeRegistros()
   {
     try {
@@ -178,26 +178,51 @@ class AsignacionParticipanteController extends Controller
    * This function receives the data needed to create multi-trainee assignments
    * to a group with a specific participation type, status and dates.
    * 
-   * @author vansss 'Vanesa Galindez'
+   * @author vansss 'Vanesa Galindez' and 'Cristian Suarez' 
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\JsonResponse
    */
 
-  // Controlador de asignación de aprendices a fichas o grupos
+  // Controlador de asignación de aprendices a fichas o grupos y cambia o asigna vocero y suplente 
   public function assignAprendizzToFicha(Request $request): JsonResponse
   {
     try {
       $data = $request->all();
-      $asignacion = new AsignacionParticipante();
-      $asignacion->idParticipante = $data['idParticipante'];
-      $asignacion->idGrupo = $data['idGrupo'] ?? null;
-      $asignacion->idTipoParticipacion = $data['idTipoParticipacion'];
-      $asignacion->idEstadoParticipantes = 1; // 1 para estado activo
-      $asignacion->fechaInicial = $data['fechaInicial']; 
-      $asignacion->fechaFinal = $data['fechaFinal']; 
-      $asignacion->observacion = $data['observacion'];
-      $asignacion->save();
-      return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacion], 201);
+      $idTipoParticipacion = $data['idTipoParticipacion'];
+      $idGrupo = $data['idGrupo'];
+      if ($data['idTipoParticipacion'] == 1 || $data['idTipoParticipacion'] == 2) {
+        $ultimoRegistro = AsignacionParticipante::selectRaw('MAX(id) as latest_id')->groupBy('idParticipante');
+        $ultimoRegistro = AsignacionParticipante::whereIn('id', function ($query) use ($ultimoRegistro, $idTipoParticipacion,$idGrupo) {
+          $query->select('latest_id')
+            ->fromSub($ultimoRegistro, 'subquery')
+            ->where('idTipoParticipacion', '=', $idTipoParticipacion)
+            ->where('idGrupo', '=', $idGrupo);
+        })
+          ->get();
+        if ($ultimoRegistro->count() > 0) {
+          $ultimoRegistro = $ultimoRegistro[0];
+          $asignacion = new AsignacionParticipante();
+          $asignacion->idParticipante = $ultimoRegistro->idParticipante;
+          $asignacion->idGrupo = $ultimoRegistro->idGrupo;
+          $asignacion->idTipoParticipacion = 4;
+          $asignacion->idEstadoParticipantes = 1;
+          $asignacion->fechaInicial = $ultimoRegistro->fechaInicial;
+          $asignacion->fechaFinal = $ultimoRegistro->fechaFinal;
+          $asignacion->observacion = $ultimoRegistro->observacion;
+          $asignacion->save();
+        }
+      }
+      $asignacionOriginal = new AsignacionParticipante();
+      $asignacionOriginal->idParticipante = $data['idParticipante'];
+      $asignacionOriginal->idGrupo = $data['idGrupo'];
+      $asignacionOriginal->idTipoParticipacion = $data['idTipoParticipacion'];
+      $asignacionOriginal->idEstadoParticipantes = $data['idEstadoParticipantes'];
+      $asignacionOriginal->fechaInicial = $data['fechaInicial'];
+      $asignacionOriginal->fechaFinal = $data['fechaFinal'];
+      $asignacionOriginal->observacion = $data['observacion'];
+      $asignacionOriginal->save();
+
+      return response()->json(['message' => 'Asignación exitosa', 'asignacion' => $asignacionOriginal], 201);
     } catch (\Exception $e) {
       return response()->json(['message' => 'Error al realizar la asignación', 'error' => $e->getMessage()], 500);
     }
@@ -302,12 +327,12 @@ class AsignacionParticipanteController extends Controller
    */
   public function getLastFichaByGroupIdAndType($idGrupo): JsonResponse
   {
-      $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
-          ->where('idTipoParticipacion', 3)
-          ->latest('created_at')
-          ->first();
-  
-      return response()->json($ultimaFicha);
+    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
+      ->where('idTipoParticipacion', 3)
+      ->latest('created_at')
+      ->first();
+
+    return response()->json($ultimaFicha);
   }
 
   /**
