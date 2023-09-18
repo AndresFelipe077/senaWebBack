@@ -380,4 +380,6 @@ Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}', [Configu
 Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
 
 Route::get('getEstadosParticipantes', [AsignacionParticipanteController::class, 'getEstadosParticipantes']);
+
+Route::get('gethistorialaprendices/{idGrupo}', [AsignacionParticipanteController::class, 'getHistorialAprendices']);
  
