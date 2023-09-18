@@ -390,3 +390,5 @@ Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::cl
 Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::class, 'countSessions']);
 
 Route::get('conf_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapById']);
+
+Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}', [ConfiguracionRapController::class, 'executionByPercentageCompetencia']);

@@ -392,5 +392,20 @@ class ConfiguracionRapController extends Controller
 
     return $numeroDeDias;
   }
-  
+
+
+
+
+
+
+  public function executionByPercentageCompetencia($idConfiguracionRap){
+
+    $idConfiguracionRap = ConfiguracionRap::findOrFail($idConfiguracionRap);
+
+    $compentencia = $idConfiguracionRap->resultados->competencia->horas;
+
+    var_dump($compentencia);
+
+  }
+
 }
