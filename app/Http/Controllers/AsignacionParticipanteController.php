@@ -75,38 +75,35 @@ class AsignacionParticipanteController extends Controller
 
   public function obtenerAprendicesPorGrupo($idGrupo)
   {
-    $asignaciones = AsignacionParticipante::selectRaw('MAX(id) as latest_id')
-      ->groupBy('idParticipante');
-    $asignaciones = AsignacionParticipante::whereIn('id', function ($query) use ($asignaciones, $idGrupo) {
-      $query->select('latest_id')
-        ->fromSub($asignaciones, 'subquery')
-        ->where('idGrupo', '=', $idGrupo);
-    })
-      ->whereIn('idEstadoParticipantes', function ($query) {
-        $query->select('id')
-          ->from('estadoParticipantes')
-          ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
-      })
-      ->whereNotIn('idParticipante', function ($query) {
-        $query->select('idParticipante')
-          ->from('AsignacionParticipante')
-          ->where('idTipoParticipacion', 3)
+      $latestIdsQuery = AsignacionParticipante::selectRaw('MAX(id) as latest_id')
+          ->where('idGrupo', $idGrupo)
           ->groupBy('idParticipante');
+  
+      $aprendicesQuery = AsignacionParticipante::whereIn('id', function ($query) use ($latestIdsQuery) {
+          $query->select('latest_id')
+              ->fromSub($latestIdsQuery, 'subquery');
       })
-      ->with($this->relations)
-      ->get();
-    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
-      ->where('idTipoParticipacion', 3)
-      ->latest('created_at')
-      ->with($this->relations)
-      ->first();
-    if ($ultimaFicha) {
-      $datos = $asignaciones->concat([$ultimaFicha]);
-    } else {
-      $datos = $asignaciones;
-    }
-    return response()->json($datos);
+          ->whereIn('idEstadoParticipantes', function ($query) {
+              $query->select('id')
+                  ->from('estadoParticipantes')
+                  ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
+          })
+          ->whereNotIn('idParticipante', function ($query) {
+              $query->select('idParticipante')
+                  ->from('AsignacionParticipante')
+                  ->where('idTipoParticipacion', 3)
+                  ->groupBy('idParticipante');
+          })
+          ->with($this->relations);
+      $ultimoLider = $this->getLastFichaByGroupIdAndType($idGrupo);
+      if ($ultimoLider) {
+          $datos = $aprendicesQuery->get()->concat([$ultimoLider->original]);
+      } else {
+          $datos = $aprendicesQuery->get();
+      }
+      return response()->json($datos);
   }
+  
   public function crearHistorialDesdeRegistros()
   {
     try {
@@ -346,6 +343,7 @@ class AsignacionParticipanteController extends Controller
     $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
       ->where('idTipoParticipacion', 3)
       ->latest('created_at')
+      ->with($this->relations)
       ->first();
 
     return response()->json($ultimaFicha);
