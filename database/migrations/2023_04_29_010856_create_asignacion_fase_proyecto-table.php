@@ -17,7 +17,7 @@ class CreateAsignacionFaseProyectoTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('idFase');
             $table->unsignedInteger('idProyectoFormativo');
-            $table->text ('descripcion');
+            $table->text ('descripcion')->nullable();
 
             $table->foreign('idProyectoFormativo')->references('id')->on('proyectoFormativo');
             $table->foreign('idFase')->references('id')->on('fase');

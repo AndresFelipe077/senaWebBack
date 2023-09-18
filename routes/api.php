@@ -59,7 +59,6 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
-use App\Http\Controllers\gestion_grupo\AsignacionJornadaActividadEventoController;
 use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\EstadoProgramaController;
 use App\Http\Controllers\pruebaController;
@@ -188,10 +187,12 @@ Route::get('sedes/ciudad/{id}', [SedeController::class, 'showByCiudad']);
 Route::resource('areas', AreaController::class);
 
 //rutas de infraestructura -> revisar y optimizar (crear un grupo de rutas como en ciudades)
-Route::resource('infraestructuras', InfraestructuraController::class);
-Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
-Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
-Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+Route::resource('infraestructuras', InfraestructuraController::class)->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('infraestructuras/sede/{id}', [InfraestructuraController::class, 'showBySede']);
+    Route::get('infraestructuras/area/{id}', [InfraestructuraController::class, 'showByArea']);
+    Route::get('infraestructuras/sede/{idSede}/area/{idArea}', [InfraestructuraController::class, 'showBySedeArea']);
+});
 
 
 //jornadas
@@ -255,11 +256,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::resource('estados', EstadoController::class);
 
-
-
-
-
-
 Route::resource('personas', PersonController::class);
 
 //regional
@@ -273,16 +269,7 @@ Route::get('personByIdentificacion/{identificacion}', [PersonController::class, 
 
 
 
-
-
-
-
-
-
 Route::resource('tipoPar', TipoParticipacionController::class);
-
-
-
 
 
 
@@ -291,8 +278,9 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 Route::get('asignacion_participante', [AsignacionParticipanteController::class, 'index']);
 
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
-
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']); 
+   //usuarios que son aprendices
+Route::get('usuarios_instructores', [UserController::class, 'instructoresActives']); 
 
 
 Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']); // SE BUSCA PROGRAMA
@@ -310,10 +298,10 @@ Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtene
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
-Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']);
+Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']); ///no se esta utilizando 
 
 
-
+Route::post ('aprendiz-ficha-asignar',[AsignacionParticipanteController::class,'assignAprendizzToFicha']);
 
 
 ///////////////////////////////////////////////////////////
@@ -323,13 +311,10 @@ Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asi
 Route::get('search/{table}/{query}', [QueryController::class, 'show']);
 
 
-
-
+//  para el excel de aprendiz 
 
 Route::post('aprendis', [AprendicesTmpController::class, 'importar']);
 Route::post('prueba', [pruebaController::class, 'import']);
-
-
 
 Route::post('importarexcel', [AprendicesTmpController::class, 'prueba']);
 
@@ -374,9 +359,9 @@ Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::clas
 
 Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
 
-Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
+Route::get('historial_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
-Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaByGroupIdAndType']);
 
 Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 
@@ -392,3 +377,7 @@ Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::c
 Route::get('conf_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapById']);
 
 Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}', [ConfiguracionRapController::class, 'executionByPercentageCompetencia']);
+Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
+
+Route::get('getEstadosParticipantes', [AsignacionParticipanteController::class, 'getEstadosParticipantes']);
+ 
