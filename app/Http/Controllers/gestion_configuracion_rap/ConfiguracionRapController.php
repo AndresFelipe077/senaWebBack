@@ -428,8 +428,9 @@ class ConfiguracionRapController extends Controller
   }
 
   /**
-   * Undocumented function
+   * Validate dates between ficha
    *
+   * @param int $idConfiguracionRap
    * @return void
    */
   public function configurationRapBetweenStartDateAndEndDateFichaLectiva($idConfiguracionRap)
@@ -448,10 +449,10 @@ class ConfiguracionRapController extends Controller
   }
 
   /**
-   * Undocumented function
+   * Validate start date and date ficha
    *
-   * @param [type] $idConfiguracionRap
-   * @param [type] $data
+   * @param int $idConfiguracionRap
+   * @param $data
    * @return void
    */
   private function validateStartDateAndEndDateFicha($idConfiguracionRap, $data)
@@ -466,6 +467,15 @@ class ConfiguracionRapController extends Controller
     }
 
     return true;
+  }
+
+  /**
+   * Validate hours of ficha
+   *
+   * @return void
+   */
+  private function validateHoursDeferredExecutedAndAssigned(){
+
   }
 
   
