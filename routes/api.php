@@ -376,7 +376,10 @@ Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::c
 
 Route::get('conf_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapById']);
 
-Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}', [ConfiguracionRapController::class, 'executionByPercentageCompetencia']);
+Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}/number_percent/{percentNumber}', [ConfiguracionRapController::class, 'executionByPercentageCompetencia']);//
+
+Route::get('configuracion_between_start_date_and_end_date_ficha/{idConfiguracionRap}', [ConfiguracionRapController::class, 'configurationRapBetweenStartDateAndEndDateFichaLectiva']);//
+
 Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
 
 Route::get('getEstadosParticipantes', [AsignacionParticipanteController::class, 'getEstadosParticipantes']);

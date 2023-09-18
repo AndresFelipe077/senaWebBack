@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\helper_service\HelperService;
 use Illuminate\Http\Request;
 use App\Models\ConfiguracionRap;
+use App\Models\Grupo;
 use App\Models\User;
 use DateTime;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
+use PhpParser\Node\Expr\Cast\Double;
 
 class ConfiguracionRapController extends Controller
 {
@@ -232,15 +235,24 @@ class ConfiguracionRapController extends Controller
   public function update(Request $request, $id): JsonResponse
   {
 
-    $data = $request->all();
+    $data = $request->all(); // Get data of request
 
-    $configuracionRap = ConfiguracionRap::findOrFail($id);
+    $configuracionRap = ConfiguracionRap::findOrFail($id); // Get information of confRap about id
 
-    if ($data['idInstructor'] != $configuracionRap->idInstructor) {
+    if ( $this->validateStartDateAndEndDateFicha($id, $data) ) { // Validate dates of ficha lectiva
 
-      $newInstructorToConfigurationRap = $this->changeInstructor($data, $configuracionRap, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal);
+      if ($data['idInstructor'] != $configuracionRap->idInstructor) { // if instructor is different
 
-      return response()->json($newInstructorToConfigurationRap);
+        $newInstructorToConfigurationRap = $this->changeInstructor($data, $configuracionRap, $configuracionRap->fechaInicial, $configuracionRap->fechaFinal); // Change instructor
+
+        return response()->json($newInstructorToConfigurationRap);
+
+      }
+
+    } else {
+
+      return response()->json(['error' => 'Fechas no permitas, deben estar entre las fechas lectivas de la ficha'], 422); // Get response false of validateStartDateAndEndDateFicha
+    
     }
 
     return response()->json(['message' => 'Instructor nuevo creado']);
@@ -342,7 +354,6 @@ class ConfiguracionRapController extends Controller
       'cantHoursByDay' => $cantHoursByJornada,
       'cantHoursTotal' => $cantHours,
     ]);
-    
   }
 
   /**
@@ -393,19 +404,69 @@ class ConfiguracionRapController extends Controller
     return $numeroDeDias;
   }
 
-
-
-
-
-
-  public function executionByPercentageCompetencia($idConfiguracionRap){
+  /**
+   * Percentage of competencia by execution of configuraciones raps
+   *
+   * @param int $idConfiguracionRap
+   * @param int $percentNumber
+   * @return double
+   */
+  public function executionByPercentageCompetencia($idConfiguracionRap, $percentNumber)
+  {
 
     $idConfiguracionRap = ConfiguracionRap::findOrFail($idConfiguracionRap);
 
-    $compentencia = $idConfiguracionRap->resultados->competencia->horas;
+    $hours = $idConfiguracionRap->resultados->competencia->horas;
 
-    var_dump($compentencia);
+    if ($percentNumber < 70 || $percentNumber > 100) {
+      throw new Exception("El valor está fuera del rango permitido (70-100).");
+    }
 
+    $percentage = $hours * ($percentNumber / 100);
+
+    return $percentage;
   }
 
+  /**
+   * Undocumented function
+   *
+   * @return void
+   */
+  public function configurationRapBetweenStartDateAndEndDateFichaLectiva($idConfiguracionRap)
+  {
+    $configuracion = ConfiguracionRap::findOrFail($idConfiguracionRap);
+
+    $idFicha = $configuracion->idGrupo;
+
+    $ficha = Grupo::findOrFail($idFicha);
+
+    $fechaInicial = $ficha->fechaInicialGrupo;
+
+    $fechaFinal = $ficha->fechaFinalGrupo;
+
+    return ['fechaInicial' => $fechaInicial, 'fechaFinal' => $fechaFinal];
+  }
+
+  /**
+   * Undocumented function
+   *
+   * @param [type] $idConfiguracionRap
+   * @param [type] $data
+   * @return void
+   */
+  private function validateStartDateAndEndDateFicha($idConfiguracionRap, $data)
+  {
+    $dates = $this->configurationRapBetweenStartDateAndEndDateFichaLectiva($idConfiguracionRap);
+
+    $fechaInicialConfRap = $data['fechaInicial'];
+    $fechaFinalConfRap   = $data['fechaFinal'];
+
+    if ($fechaInicialConfRap < $dates["fechaInicial"] || $fechaFinalConfRap > $dates["fechaFinal"]) {
+      return false;
+    }
+
+    return true;
+  }
+
+  
 }
