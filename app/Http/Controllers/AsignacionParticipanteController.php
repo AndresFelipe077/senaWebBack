@@ -87,9 +87,25 @@ class AsignacionParticipanteController extends Controller
           ->from('estadoParticipantes')
           ->whereIn('detalleEstado', ['ACTIVO', 'PENDIENTE']);
       })
-      ->with(['usuario.persona'])
+      ->whereNotIn('idParticipante', function ($query) {
+        $query->select('idParticipante')
+          ->from('AsignacionParticipante')
+          ->where('idTipoParticipacion', 3)
+          ->groupBy('idParticipante');
+      })
+      ->with($this->relations)
       ->get();
-    return response()->json($asignaciones);
+    $ultimaFicha = AsignacionParticipante::where('idGrupo', $idGrupo)
+      ->where('idTipoParticipacion', 3)
+      ->latest('created_at')
+      ->with($this->relations)
+      ->first();
+    if ($ultimaFicha) {
+      $datos = $asignaciones->concat([$ultimaFicha]);
+    } else {
+      $datos = $asignaciones;
+    }
+    return response()->json($datos);
   }
   public function crearHistorialDesdeRegistros()
   {
@@ -362,18 +378,29 @@ class AsignacionParticipanteController extends Controller
           ->from('estadoParticipantes');
       })
       ->whereNotIn('idTipoParticipacion', [3])
-      ->with(['usuario.persona'])
+      ->with($this->relations)
       ->get();
 
     return response()->json($asignaciones);
   }
   public function getEstadosParticipantes(): JsonResponse
-{
+  {
     $estadosExcluidos = ['ACTIVO', 'PENDIENTE'];
-    
+
     $estadosParticipantes = EstadoParticipante::whereNotIn('detalleEstado', $estadosExcluidos)
-        ->get();
+      ->get();
 
     return response()->json($estadosParticipantes);
-}
+  }
+
+  
+  public function getHistorialAprendices($idGrupo): JsonResponse
+{
+    $registros = AsignacionParticipante::where('idGrupo', $idGrupo)
+        ->orderBy('id', 'asc') 
+        ->whereNotIn('idTipoParticipacion', [3])
+        ->with($this->relations)->get();
+
+    return response()->json($registros);
+  }
 }

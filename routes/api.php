@@ -374,4 +374,6 @@ Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteContr
 Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
 
 Route::get('getEstadosParticipantes', [AsignacionParticipanteController::class, 'getEstadosParticipantes']);
+
+Route::get('gethistorialaprendices/{idGrupo}', [AsignacionParticipanteController::class, 'getHistorialAprendices']);
  
