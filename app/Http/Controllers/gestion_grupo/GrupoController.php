@@ -700,7 +700,7 @@ class GrupoController extends Controller
    * Create registers about configuracionRaps by this idGrupo(ficha)
    * @author Andres Felipe Pizo Luligo
    */
-  public function createConfiguracionRapByGrupo($idFicha)
+  private function createConfiguracionRapByGrupo($idFicha)
   {
     $ficha = Grupo::find($idFicha);
 
@@ -769,7 +769,7 @@ class GrupoController extends Controller
 
   /**
    * Get configuraciones raps by id ficha
-   *
+   * @author Andres Felipe Pizo Luligo
    * @return void
    */
   public function getConfiguracionRapById($idFicha)
