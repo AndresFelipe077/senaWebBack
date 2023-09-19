@@ -9,6 +9,18 @@ use Illuminate\Http\Request;
 
 class PlaneacionController extends Controller
 {
+    private $relations;
+
+    public function __construct()
+    {
+        $this -> relations = [
+            'actividadProyectos',
+            'resultados',
+            'criteriosEvaluacion',
+            'actividadAprendizajes'
+        ];
+    }
+
     public function destroy(int $id)
     {
         try {
@@ -24,7 +36,6 @@ class PlaneacionController extends Controller
             return response()->json(['message' => 'Error al eliminar el registro', 'error' => $e->getMessage()], 500);
         }
     }
-
 
     public function store(Request $request)
     {
@@ -61,11 +72,32 @@ class PlaneacionController extends Controller
         }
     }
 
+    public function update(Request $request,int $id){
+ 
+        $data = $request -> all();
+
+        $planeacion =  Planeacion::findOrFail($id);
+        $planeacion -> fill($data);
+        $planeacion -> save();
+        $planeacion = Planeacion::with($this->relations)->findOrFail($planeacion->id);
+        return response()->json($planeacion,203);
+
+    }
+
+    public function showByResultado(int $id)
+    {
+        $resultados = Planeacion::with($this->relations)
+        ->where('idResultadoAprendizaje',$id);
+
+        return response() -> json($resultados);
+    }
+
     public function showByIdActividadProyecto(int $id)
     {
-        $resultados = Planeacion::with(['actividadProyectos','resultados'])
+        $resultados = Planeacion::with($this->relations)
         ->where('idActividadProyecto',$id) -> get();
 
         return response() -> json($resultados);
     }
+
 }
