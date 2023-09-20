@@ -440,7 +440,7 @@ class GrupoController extends Controller
       'idTipoOferta' => $data['idTipoOferta'],
     ]);
 
-    if (isset($data['imagenIcon']) && $data['imagenIcon'] !== 'undefined') {
+    if (isset($data['imagenIcon']) && $data['imagenIcon'] !== 'undefined') { // Validate image when not update
       
       $this->deleteImage($especial);
 
