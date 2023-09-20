@@ -59,6 +59,7 @@ use App\Http\Controllers\AprendicesTmpController;
 use App\Http\Controllers\AsignacionFaseProyFormativoController;
 use App\Http\Controllers\CriteriosEvaluacion;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\gestion_grupo\AsignacionJornadaActividadEventoController;
 use App\Http\Controllers\HistorialDocumentoController;
 use App\Http\Controllers\EstadoProgramaController;
 use App\Http\Controllers\pruebaController;
