@@ -20,7 +20,7 @@ class GrupoFactory extends Factory
     public function definition()
     {
 
-        $tipoGrupo          = TipoGrupo::all()->random();
+        // $tipoGrupo          = TipoGrupo::all()->random();
         $proyectoFormativo  = proyectoFormativo::all()->random();
         $tipoFormacion      = TipoFormacion::all()->random();
         $estado             = EstadoGrupo::all()->random();
@@ -32,7 +32,7 @@ class GrupoFactory extends Factory
             'fechaInicialGrupo'   => $this->faker->randomElement(['2018/12/12', '20/12/12']),
             'fechaFinalGrupo'     => $this->faker->randomElement(['2023/12/10', '2030/12/10']),
             'observacion'         => strtoupper($this->faker->text()),
-            'idTipoGrupo'         => $tipoGrupo -> id,
+            'idTipoGrupo'         => 1,
             'idProyectoFormativo' => $proyectoFormativo -> id,
             'idTipoFormacion'     => $tipoFormacion -> id,
             'idEstado'            => $estado -> id,

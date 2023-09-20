@@ -20,7 +20,7 @@ class CreateAsignacionParticipantesTable extends Migration
             $table->foreign('idParticipante')->references('id')->on('usuario')->onDelete('cascade');
 
             $table->unsignedInteger('idGrupo')->nullable();
-            $table->foreign('idGrupo')->references('id')->on('grupo')->onDelete('cascade');
+            $table->foreign('idGrupo')->references('id')->on('grupo')->onDelete('cascade')->nullable();
 
             $table->foreignId('idTipoParticipacion')->references('id')->on('tipoParticipacion')->onDelete('cascade');
 

@@ -44,30 +44,8 @@ class GrupoController extends Controller
 
     $grupos = Grupo::with($this->relations)->get();
 
-    //quitar pivots
-    $newGrupos = $grupos->map(function ($grupo) {
-      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-        $pivot = $infr['pivot'];
-        unset($infr['pivot']);
-        $infr['horario_infraestructura'] = $pivot;
-        return $infr;
-      });
-
-      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
-        $pivot = $participante['pivot'];
-        unset($participante['pivot']);
-        $participante['participantes_asignados'] = $pivot;
-        return $participante;
-      });
-
-      $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
-        $pivot = $jornada['pivot'];
-        unset($jornada['pivot']);
-        $jornada['jornada_grupo'] = $pivot;
-        return $jornada;
-      });
-      return $grupo;
-    });
+    $newGrupos = $this->mapRelations($grupos);
+    
     return response()->json($newGrupos);
   }
 
@@ -78,29 +56,7 @@ class GrupoController extends Controller
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '2')->get();
 
-    $newGrupos = $grupos->map(function ($grupo) {
-      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
-        $pivot = $infr['pivot'];
-        unset($infr['pivot']);
-        $infr['horario_infraestructura'] = $pivot;
-        return $infr;
-      });
-
-      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
-        $pivot = $participante['pivot'];
-        unset($participante['pivot']);
-        $participante['participantes_asignados'] = $pivot;
-        return $participante;
-      });
-
-      $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
-        $pivot = $jornada['pivot'];
-        unset($jornada['pivot']);
-        $jornada['jornada_grupo'] = $pivot;
-        return $jornada;
-      });
-      return $grupo;
-    });
+    $newGrupos = $this->mapRelations($grupos);
 
     return response()->json($newGrupos);
   }
@@ -112,6 +68,19 @@ class GrupoController extends Controller
   {
     $grupos = Grupo::with($this->relations)->where('idTipoGrupo', '1')->get();
 
+    $newGrupos = $this->mapRelations($grupos);
+
+    return response()->json($newGrupos);
+  }
+
+  /**
+   * Map relations, delete pivots by relations many to many
+   * @param $grupos > data of fichas or especiales (GET)
+   * @return relation of grupos
+   * @author Andres Felipe Pizo Luligo
+   */
+  private function mapRelations($grupos){
+    
     $newGrupos = $grupos->map(function ($grupo) {
       $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
         $pivot = $infr['pivot'];
@@ -136,7 +105,41 @@ class GrupoController extends Controller
       return $grupo;
     });
 
-    return response()->json($newGrupos);
+    return $newGrupos;
+
+  }
+
+  /**
+   * Map relations, delete pivots by relations many to many
+   * @param $grupos > data of ficha or especial (CREATE || UPDATE)
+   * @return relation of ficha or especial
+   * @author Andres Felipe Pizo Luligo
+   */
+  private function mapRelation($grupo){
+
+      $grupo['infraestructuras'] = $grupo['infraestructuras']->map(function ($infr) {
+        $pivot = $infr['pivot'];
+        unset($infr['pivot']);
+        $infr['horario_infraestructura'] = $pivot;
+        return $infr;
+      });
+
+      $grupo['participantes'] = $grupo['participantes']->map(function ($participante) {
+        $pivot = $participante['pivot'];
+        unset($participante['pivot']);
+        $participante['participantes_asignados'] = $pivot;
+        return $participante;
+      });
+
+      $grupo['jornadas'] = $grupo['jornadas']->map(function ($jornada) {
+        $pivot = $jornada['pivot'];
+        unset($jornada['pivot']);
+        $jornada['jornada_grupo'] = $pivot;
+        return $jornada;
+      });
+
+      return $grupo;
+
   }
 
   /**
@@ -202,8 +205,9 @@ class GrupoController extends Controller
 
     $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
 
+    $newFicha = $this->mapRelation($grupo);
 
-    return response()->json($grupo, 201);
+    return response()->json($newFicha, 201);
   }
 
   /**
@@ -279,7 +283,10 @@ class GrupoController extends Controller
 
     $especial = Grupo::with($this->relations)->findOrFail($grupo->id);
 
-    return response()->json($especial, 201);
+    $newEspecial = $this->mapRelation($especial);
+
+    return response()->json($newEspecial, 201);
+
   }
 
 
@@ -291,27 +298,15 @@ class GrupoController extends Controller
    */
   public function show(int $id)
   {
-    $dato = Grupo::with($this->relations)->find($id);
+    $ficha_especial = Grupo::with($this->relations)->find($id);
 
-    if (!$dato) {
-      return response()->json(['error' => 'El dato no fue encontrado'], 404);
+    if (!$ficha_especial) {
+      return response()->json(['error' => 'Registration not found'], 404);
     }
 
-    $dato['infraestructuras'] = $dato['infraestructuras']->map(function ($infr) {
-      $pivot = $infr['pivot'];
-      unset($infr['pivot']);
-      $infr['horario_infraestructura'] = $pivot;
-      return $infr;
-    });
+    $ficha_especial = $this->mapRelation($ficha_especial);
 
-    $dato['jornadas'] = $dato['jornadas']->map(function ($jornada) {
-      $pivot = $jornada['pivot'];
-      unset($jornada['pivot']);
-      $jornada['jornada_grupo'] = $pivot;
-      return $jornada;
-    });
-
-    return response()->json($dato);
+    return response()->json($ficha_especial);
   }
 
   /**
@@ -376,7 +371,7 @@ class GrupoController extends Controller
   public function update(Request $request, $id): JsonResponse
   {
     $data = $request->all();
-    $grupo = Grupo::with($this->relations)->findOrFail($id);
+    $grupo = Grupo::findOrFail($id);
 
     // Validar infraestructuras y jornadas
     $existeAsignacion = $this->verificarAsignacionInfraestructuraUpdate($data['infraestructuras'], $request->jornadas, $grupo->id);
@@ -386,15 +381,15 @@ class GrupoController extends Controller
     }
 
     $grupo->update([
-      'nombre' => $data['nombre'],
-      'fechaInicialGrupo' => $data['fechaInicialGrupo'],
-      'fechaFinalGrupo' => $data['fechaFinalGrupo'],
-      'observacion' => $data['observacion'],
-      'idTipoGrupo' => $data['idTipoGrupo'],
+      'nombre'              => $data['nombre'],
+      'fechaInicialGrupo'   => $data['fechaInicialGrupo'],
+      'fechaFinalGrupo'     => $data['fechaFinalGrupo'],
+      'observacion'         => $data['observacion'],
+      'idTipoGrupo'         => $data['idTipoGrupo'],
       'idProyectoFormativo' => $data['idProyectoFormativo'],
-      'idTipoFormacion' => $data['idTipoFormacion'],
-      'idEstado' => $data['idEstado'],
-      'idTipoOferta' => $data['idTipoOferta'],
+      'idTipoFormacion'     => $data['idTipoFormacion'],
+      'idEstado'            => $data['idEstado'],
+      'idTipoOferta'        => $data['idTipoOferta'],
     ]);
 
     $currentInfraestructuras = $grupo->infraestructuras()->whereDate('fechaFinal', '>=', now())->pluck('idInfraestructura');
@@ -416,9 +411,14 @@ class GrupoController extends Controller
       }
     }
 
-    $grupo->save(); // Guardar el grupo actualizado
+    $grupo->save(); // Guardar la ficha actualizada
 
-    return response()->json($grupo, 200);
+    $grupo = Grupo::with($this->relations)->findOrFail($grupo->id);
+
+    $grupo1 = $this->mapRelation($grupo);
+
+    return response()->json($grupo1, 200);
+
   }
 
   /**
@@ -428,7 +428,7 @@ class GrupoController extends Controller
   public function updateEspecial(Request $request, $idEspecial): JsonResponse
   {
     $data = $request->all();
-    $especial = Grupo::with($this->relations)->findOrFail($idEspecial);
+    $especial = Grupo::findOrFail($idEspecial);
 
     $especial->update([
       'nombre' => $data['nombre'],
@@ -487,7 +487,11 @@ class GrupoController extends Controller
       }
     }
 
-    $especial->save(); // Guardar el grupo actualizado
+    $especial->save(); // Guardar el especial actualizado
+
+    $especial = Grupo::with($this->relations)->findOrFail($especial->id);
+
+    $especial = $this->mapRelation($especial);
 
     return response()->json($especial, 200);
   }
@@ -515,8 +519,10 @@ class GrupoController extends Controller
   }
 
   /**
-   * Delete image
-   * @params $ficha_especial
+   * Delete image of ficha or especial
+   *
+   * @param $ficha_especial
+   * @return void
    */
   private function deleteImage($ficha_especial): void {
 
@@ -694,7 +700,7 @@ class GrupoController extends Controller
    * Create registers about configuracionRaps by this idGrupo(ficha)
    * @author Andres Felipe Pizo Luligo
    */
-  public function createConfiguracionRapByGrupo($idFicha)
+  private function createConfiguracionRapByGrupo($idFicha)
   {
     $ficha = Grupo::find($idFicha);
 
@@ -728,7 +734,7 @@ class GrupoController extends Controller
           'idJornada'         => null,
           'idGrupo'           => $idFicha,
           'idInfraestructura' => null,
-          'idEstado'          => 1,
+          'idEstado'          => 2, // PENDIENTE
           'horas'             => 0,
           'fechaInicial'      => null,
           'fechaFinal'        => null,
@@ -760,4 +766,25 @@ class GrupoController extends Controller
 
     return response()->json($configuracionesRaps);
   }
+
+  /**
+   * Get configuraciones raps by id ficha
+   * @author Andres Felipe Pizo Luligo
+   * @return void
+   */
+  public function getConfiguracionRapById($idFicha)
+  {
+
+    $configuracionController = new ConfiguracionRapController();
+
+    $relations = $configuracionController->relations(''); // Traeme todas las relactions
+
+    $confRaps = ConfiguracionRap::with($relations)->where('idGrupo', $idFicha)->get();
+
+    $confsRaps = $this->mapRelations($confRaps);
+
+    return response()->json($confsRaps);
+    
+  }
+
 }

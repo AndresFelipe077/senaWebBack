@@ -21,9 +21,11 @@ class CreateEstadoConfiguracionRap extends Migration
         });
 
         DB::table('estadoConfiguracionRap')->insert([
-            ['estado' => 'ACTIVO'],
+            ['estado' => 'EN EJECUCION'],
+            ['estado' => 'PENDIENTE'],
             ['estado' => 'FINALIZADO'],
-            ['estado' => 'TRASLADO'],
+            ['estado' => 'CAMBIO DE INSTRUCTOR'],
+            ['estado' => 'PAUSADO']
         ]);
 
     }

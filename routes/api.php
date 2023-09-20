@@ -214,11 +214,9 @@ Route::get('usuarios_instructores', [UserController::class, 'instructores']);
 
 Route::get('configuraciones_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapByidFicha']);
 
-Route::resource('grupos', GrupoController::class);
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    // Route::resource('grupos', GrupoController::class);
+    Route::resource('grupos', GrupoController::class);
 
     Route::post('create_especial/{idEspecial}', [GrupoController::class, 'storeEspecial']);
 
@@ -275,8 +273,9 @@ Route::resource('tipoPar', TipoParticipacionController::class);
 
 Route::get('asignacion_participante', [AsignacionParticipanteController::class, 'index']);
 
-Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']);    //usuarios que son aprendices
-
+Route::get('usuarios_aprendices', [UserController::class, 'aprendicesActives']); 
+   //usuarios que son aprendices
+Route::get('usuarios_instructores', [UserController::class, 'instructoresActives']); 
 
 
 Route::post('buscarProgramas',  [ProgramaController::class, 'buscarProgramas']); // SE BUSCA PROGRAMA
@@ -289,12 +288,18 @@ Route::get('participantesPro', [AsignacionParticipanteController::class, 'obtene
 
 Route::get('/asignacionParticipantes/grupos/{idGrupo}/aprendices', [AsignacionParticipanteController::class, 'obtenerAprendicesPorGrupo']);
 
-Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']);
+Route::post('asignar-nuevo-tipo', [AsignacionParticipanteController::class, 'asignarNuevoTipo']); ///no se esta utilizando 
+
+
+Route::post ('aprendiz-ficha-asignar',[AsignacionParticipanteController::class,'assignAprendizzToFicha']);
 
 
 ///////////////////////////////////////////////////////////
 
 Route::get('search/{table}/{query}', [QueryController::class, 'show']);
+
+
+//  para el excel de aprendiz 
 
 Route::post('aprendis', [AprendicesTmpController::class, 'importar']);
 Route::post('prueba', [pruebaController::class, 'import']);
@@ -335,8 +340,6 @@ Route::delete('/proyectoFormativo/{idProyectoFormativo}/competencias', [Proyecto
 //////////////
 
 Route::get('crear-historial', [AsignacionParticipanteController::class, 'crearHistorialDesdeRegistros']);
-// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
-Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
 
 Route::post('assig_instructor_to_ficha', [AsignacionParticipanteController::class, 'assignInstructorToFicha']);
 
@@ -344,10 +347,30 @@ Route::post('assig_aprendices_to_ficha', [AsignacionParticipanteController::clas
 
 Route::get('fichas_by_instructor/{idInstructor}', [AsignacionParticipanteController::class, 'getFichasByInstructorLider']);
 
-Route::get('asignacion_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
+Route::get('historial_fichas_by_id/{idFicha}', [AsignacionParticipanteController::class, 'getFichasById']);
 
-Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaById']);
+Route::get('get_last_ficha/{idLastFicha}', [AsignacionParticipanteController::class, 'getLastFichaByGroupIdAndType']);
 
 Route::get('get_last_register/{idParticipante}', [AsignacionParticipanteController::class, 'getLastRegisterByIdParticipante']);
 
 Route::put('update_instructor/{idAsignacionFicha}', [AsignacionParticipanteController::class, 'updateInstructor']);
+
+
+// Configuracion Rap
+// Obtain consultation of hours that are lost due to raps that the competition has depending on the attendance of the instructor
+Route::get('horas_raps_perdidos/{idInstructor}', [ConfiguracionRapController::class, 'getHoursLostForRapInCompetenciaByInstructor']);
+
+Route::get('count_sessions/{idConfiguracionRap}', [ConfiguracionRapController::class, 'countSessions']);
+
+Route::get('conf_raps_by_ficha/{idFicha}', [GrupoController::class, 'getConfiguracionRapById']);
+
+Route::get('percentage_competencia_for_conf_raps/{idConfiguracionRap}/number_percent/{percentNumber}', [ConfiguracionRapController::class, 'executionByPercentageCompetencia']);//
+
+Route::get('configuracion_between_start_date_and_end_date_ficha/{idConfiguracionRap}', [ConfiguracionRapController::class, 'configurationRapBetweenStartDateAndEndDateFichaLectiva']);//
+
+Route::get('get_last_all_register', [AsignacionParticipanteController::class, 'getLastRegisterOfAllParticipants']);
+
+Route::get('getEstadosParticipantes', [AsignacionParticipanteController::class, 'getEstadosParticipantes']);
+
+Route::get('gethistorialaprendices/{idGrupo}', [AsignacionParticipanteController::class, 'getHistorialAprendices']);
+ 
