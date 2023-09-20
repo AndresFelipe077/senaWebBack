@@ -99,7 +99,7 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_oferta.sql';
         DB::unprepared(file_get_contents($path));
 
-        // proyectoFormativo::factory(1)->create();
+        proyectoFormativo::factory(1)->create();
 
         // Grupo::factory(1)->create();
 
