@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
         $path = 'database/seeders/sql/tipo_competencia.sql';
         DB::unprepared(file_get_contents($path));
 
-        $path = 'database/seeders/sql/jornada.sql';
-        DB::unprepared(file_get_contents($path));
+        // $path = 'database/seeders/sql/jornada.sql';
+        // DB::unprepared(file_get_contents($path));
 
         $path = 'database/seeders/sql/estado_grupo_infraestructura.sql';
         DB::unprepared(file_get_contents($path));
@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
 
         proyectoFormativo::factory(1)->create();
 
-        Grupo::factory(1)->create();
+        // Grupo::factory(1)->create();
 
         // $path = 'database/seeders/sql/asignacion_participante.sql';
         // DB::unprepared(file_get_contents($path));

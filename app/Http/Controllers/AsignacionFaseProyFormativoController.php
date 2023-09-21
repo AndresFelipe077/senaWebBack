@@ -10,7 +10,8 @@ class AsignacionFaseProyFormativoController extends Controller
 
     private $relations;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->relations = [
             'fase',
             'proyectoFormativo'
@@ -32,6 +33,33 @@ class AsignacionFaseProyFormativoController extends Controller
         return response()->json($fases->get());
     }
 
+    public function asignationExist(Request $request, ?int $id = null): bool
+    {
+        $data = $request->all();
+        $idFase = $data['idFase'];
+        $idProyecto = $data['idProyectoFormativo'];
+
+        $asignacion_fase = null;
+
+        if ($id) {
+            $asignacion_fase = AsignacionFaseProyFormativo::find($id);
+        }
+
+        if ($asignacion_fase) {
+            $status_fase = $asignacion_fase->idFase == $data['idFase'];
+            $status_proyecto = $asignacion_fase->idProyectoFormativo == $data['idProyectoFormativo'];
+            $found = !($status_fase && $status_proyecto);
+            if(!$found){
+                return $found;
+            }
+        }
+
+        $found = AsignacionFaseProyFormativo::where('idFase', $idFase)
+            ->where('idProyectoFormativo', $idProyecto)
+            ->exists();
+
+        return $found;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -40,10 +68,14 @@ class AsignacionFaseProyFormativoController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->all();
-        $asignacionFaseProyFormativo=new asignacionFaseProyFormativo($data);
-        $asignacionFaseProyFormativo -> save();
-        $asignacionFaseProyFormativo = asignacionFaseProyFormativo::with($this->relations) ->findOrFail($asignacionFaseProyFormativo->id);
+        if ($this->asignationExist($request)) {
+            $message = "Esta Fase ya fue asignada";
+            return response()->json(['error' => $message], 400);
+        }
+        $data = $request->all();
+        $asignacionFaseProyFormativo = new AsignacionFaseProyFormativo($data);
+        $asignacionFaseProyFormativo->save();
+        $asignacionFaseProyFormativo = AsignacionFaseProyFormativo::with($this->relations)->findOrFail($asignacionFaseProyFormativo->id);
 
         return response()->json($asignacionFaseProyFormativo);
     }
@@ -62,9 +94,9 @@ class AsignacionFaseProyFormativoController extends Controller
     public function showByIdProyecto(int $id)
     {
         $fases = AsignacionFaseProyFormativo::with($this->relations)
-        ->where('idProyectoFormativo',$id) -> get();
+            ->where('idProyectoFormativo', $id)->get();
 
-        return response() -> json($fases);
+        return response()->json($fases);
     }
 
     /**
@@ -74,15 +106,20 @@ class AsignacionFaseProyFormativoController extends Controller
      * @param  \App\Models\asignacionFaseProyFormativo  $asignacionFaseProyFormativo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,int $id)
+    public function update(Request $request, int $id)
     {
-        $data = $request -> all();
-        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations)
-        -> findOrFail($id);
-        $asignacion_fase -> fill($data);
-        $asignacion_fase -> save();
+        if ($this->asignationExist($request,$id)) {
+            $message = "Esta fase ya fue asignada a este proyecto ";
+            return response()->json(['error' => $message], 400);
+        }
+        $data = $request->all();
+        $asignacion_fase = AsignacionFaseProyFormativo::findOrFail($id);
+        $asignacion_fase->fill($data);
+        $asignacion_fase->save();
+        $asignacion_fase = AsignacionFaseProyFormativo::with($this->relations)->findOrFail($asignacion_fase->id);
 
-        return response()->json($asignacion_fase,204);
+
+        return response()->json($asignacion_fase);
     }
 
     /**
@@ -93,7 +130,7 @@ class AsignacionFaseProyFormativoController extends Controller
      */
     public function destroy(int $id)
     {
-        $asignacionFaseP = asignacionFaseProyFormativo::findOrFail($id);
-        $asignacionFaseP -> delete();
+        $asignacionFaseP = AsignacionFaseProyFormativo::findOrFail($id);
+        $asignacionFaseP->delete();
     }
 }

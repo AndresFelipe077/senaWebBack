@@ -26,8 +26,9 @@ class ResultadoAprendizajeController extends Controller{
         $competencia = $request->input('competencias');
         $resultados = resultadoAprendizaje::with('competencia');
         
+// rrrrrrrevkizar
         if ($competencia) {
-            $resultados->whereHas('competencia', function ($q) use ($competencia) {
+            $resultados->whereHas('competencias', function ($q) use ($competencia) {
                 return $q->where('id', $competencia)->orWhere('nombreCompetencia', $competencia);
             });
         }
