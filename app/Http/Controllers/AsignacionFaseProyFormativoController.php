@@ -6,7 +6,7 @@ use App\Models\AsignacionFaseProyFormativo;
 use Illuminate\Http\Request;
 
 class AsignacionFaseProyFormativoController extends Controller
-{   
+{
 
     private $relations;
 
@@ -21,9 +21,15 @@ class AsignacionFaseProyFormativoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        $nombreFase = $request->input('descripcion');
+
+        $fases = AsignacionFaseProyFormativo::query();
+        if ($nombreFase) {
+            $fases->where('descripcion', $nombreFase);
+        }
+        return response()->json($fases->get());
     }
 
     /**
@@ -71,7 +77,7 @@ class AsignacionFaseProyFormativoController extends Controller
     public function update(Request $request,int $id)
     {
         $data = $request -> all();
-        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations) 
+        $asignacion_fase = asignacionFaseProyFormativo::with($this->relations)
         -> findOrFail($id);
         $asignacion_fase -> fill($data);
         $asignacion_fase -> save();
