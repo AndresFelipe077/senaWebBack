@@ -22,15 +22,10 @@ class AsignacionFaseProyFormativoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $nombreFase = $request->input('descripcion');
-
-        $fases = AsignacionFaseProyFormativo::query();
-        if ($nombreFase) {
-            $fases->where('descripcion', $nombreFase);
-        }
-        return response()->json($fases->get());
+        $data = AsignacionFaseProyFormativo::with($this->relations)->get();
+        return response() -> json($data,200);
     }
 
     public function asignationExist(Request $request, ?int $id = null): bool

@@ -7,7 +7,16 @@ use App\Models\actividadAprendizaje;
 use Illuminate\Http\Request;
 
 class actividadAprendizajeController extends Controller
-{
+{   
+    private $relations;
+
+    public function __construct()
+    {
+        $this->relations = [
+            'estado',
+            'rap.resultados'
+        ];
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +27,7 @@ class actividadAprendizajeController extends Controller
     {
         $estado = $request->input('estado');
         $ActividadAprendizaje = $request->input('rap');
-        $actividadAprendizaje = actividadAprendizaje::with('estado', 'rap');
+        $actividadAprendizaje = actividadAprendizaje::with($this->relations);
 
         if ($estado) {
             $actividadAprendizaje->whereHas('estado', function ($q) use ($estado) {
@@ -46,6 +55,7 @@ class actividadAprendizajeController extends Controller
         $data = $request->all();
         $actividadAA = new actividadAprendizaje($data);
         $actividadAA->save();
+        $actividadAA = actividadAprendizaje::with($this->relations)->findOrFail($actividadAA -> id);
 
         return response()->json($actividadAA, 201);
     }
@@ -65,7 +75,7 @@ class actividadAprendizajeController extends Controller
 
 
     public function showByIdRap(int $id){
-        $actividadesAprendizaje = actividadAprendizaje::with('planeacion')
+        $actividadesAprendizaje = actividadAprendizaje::with($this->relations)
         -> where('idPlaneacion',$id) -> get();
 
         return response() -> json($actividadesAprendizaje);
@@ -84,6 +94,7 @@ class actividadAprendizajeController extends Controller
         $actividadAA = actividadAprendizaje::findOrFail($id);
         $actividadAA->fill($data);
         $actividadAA->save();
+        $actividadAA = actividadAprendizaje::with($this->relations) -> findOrFail($actividadAA ->id);
 
         return response()->json($actividadAA);
     }
