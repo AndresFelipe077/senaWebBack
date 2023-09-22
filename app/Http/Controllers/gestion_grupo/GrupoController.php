@@ -219,6 +219,10 @@ class GrupoController extends Controller
   public function storeEspecial(Request $request): JsonResponse
   {
 
+    $request->validate([
+      'imagenIcon' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg+xml',
+    ]);
+
     $data = $request->all();
 
     $grupo = new Grupo([
@@ -425,6 +429,11 @@ class GrupoController extends Controller
    */
   public function updateEspecial(Request $request, $idEspecial): JsonResponse
   {
+
+    $request->validate([
+      'imagenIcon' => 'nullable|mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg+xml',
+    ]);
+
     $data = $request->all();
     $especial = Grupo::findOrFail($idEspecial);
 
@@ -441,7 +450,7 @@ class GrupoController extends Controller
     ]);
 
     if (isset($data['imagenIcon']) && $data['imagenIcon'] !== 'undefined') { // Validate image when not update
-      
+
       $this->deleteImage($especial);
 
       if ($request->hasFile('imagenIcon')) {
@@ -460,7 +469,6 @@ class GrupoController extends Controller
 
         $especial->imagenIcon = $rutaImagenGuardada; // Asignar a el campo imagenIcon
       }
-
     }
 
 

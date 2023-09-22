@@ -17,6 +17,7 @@ class CreateProyectoFormativosTable extends Migration
             $table->increments('id');
             $table->text('nombre');
             $table->text('codigo');
+            $table->integer('tiempoEstimado');
             $table->integer('numeroTotalRaps');
 
             $table->unsignedInteger('idCentroFormacion');
