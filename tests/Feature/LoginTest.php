@@ -11,7 +11,7 @@ use Tests\TestCase;
 class LoginTest extends TestCase
 {
 
-  use RefreshDatabase;
+  // use RefreshDatabase;
 
   /**
    * A basic feature test example.
@@ -21,12 +21,12 @@ class LoginTest extends TestCase
   public function test_example()
   {
     
-    Artisan::call('migrate');
+    $existingUser = User::find(2); // Cambia el ID según tus necesidades
 
-    // Hacer una solicitud POST a la ruta de inicio de sesión de la API
+    // Hacer una solicitud POST a la ruta de inicio de sesión de la API utilizando las credenciales del usuario existente
     $response = $this->json('POST', '/api/login', [
-      'email' => 'admin@gmail.com',
-      'password' => '123', // Cambia esto a la contraseña deseada
+        'email' => $existingUser->email,
+        'password' => '123', // Cambia esto según la contraseña del usuario
     ]);
 
     // Verificar que la solicitud se haya realizado con éxito
