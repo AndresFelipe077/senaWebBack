@@ -796,4 +796,5 @@ class GrupoController extends Controller
 
     return response()->json($confsRaps);
   }
+  
 }
