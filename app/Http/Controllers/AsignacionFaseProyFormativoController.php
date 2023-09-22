@@ -24,6 +24,8 @@ class AsignacionFaseProyFormativoController extends Controller
      */
     public function index()
     {
+        $data = AsignacionFaseProyFormativo::with($this->relations)->get();
+        return response() -> json($data,200);
     }
 
     public function asignationExist(Request $request, ?int $id = null): bool

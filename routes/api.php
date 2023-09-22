@@ -138,6 +138,7 @@ Route::get('actividadAprendizaje/rap/{id}', [actividadAprendizajeController::cla
 
 Route::resource('asignacionFaseP', AsignacionFaseProyFormativoController::class);
 Route::get('asignacionFaseP/proyecto/{id}', [AsignacionFaseProyFormativoController::class, 'showByIdProyecto']);
+Route::get('asignacionFase', [AsignacionFaseProyFormativoController::class, 'index']);
 
 Route::resource('asignacionCompetenciaProyecto', AsignacionCompetenciaProyectoController::class);
 Route::get('asignacionCompetenciaProyecto/proyecto/{id}', [AsignacionCompetenciaProyectoController::class, 'showByIdProyecto']);
